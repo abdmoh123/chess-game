@@ -278,12 +278,6 @@ public class Board {
             this.updateSpace(old_space, null);
         }
 
-        // disable en passant for all pawns after player made a move (except double pawn moves)
-        List<Space> pawn_spaces = getSpacesByPieceName("Pawn");
-        for (Space pawn_space : pawn_spaces) {
-            ((Pawn) pawn_space.getPiece()).setEnPassant(false);
-            this.updateSpace(pawn_space, pawn_space.getPiece());
-        }
         // allow pawn to be taken through en passant rule if moved 2 squares
         if (move_in.getChessPiece() instanceof Pawn) {
             ((Pawn) move_in.getChessPiece()).setEnPassant(move_in instanceof DoublePawnMove);

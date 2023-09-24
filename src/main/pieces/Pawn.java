@@ -11,17 +11,13 @@ import java.util.List;
 
 public class Pawn extends Piece {
     private boolean en_passant;
-//    private List<EnPassantMove> en_passant_moves;
 
     public Pawn(boolean is_white_in, int id_in) {
         super(is_white_in, 1, id_in);
         this.en_passant = false;
-//        this.en_passant_moves = new ArrayList<>();
     }
 
     public List<Move> getEnPassantMoves(Space location, Board chess_board) {
-        // TODO: Make en passant work
-
         int x_loc = location.getX();
         int y_loc, forward_y_loc;
         y_loc = forward_y_loc = location.getY();
@@ -100,14 +96,6 @@ public class Pawn extends Piece {
         }
 
         return diagonal_spaces;
-
-
-        // allow pawn to make use of the en passant rule
-//        if (adjacent_space.getPiece() instanceof Pawn) {
-//            if (((Pawn) adjacent_space.getPiece()).is_en_passant()) {
-//                addEnPassantMove(new EnPassantMove(location, diagonal_space, adjacent_space));
-//            }
-//        }
     }
 
     public Move getForwardMove(Space location, Board chess_board) {
@@ -216,10 +204,4 @@ public class Pawn extends Piece {
     public void setEnPassant(boolean choice) {
         en_passant = choice;
     }
-//    public void addEnPassantMove(EnPassantMove move_in) {
-//        this.en_passant_moves.add(move_in);
-//    }
-//    public void resetEnPassantMoves() {
-//        this.en_passant_moves.clear();
-//    }
 }

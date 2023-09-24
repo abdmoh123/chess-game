@@ -3,6 +3,7 @@ package main;
 import main.control.Player;
 import main.moves.Move;
 import main.pieces.Piece;
+import main.pieces.Pawn;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,7 @@ public class Game {
             player = getPlayer(2);
         }
 
+        // display the board onto the terminal/console
         chess_board.display();
 
         if (player.quickCheck()) {
@@ -60,6 +62,17 @@ public class Game {
 
         // player generates move
         Move generated_move = player.startMove(chess_board);
+
+        // disable en passant for all pawns after player made a move (except double pawn moves)
+        List<Space> pawn_spaces = chess_board.getSpacesByPieceName("Pawn");
+        for (Space pawn_space : pawn_spaces) {
+            // disable en passant for selected pawn
+            Pawn pawn_piece = (Pawn) pawn_space.getPiece();
+            pawn_piece.setEnPassant(false);
+            // update board with new pawn piece
+            chess_board.updateSpace(pawn_space, pawn_piece);
+        }
+
         // move is applied to game (piece is moved)
         chess_board.applyMove(generated_move);
 
