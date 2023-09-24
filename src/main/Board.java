@@ -3,7 +3,6 @@ package main;
 import main.moves.*;
 import main.pieces.*;
 
-import java.lang.invoke.CallSite;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -151,7 +150,6 @@ public class Board {
     public Space getSpace(int x, int y) {
         // only returns a space within the board coordinates
         if (x >= 0 && x < 8 && y >= 0 && y < 8) {
-            Space space = spaces[y][x];
             return spaces[y][x];
         }
         else throw new ArrayIndexOutOfBoundsException("Invalid coordinate! " + x + " " + y);

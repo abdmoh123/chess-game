@@ -13,13 +13,6 @@ public class Human extends Player {
         super(is_white_in);
     }
 
-    private Move selectMove(List<Move> possible_moves, int choice) {
-        if (choice > possible_moves.size() - 1 || choice < 0) {
-            throw new ArrayIndexOutOfBoundsException("Invalid Choice!");
-        }
-        return possible_moves.get(choice);
-    }
-
     private boolean verifySpaceInput(String input_string) {
         if (input_string.length() != 2) {
             return false;
