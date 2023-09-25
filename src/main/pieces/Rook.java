@@ -10,8 +10,8 @@ import java.util.List;
 public class Rook extends Piece {
     private boolean activated;
 
-    public Rook(boolean is_white_in, int id_in) {
-        super(is_white_in, 5, id_in);
+    public Rook(boolean is_white_in) {
+        super(is_white_in, 5);
         this.activated = false;
     }
 

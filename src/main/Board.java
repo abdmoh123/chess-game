@@ -15,30 +15,30 @@ public class Board {
         this.spaces = new Space[8][8];
 
         // places the white pieces
-        this.spaces[0][0] = new Space(0, 0, new Rook(true, 1));
-        this.spaces[0][1] = new Space(1, 0, new Knight(true, 2));
-        this.spaces[0][2] = new Space(2, 0, new Bishop(true, 3));
-        this.spaces[0][3] = new Space(3, 0, new Queen(true, 4));
-        this.spaces[0][4] = new Space(4, 0, new King(true, 5));
-        this.spaces[0][5] = new Space(5, 0, new Bishop(true, 6));
-        this.spaces[0][6] = new Space(6, 0, new Knight(true, 7));
-        this.spaces[0][7] = new Space(7, 0, new Rook(true, 8));
+        this.spaces[0][0] = new Space(0, 0, new Rook(true));
+        this.spaces[0][1] = new Space(1, 0, new Knight(true));
+        this.spaces[0][2] = new Space(2, 0, new Bishop(true));
+        this.spaces[0][3] = new Space(3, 0, new Queen(true));
+        this.spaces[0][4] = new Space(4, 0, new King(true));
+        this.spaces[0][5] = new Space(5, 0, new Bishop(true));
+        this.spaces[0][6] = new Space(6, 0, new Knight(true));
+        this.spaces[0][7] = new Space(7, 0, new Rook(true));
 
         // places white and black pawns
         for (int i = 0; i < 8; ++i) {
-            this.spaces[1][i] = new Space(i, 1, new Pawn(true, 9 + i));
-            this.spaces[6][i] = new Space(i, 6, new Pawn(false, 25 + i));
+            this.spaces[1][i] = new Space(i, 1, new Pawn(true));
+            this.spaces[6][i] = new Space(i, 6, new Pawn(false));
         }
 
         // places the black pieces
-        this.spaces[7][0] = new Space(0, 7, new Rook(false, 17));
-        this.spaces[7][1] = new Space(1, 7, new Knight(false, 18));
-        this.spaces[7][2] = new Space(2, 7, new Bishop(false, 19));
-        this.spaces[7][3] = new Space(3, 7, new Queen(false, 20));
-        this.spaces[7][4] = new Space(4, 7, new King(false, 21));
-        this.spaces[7][5] = new Space(5, 7, new Bishop(false, 22));
-        this.spaces[7][6] = new Space(6, 7, new Knight(false, 23));
-        this.spaces[7][7] = new Space(7, 7, new Rook(false, 24));
+        this.spaces[7][0] = new Space(0, 7, new Rook(false));
+        this.spaces[7][1] = new Space(1, 7, new Knight(false));
+        this.spaces[7][2] = new Space(2, 7, new Bishop(false));
+        this.spaces[7][3] = new Space(3, 7, new Queen(false));
+        this.spaces[7][4] = new Space(4, 7, new King(false));
+        this.spaces[7][5] = new Space(5, 7, new Bishop(false));
+        this.spaces[7][6] = new Space(6, 7, new Knight(false));
+        this.spaces[7][7] = new Space(7, 7, new Rook(false));
 
         // fills the rest with empty spaces
         for (int i = 2; i < 6; ++i) {
@@ -104,20 +104,6 @@ public class Board {
         }
 
         return selected_pieces;
-    }
-    public Space getSpaceByPiece(Piece piece_in) {
-        int piece_id = piece_in.getID();
-
-        for (Space[] row : getSpaces()) {
-            for (Space space : row) {
-                if (!space.isEmpty()) {
-                    if (space.getPiece().getID() == piece_id) {
-                        return space;
-                    }
-                }
-            }
-        }
-        throw new RuntimeException("Piece does not exist!");
     }
 
     public void display() {
@@ -214,11 +200,10 @@ public class Board {
         }
     }
 
-    public boolean isPieceUniqueOnRow(Piece piece_in) {
+    public boolean isSpacePieceUniqueOnRow(Space space_in) {
         /* Search through row to see if a given piece is unique within the row */
 
         // get row of piece by getting the space coordinates
-        Space space_in = getSpaceByPiece(piece_in);
         Space[] row = getRow(space_in.getY());
 
         int count = 0;
@@ -229,7 +214,7 @@ public class Board {
             }
             if (!space.isEmpty()) {
                 // check if piece is the same type as given piece
-                if (space.getPiece().getName().equals(piece_in.getName())) {
+                if (space.getPiece().getName().equals(space_in.getPiece().getName())) {
                     ++count;
                 }
             }

@@ -11,8 +11,8 @@ import java.util.List;
 public class King extends Piece {
     private boolean castling_state;
 
-    public King(boolean is_white_in, int id_in) {
-        super(is_white_in, 999, id_in);
+    public King(boolean is_white_in) {
+        super(is_white_in, 999);
         this.castling_state = false;
     }
 

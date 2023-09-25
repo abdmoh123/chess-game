@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Bishop extends Piece {
-    public Bishop(boolean is_white_in, int id_in) {
-        super(is_white_in, 3, id_in);
+    public Bishop(boolean is_white_in) {
+        super(is_white_in, 3);
     }
 
     private boolean search_bishop_spaces(

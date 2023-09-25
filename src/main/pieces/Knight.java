@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Knight extends Piece {
-    public Knight(boolean is_white_in, int id_in) {
-        super(is_white_in, 3, id_in);
+    public Knight(boolean is_white_in) {
+        super(is_white_in, 3);
     }
 
     @Override

@@ -8,15 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Piece {
-    private final int ID; // used to identify specific pieces
     private final boolean WHITE_STATE; // true = white, false = black
     private final int VALUE;
     private List<Space> visible_spaces;
 
-    public Piece(boolean is_white_in, int value_in, int id_in) {
+    public Piece(boolean is_white_in, int value_in) {
         this.WHITE_STATE = is_white_in;
         this.VALUE = value_in;
-        this.ID = id_in;
         this.visible_spaces = new ArrayList<>();
     }
 
@@ -30,9 +28,6 @@ public abstract class Piece {
     }
     public int getValue() {
         return this.VALUE;
-    }
-    public int getID() {
-        return this.ID;
     }
 
     public List<Space> getVisibleSpaces() {

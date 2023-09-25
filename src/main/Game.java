@@ -129,7 +129,7 @@ public class Game {
         for (Space[] row : chess_board.getSpaces()) {
             for (Space space : row) {
                 if (space.isFriendly(player_in.isWhite())) {
-                    if (player_in.canPiecePreventCheck(space.getPiece(), chess_board)) {
+                    if (player_in.canSpacePreventCheck(space, chess_board)) {
                         return false;
                     }
                 }

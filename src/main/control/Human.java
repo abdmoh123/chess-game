@@ -3,6 +3,7 @@ package main.control;
 import main.Board;
 import main.Space;
 import main.moves.Move;
+import main.moves.PromotePawnMove;
 
 import java.util.List;
 
@@ -63,7 +64,7 @@ public class Human extends Player {
                 if (selected_space.isFriendly(isWhite())) {
                     if (isCheck(chess_board)) {
                         // check if piece is not pinned
-                        if (canPiecePreventCheck(selected_space.getPiece(), chess_board)) {
+                        if (canSpacePreventCheck(selected_space, chess_board)) {
                             can_move = true;
                         }
                     }
@@ -94,7 +95,7 @@ public class Human extends Player {
             for (int i = 0; i < possible_moves.size(); ++i) {
                 Move move = possible_moves.get(i);
                 String move_name = move.getMoveAsString(
-                    doesMoveCauseEnemyCheck(move, chess_board), !chess_board.isPieceUniqueOnRow(move.getChessPiece())
+                    doesMoveCauseEnemyCheck(move, chess_board), !chess_board.isSpacePieceUniqueOnRow(move.getOldLocation())
                 );
                 System.out.printf("%d: %s\n", i + 1, move_name);
             }
@@ -109,7 +110,28 @@ public class Human extends Player {
                 System.out.println("Input must be integer!");
             }
         }
+        Move chosen_move = possible_moves.get(choice - 1);
+        
+        // allow user to select which piece to promote a pawn to
+        if (chosen_move instanceof PromotePawnMove) {
+            choice = -1; // reset choice variable for another input
+            while (choice <= 0 || choice > 4) {
+                System.out.println("You have promoted a pawn!\nPlease choose a new piece:");
+                System.out.println("1: Queen\n2: Rook\n3: Bishop\n4: Knight");
 
-        return possible_moves.get(choice - 1);
+                String str_choice = SCANNER.nextLine();
+                // convert input to integer if possible
+                try {
+                    choice = Integer.parseInt(str_choice);
+                }
+                catch (Exception e) {
+                    System.out.println("Input must be integer!");
+                }
+            }
+            // apply the chosen piece to the move
+            ((PromotePawnMove) chosen_move).setNewPiece(choice, isWhite());
+        }
+
+        return chosen_move;
     }
 }

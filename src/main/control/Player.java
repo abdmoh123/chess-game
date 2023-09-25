@@ -5,7 +5,6 @@ import main.moves.CastlingMove;
 import main.moves.Move;
 import main.Space;
 import main.pieces.King;
-import main.pieces.Piece;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -103,11 +102,10 @@ public abstract class Player {
         return isCheckforEnemy(board_after);
     }
 
-    public boolean canPiecePreventCheck(Piece piece_in, Board chess_board) {
+    public boolean canSpacePreventCheck(Space space_in, Board chess_board) {
         /* Check if piece is not pinned */
 
-        Space space = chess_board.getSpaceByPiece(piece_in);
-        List<Move> possible_moves = piece_in.getPossibleMoves(space, chess_board);
+        List<Move> possible_moves = space_in.getPiece().getPossibleMoves(space_in, chess_board);
 
         for (Move move : possible_moves) {
             if (!doesMoveCauseCheck(move, chess_board)) {
