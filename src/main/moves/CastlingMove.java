@@ -23,8 +23,12 @@ public class CastlingMove extends Move {
 
     @Override
     public String getMoveAsString(boolean is_check_in, boolean be_precise) {
-        // castling is always this notation
-        return "O-O";
+        // if castling king-side, move = "O-O"
+        if (old_rook_space.getX() == 7) {
+            return "O-O";
+        }
+        // if castling queen-side, move = "O-O-O"
+        return "O-O-O";
     }
 
     @Override

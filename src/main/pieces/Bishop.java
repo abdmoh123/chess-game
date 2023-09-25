@@ -93,4 +93,9 @@ public class Bishop extends Piece {
     public String getName() {
         return "Bishop";
     }
+
+    @Override
+    public Piece clone() {
+        return new Bishop(isWhite());
+    }
 }

@@ -3,6 +3,7 @@ package main.moves;
 import main.Space;
 import main.boards.Board;
 import main.pieces.King;
+import main.pieces.Piece;
 import main.pieces.Rook;
 
 public class StandardMove extends Move {
@@ -17,17 +18,19 @@ public class StandardMove extends Move {
         Space old_space = getOldLocation();
         Space new_space = getNewLocation();
 
+        Piece piece_copy = getChessPiece().clone();
+
         // prevent castling on moved rooks
-        if (getChessPiece() instanceof Rook) {
-            ((Rook) getChessPiece()).activate();
+        if (piece_copy instanceof Rook) {
+            ((Rook) piece_copy).activate();
         }
         // prevent castling if king moves
-        if (getChessPiece() instanceof King) {
-            ((King) getChessPiece()).disableCastling();
+        if (piece_copy instanceof King) {
+            ((King) piece_copy).disableCastling();
         }
 
         // apply the move by updating the board
-        chess_board.updateSpace(new_space, old_space.getPiece());
+        chess_board.updateSpace(new_space, piece_copy);
         chess_board.updateSpace(old_space, null);
     }
 }

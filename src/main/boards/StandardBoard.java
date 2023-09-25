@@ -6,6 +6,7 @@ import main.pieces.Bishop;
 import main.pieces.King;
 import main.pieces.Knight;
 import main.pieces.Pawn;
+import main.pieces.Piece;
 import main.pieces.Queen;
 import main.pieces.Rook;
 
@@ -41,23 +42,25 @@ public class StandardBoard extends Board {
         }
     }
 
-    public StandardBoard(StandardBoard chess_board) {
-        /* Allow copying/cloning of boards based on another board layout */
-        
-        this.spaces = new Space[8][8];
+    public StandardBoard clone() {
+        /* Create a deep copy/clone of a given board (any changes won't affect the original) */
 
-        for (int i = 0; i < 8; ++i) {
-            for (int j = 0; j < 8; ++j) {
-                this.spaces[i][j] = new Space(j, i, chess_board.getSpace(j, i).getPiece());
+        StandardBoard new_board = new StandardBoard();
+        for (Space[] row : new_board.getSpaces()) {
+            for (Space space : row) {
+                if (!space.isEmpty()) {
+                    new_board.updateSpace(space, space.getPiece().clone());
+                }
             }
         }
+        return new_board;
     }
 
     @Override
     public StandardBoard after(Move move_in) {
         /* Create a temporary board with the move applied. Useful for handling checks and pinned pieces. */
 
-        StandardBoard new_board = new StandardBoard(this);
+        StandardBoard new_board = clone();
         move_in.apply(new_board);
         return new_board;
     }

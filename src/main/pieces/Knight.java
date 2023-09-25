@@ -58,6 +58,13 @@ public class Knight extends Piece {
     }
 
     @Override
+    public Piece clone() {
+        Knight new_knight = new Knight(isWhite());
+        new_knight.setVisibleSpaces(getVisibleSpaces());
+        return new_knight;
+    }
+
+    @Override
     public String getName() {
         return "Knight";
     }

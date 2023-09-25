@@ -141,6 +141,14 @@ public class King extends Piece {
         return "King";
     }
 
+    @Override
+    public Piece clone() {
+        King new_king = new King(isWhite());
+        new_king.castling_state = hasCastled();
+        new_king.setVisibleSpaces(getVisibleSpaces());
+        return new_king;
+    }
+
     public boolean hasCastled() {
         return castling_state;
     }

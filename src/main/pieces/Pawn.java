@@ -221,6 +221,14 @@ public class Pawn extends Piece {
         return "Pawn";
     }
 
+    @Override
+    public Piece clone() {
+        Pawn new_pawn = new Pawn(isWhite());
+        new_pawn.setEnPassant(isEnPassant());
+        new_pawn.setVisibleSpaces(getVisibleSpaces());
+        return new_pawn;
+    }
+
     public boolean isEnPassant() {
         return en_passant;
     }

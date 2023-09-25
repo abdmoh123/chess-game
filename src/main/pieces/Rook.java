@@ -98,6 +98,13 @@ public class Rook extends Piece {
     public String getName() {
         return "Rook";
     }
+    @Override
+    public Piece clone() {
+        Rook new_rook = new Rook(isWhite());
+        new_rook.activated = this.activated;
+        new_rook.setVisibleSpaces(getVisibleSpaces());
+        return new_rook;
+    }
 
     public boolean is_activated() {
         return activated;

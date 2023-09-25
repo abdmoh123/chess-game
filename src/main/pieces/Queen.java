@@ -43,4 +43,11 @@ public class Queen extends Piece {
     public String getName() {
         return "Queen";
     }
+
+    @Override
+    public Piece clone() {
+        Queen new_queen = new Queen(isWhite());
+        new_queen.setVisibleSpaces(getVisibleSpaces());
+        return new_queen;
+    }
 }

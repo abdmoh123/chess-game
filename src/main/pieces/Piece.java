@@ -19,6 +19,7 @@ public abstract class Piece {
     }
 
     public abstract String getName();
+    public abstract Piece clone();
 
     public abstract void computeVision(Space location, Board chess_board);
     public abstract List<Move> getPossibleMoves(Space location, Board chess_board);
