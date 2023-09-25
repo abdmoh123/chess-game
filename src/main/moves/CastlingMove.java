@@ -1,6 +1,9 @@
 package main.moves;
 
+import main.Board;
 import main.Space;
+import main.pieces.King;
+import main.pieces.Rook;
 
 public class CastlingMove extends Move {
     private Space old_rook_space;
@@ -22,5 +25,24 @@ public class CastlingMove extends Move {
     public String getMoveAsString(boolean is_check_in, boolean be_precise) {
         // castling is always this notation
         return "O-O";
+    }
+
+    @Override
+    public void apply(Board chess_board) {
+        // get the spaces included in the move
+        Space old_space = getOldLocation();
+        Space new_space = getNewLocation();
+        Space old_rook_space = getOldRookSpace();
+        Space new_rook_space = getNewRookSpace();
+
+        // prevent future castling
+        ((Rook) old_rook_space.getPiece()).activate();
+        ((King) getChessPiece()).disableCastling();
+
+        // apply the move by updating the board
+        chess_board.updateSpace(new_space, old_space.getPiece());
+        chess_board.updateSpace(old_space, null);
+        chess_board.updateSpace(new_rook_space, old_rook_space.getPiece());
+        chess_board.updateSpace(old_rook_space, null);
     }
 }

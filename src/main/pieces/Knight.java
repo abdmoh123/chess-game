@@ -2,6 +2,7 @@ package main.pieces;
 
 import main.Board;
 import main.moves.Move;
+import main.moves.StandardMove;
 import main.Space;
 
 import java.util.ArrayList;
@@ -51,7 +52,7 @@ public class Knight extends Piece {
 
         // only adds legal moves (within chess board coords)
         for (Space space : getVisibleSpaces()) {
-            possible_moves.add(new Move(location, space));
+            possible_moves.add(new StandardMove(location, space));
         }
         return possible_moves;
     }

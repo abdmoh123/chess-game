@@ -1,5 +1,6 @@
 package main.moves;
 
+import main.Board;
 import main.Space;
 
 public class EnPassantMove extends Move {
@@ -13,5 +14,18 @@ public class EnPassantMove extends Move {
 
     public Space get_killed_pawn_space() {
         return killed_pawn_space;
+    }
+
+    @Override
+    public void apply(Board chess_board) {
+        // get the spaces included in the move
+        Space old_space = getOldLocation();
+        Space new_space = getNewLocation();
+        Space pawn_space = get_killed_pawn_space();
+
+        // apply the move by updating the board
+        chess_board.updateSpace(new_space, old_space.getPiece());
+        chess_board.updateSpace(old_space, null);
+        chess_board.updateSpace(pawn_space, null);
     }
 }

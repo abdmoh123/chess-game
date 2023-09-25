@@ -1,5 +1,6 @@
 package main.moves;
 
+import main.Board;
 import main.Space;
 import main.pieces.Bishop;
 import main.pieces.Knight;
@@ -18,6 +19,8 @@ public class PromotePawnMove extends Move {
         return this.new_piece;
     }
     public void setNewPiece(int choice, boolean is_white_in) {
+        /* Set the piece that the pawn promotes to */
+        
         switch (choice) {
             case 1:
                 this.new_piece = new Queen(is_white_in);
@@ -34,5 +37,16 @@ public class PromotePawnMove extends Move {
             default:
                 throw new RuntimeException("Invalid choice for promoted pawn!");
         }
+    }
+
+    @Override
+    public void apply(Board chess_board) {
+        // get the spaces included in the move
+        Space old_space = getOldLocation();
+        Space new_space = getNewLocation();
+
+        // apply the move by updating the board
+        chess_board.updateSpace(new_space, getNewPiece());
+        chess_board.updateSpace(old_space, null);
     }
 }

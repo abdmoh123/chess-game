@@ -73,8 +73,8 @@ public class Game {
             chess_board.updateSpace(pawn_space, pawn_piece);
         }
 
-        // move is applied to game (piece is moved)
-        chess_board.applyMove(generated_move);
+        // move is applied to board (piece is moved)
+        generated_move.apply(chess_board);;
 
         // add points gained and saves move to history
         player.addPoints(generated_move.getKillPoints());

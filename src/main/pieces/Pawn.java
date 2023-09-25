@@ -5,6 +5,7 @@ import main.moves.DoublePawnMove;
 import main.moves.EnPassantMove;
 import main.moves.Move;
 import main.moves.PromotePawnMove;
+import main.moves.StandardMove;
 import main.Space;
 
 import java.util.ArrayList;
@@ -131,7 +132,7 @@ public class Pawn extends Piece {
             if (new_space.getY() == 7 || new_space.getY() == 0) {
                 return new PromotePawnMove(location, chess_board.getSpace(x_loc, y_loc));
             }
-            return new Move(location, chess_board.getSpace(x_loc, y_loc));
+            return new StandardMove(location, chess_board.getSpace(x_loc, y_loc));
         }
         return null;
     }
@@ -207,7 +208,7 @@ public class Pawn extends Piece {
                     possible_moves.add(new PromotePawnMove(location, visible_space));
                 }
                 else {
-                    possible_moves.add(new Move(location, visible_space));
+                    possible_moves.add(new StandardMove(location, visible_space));
                 }
             }
         }

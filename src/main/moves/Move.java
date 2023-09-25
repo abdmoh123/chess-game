@@ -1,11 +1,12 @@
 package main.moves;
 
+import main.Board;
 import main.Space;
 import main.pieces.Knight;
 import main.pieces.Pawn;
 import main.pieces.Piece;
 
-public class Move {
+public abstract class Move {
     private final Piece CHESS_PIECE;
     private final Space OLD_LOCATION;
     private final Space NEW_LOCATION;
@@ -23,6 +24,8 @@ public class Move {
             this.kill_points = new_location_in.getPiece().getValue();
         }
     }
+
+    public abstract void apply(Board chess_board);
 
     public static boolean is_legal(Space old_location_in, Space new_location_in) {
         // ensure moves stay within the predefined board coordinates
@@ -62,6 +65,7 @@ public class Move {
     public void setKillPoints(int points_in) {
         this.kill_points = points_in;
     }
+    
     public String getMoveAsString(boolean is_check_in, boolean be_precise) {
         /* Get the move in algebraic notation (for human readability) */
 

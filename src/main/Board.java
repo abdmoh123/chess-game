@@ -222,58 +222,11 @@ public class Board {
         return count == 1;
     }
 
-    public void applyMove(Move move_in) {
-        // get the spaces included in the move
-        Space old_space = move_in.getOldLocation();
-        Space new_space = move_in.getNewLocation();
-
-        // prevent castling on moved rooks
-        if (move_in.getChessPiece() instanceof Rook) {
-            ((Rook) move_in.getChessPiece()).activate();
-        }
-        // prevent castling if king moves
-        if (move_in.getChessPiece() instanceof King) {
-            ((King) move_in.getChessPiece()).disableCastling();
-        }
-
-        if (move_in instanceof EnPassantMove) {
-            Space pawn_space = ((EnPassantMove) move_in).get_killed_pawn_space();
-
-            // apply the move by updating the board
-            this.updateSpace(new_space, old_space.getPiece());
-            this.updateSpace(old_space, null);
-            this.updateSpace(pawn_space, null);
-        }
-        else if (move_in instanceof PromotePawnMove) {
-            // apply the move by updating the board
-            this.updateSpace(new_space, ((PromotePawnMove) move_in).getNewPiece());
-            this.updateSpace(old_space, null);
-        }
-        else if (move_in instanceof CastlingMove) {
-            Space old_rook_space = ((CastlingMove) move_in).getOldRookSpace();
-            Space new_rook_space = ((CastlingMove) move_in).getNewRookSpace();
-            this.updateSpace(new_space, old_space.getPiece());
-            this.updateSpace(old_space, null);
-            this.updateSpace(new_rook_space, old_rook_space.getPiece());
-            this.updateSpace(old_rook_space, null);
-        }
-        else {
-            // apply the move by updating the board
-            this.updateSpace(new_space, old_space.getPiece());
-            this.updateSpace(old_space, null);
-        }
-
-        // allow pawn to be taken through en passant rule if moved 2 squares
-        if (move_in.getChessPiece() instanceof Pawn) {
-            ((Pawn) move_in.getChessPiece()).setEnPassant(move_in instanceof DoublePawnMove);
-        }
-    }
-
     public Board after(Move move_in) {
         /* Create a temporary board with the move applied. Useful for handling checks and pinned pieces. */
 
         Board new_board = new Board(this);
-        new_board.applyMove(move_in);
+        move_in.apply(new_board);
         return new_board;
     }
 }

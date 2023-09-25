@@ -3,6 +3,7 @@ package main.pieces;
 import main.Board;
 import main.moves.CastlingMove;
 import main.moves.Move;
+import main.moves.StandardMove;
 import main.Space;
 
 import java.util.ArrayList;
@@ -107,7 +108,7 @@ public class King extends Piece {
 
         // convert all visible spaces to moves
         for (Space visible_space : getVisibleSpaces()) {
-            possible_moves.add(new Move(location, visible_space));
+            possible_moves.add(new StandardMove(location, visible_space));
         }
 
         // add castling moves if possible and available

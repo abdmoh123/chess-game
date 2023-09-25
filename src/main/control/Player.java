@@ -3,6 +3,7 @@ package main.control;
 import main.Board;
 import main.moves.CastlingMove;
 import main.moves.Move;
+import main.moves.StandardMove;
 import main.Space;
 import main.pieces.King;
 
@@ -28,10 +29,9 @@ public abstract class Player {
 
         List<Move> filtered_moves = new ArrayList<>();
 
-
         for (Move move : move_list) {
             if (move instanceof CastlingMove) {
-                Move temp_move = new Move(move.getOldLocation(), ((CastlingMove) move).getNewRookSpace());
+                Move temp_move = new StandardMove(move.getOldLocation(), ((CastlingMove) move).getNewRookSpace());
                 // both the king and rook space must not be in check
                 if (!doesMoveCauseCheck(temp_move, chess_board) && !doesMoveCauseCheck(move, chess_board)) {
                     filtered_moves.add(move);

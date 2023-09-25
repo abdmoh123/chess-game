@@ -2,10 +2,12 @@ package main.moves;
 
 import main.Board;
 import main.Space;
-import main.pieces.Pawn;
+import main.pieces.King;
+import main.pieces.Rook;
 
-public class DoublePawnMove extends Move {
-    public DoublePawnMove(Space old_location_in, Space new_location_in) {
+public class StandardMove extends Move {
+
+    public StandardMove(Space old_location_in, Space new_location_in) {
         super(old_location_in, new_location_in);
     }
 
@@ -15,11 +17,17 @@ public class DoublePawnMove extends Move {
         Space old_space = getOldLocation();
         Space new_space = getNewLocation();
 
+        // prevent castling on moved rooks
+        if (getChessPiece() instanceof Rook) {
+            ((Rook) getChessPiece()).activate();
+        }
+        // prevent castling if king moves
+        if (getChessPiece() instanceof King) {
+            ((King) getChessPiece()).disableCastling();
+        }
+
         // apply the move by updating the board
         chess_board.updateSpace(new_space, old_space.getPiece());
         chess_board.updateSpace(old_space, null);
-
-        // allow pawn to be taken through en passant rule
-        ((Pawn) getChessPiece()).setEnPassant(true);
     }
 }
