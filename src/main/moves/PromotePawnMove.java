@@ -1,7 +1,7 @@
 package main.moves;
 
-import main.Board;
 import main.Space;
+import main.boards.Board;
 import main.pieces.Bishop;
 import main.pieces.Knight;
 import main.pieces.Piece;
@@ -20,7 +20,7 @@ public class PromotePawnMove extends Move {
     }
     public void setNewPiece(int choice, boolean is_white_in) {
         /* Set the piece that the pawn promotes to */
-        
+
         switch (choice) {
             case 1:
                 this.new_piece = new Queen(is_white_in);

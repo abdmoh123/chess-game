@@ -1,64 +1,29 @@
-package main;
+package main.boards;
 
+import main.Space;
 import main.moves.*;
 import main.pieces.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Board {
-    private Space[][] spaces;
+public abstract class Board {
+    protected Space[][] spaces;
 
     public Board() {
-
         // initialise 2D array
+        initialiseSpaces();
+    }
+
+    private void initialiseSpaces() {
+        // fills board with empty spaces
         this.spaces = new Space[8][8];
-
-        // places the white pieces
-        this.spaces[0][0] = new Space(0, 0, new Rook(true));
-        this.spaces[0][1] = new Space(1, 0, new Knight(true));
-        this.spaces[0][2] = new Space(2, 0, new Bishop(true));
-        this.spaces[0][3] = new Space(3, 0, new Queen(true));
-        this.spaces[0][4] = new Space(4, 0, new King(true));
-        this.spaces[0][5] = new Space(5, 0, new Bishop(true));
-        this.spaces[0][6] = new Space(6, 0, new Knight(true));
-        this.spaces[0][7] = new Space(7, 0, new Rook(true));
-
-        // places white and black pawns
         for (int i = 0; i < 8; ++i) {
-            this.spaces[1][i] = new Space(i, 1, new Pawn(true));
-            this.spaces[6][i] = new Space(i, 6, new Pawn(false));
-        }
-
-        // places the black pieces
-        this.spaces[7][0] = new Space(0, 7, new Rook(false));
-        this.spaces[7][1] = new Space(1, 7, new Knight(false));
-        this.spaces[7][2] = new Space(2, 7, new Bishop(false));
-        this.spaces[7][3] = new Space(3, 7, new Queen(false));
-        this.spaces[7][4] = new Space(4, 7, new King(false));
-        this.spaces[7][5] = new Space(5, 7, new Bishop(false));
-        this.spaces[7][6] = new Space(6, 7, new Knight(false));
-        this.spaces[7][7] = new Space(7, 7, new Rook(false));
-
-        // fills the rest with empty spaces
-        for (int i = 2; i < 6; ++i) {
             for (int j = 0; j < 8; ++j) {
                 this.spaces[i][j] = new Space(j, i);
             }
         }
     }
-
-    public Board(Board chess_board) {
-        /* Allow copying/cloning of boards based on another board layout */
-        this.spaces = new Space[8][8];
-
-        for (int i = 0; i < 8; ++i) {
-            for (int j = 0; j < 8; ++j) {
-                this.spaces[i][j] = new Space(j, i, chess_board.getSpace(j, i).getPiece());
-            }
-        }
-    }
-
     public List<Space> getCheckedSpaces(boolean is_white_turn) {
         List<Space> checked_spaces = new ArrayList<>();
         List<Space> enemy_spaces = new ArrayList<>();
@@ -224,11 +189,5 @@ public class Board {
         return count == 1;
     }
 
-    public Board after(Move move_in) {
-        /* Create a temporary board with the move applied. Useful for handling checks and pinned pieces. */
-
-        Board new_board = new Board(this);
-        move_in.apply(new_board);
-        return new_board;
-    }
+    public abstract Board after(Move move_in);
 }

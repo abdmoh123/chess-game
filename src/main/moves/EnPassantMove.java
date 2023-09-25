@@ -1,7 +1,7 @@
 package main.moves;
 
-import main.Board;
 import main.Space;
+import main.boards.Board;
 
 public class EnPassantMove extends Move {
     private Space killed_pawn_space;

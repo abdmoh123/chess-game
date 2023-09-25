@@ -1,7 +1,7 @@
 package main.control;
 
-import main.Board;
 import main.Space;
+import main.boards.Board;
 import main.moves.Move;
 
 import java.util.ArrayList;
