@@ -205,6 +205,8 @@ public class Board {
 
         // get row of piece by getting the space coordinates
         Space[] row = getRow(space_in.getY());
+        
+        String piece_name = space_in.getPiece().getName();
 
         int count = 0;
         for (Space space : row) {
@@ -213,8 +215,8 @@ public class Board {
                 break;
             }
             if (!space.isEmpty()) {
-                // check if piece is the same type as given piece
-                if (space.getPiece().getName().equals(space_in.getPiece().getName())) {
+                // check if piece is the same type and same team as given piece
+                if (space.getPiece().getName().equals(piece_name) && space.getPiece().isWhite() == space_in.getPiece().isWhite()) {
                     ++count;
                 }
             }
