@@ -1,7 +1,7 @@
 package main;
 
 import main.boards.Board;
-import main.boards.StandardChessBoard;
+import main.boards.StandardBoard;
 import main.control.Player;
 import main.moves.Move;
 import main.pieces.Piece;
@@ -21,7 +21,7 @@ public class Game {
         this.player_1 = p1;
         this.player_2 = p2;
         this.p1_turn = p1.isWhite();
-        this.chess_board = new StandardChessBoard();
+        this.chess_board = new StandardBoard();
         this.game_state = GameState.ACTIVE;
     }
 

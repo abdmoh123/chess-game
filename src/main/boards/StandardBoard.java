@@ -9,9 +9,9 @@ import main.pieces.Pawn;
 import main.pieces.Queen;
 import main.pieces.Rook;
 
-public class StandardChessBoard extends Board {
+public class StandardBoard extends Board {
     
-    public StandardChessBoard() {
+    public StandardBoard() {
         super();
 
         // places the white pieces
@@ -41,7 +41,7 @@ public class StandardChessBoard extends Board {
         }
     }
 
-    public StandardChessBoard(StandardChessBoard chess_board) {
+    public StandardBoard(StandardBoard chess_board) {
         /* Allow copying/cloning of boards based on another board layout */
         
         this.spaces = new Space[8][8];
@@ -54,10 +54,10 @@ public class StandardChessBoard extends Board {
     }
 
     @Override
-    public StandardChessBoard after(Move move_in) {
+    public StandardBoard after(Move move_in) {
         /* Create a temporary board with the move applied. Useful for handling checks and pinned pieces. */
 
-        StandardChessBoard new_board = new StandardChessBoard(this);
+        StandardBoard new_board = new StandardBoard(this);
         move_in.apply(new_board);
         return new_board;
     }
