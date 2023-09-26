@@ -41,6 +41,7 @@ public class Human extends Player {
     }
 
     public Space convertInputToSpace(Board chess_board) {
+        /* Convert inputted string into a space based on standard notation (e.g. e7) */
 
         String first_space_loc = "";
 
@@ -55,7 +56,9 @@ public class Human extends Player {
         return chess_board.getSpaceByString(first_space_loc);
     }
 
-    public List<Move> inputLoop(Board chess_board) {
+    public List<Move> userSelectSpace(Board chess_board) {
+        /* Loop for user to select a space to move a piece */
+        
         while (true) {
             Space selected_space = null;
             boolean can_move = false;
@@ -83,36 +86,22 @@ public class Human extends Player {
         }
     }
 
-    @Override
-    public Move startMove(Board chess_board) {
-        // get all (excluding moves leading to check) moves based on user's selected piece
-        List<Move> possible_moves = inputLoop(chess_board);
+    private void printMoves(List<Move> possible_moves, Board chess_board) {
+        /* Print list of moves user can select from */
 
-        int choice = -1;
-        while (choice <= 0 || choice > possible_moves.size()) {
-            // print list of moves user can select from
-            System.out.println("Please select a move:");
-            for (int i = 0; i < possible_moves.size(); ++i) {
-                Move move = possible_moves.get(i);
-                String move_name = move.getMoveAsString(
-                    doesMoveCauseEnemyCheck(move, chess_board), !chess_board.isSpacePieceUniqueOnRow(move.getOldLocation())
-                );
-                System.out.printf("%d: %s\n", i + 1, move_name);
-            }
-
-            // user chooses one of the printed moves
-            String str_choice = SCANNER.nextLine();
-            // convert input to integer if possible
-            try {
-                choice = Integer.parseInt(str_choice);
-            }
-            catch (Exception e) {
-                System.out.println("Input must be integer!");
-            }
+        System.out.println("Please select a move (or type 'Q' or 'q' to go back):");
+        for (int i = 0; i < possible_moves.size(); ++i) {
+            Move move = possible_moves.get(i);
+            String move_name = move.getMoveAsString(
+                doesMoveCauseEnemyCheck(move, chess_board), !chess_board.isSpacePieceUniqueOnRow(move.getOldLocation())
+            );
+            System.out.printf("%d: %s\n", i + 1, move_name);
         }
-        Move chosen_move = possible_moves.get(choice - 1);
+    }
+
+    private Move checkPawnPromotion(Move chosen_move, int choice) {
+        /* Check if pawn is being promoted and get user input accordingly */
         
-        // allow user to select which piece to promote a pawn to
         if (chosen_move instanceof PromotePawnMove) {
             choice = -1; // reset choice variable for another input
             while (choice <= 0 || choice > 4) {
@@ -131,7 +120,41 @@ public class Human extends Player {
             // apply the chosen piece to the move
             ((PromotePawnMove) chosen_move).setNewPiece(choice, isWhite());
         }
-
         return chosen_move;
+    }
+
+    @Override
+    public Move startMove(Board chess_board) {
+        while (true) {
+            // get all (excluding moves leading to check) moves based on user's selected piece
+            List<Move> possible_moves = userSelectSpace(chess_board);
+
+            // allow user to select which move to play
+            int choice = -1;
+            boolean restart = false;
+            while ((choice <= 0 || choice > possible_moves.size()) && !restart) {
+                printMoves(possible_moves, chess_board);
+
+                // user chooses one of the printed moves
+                String str_choice = SCANNER.nextLine();
+                // allow user to go back in the menu
+                if (str_choice.equals("Q") || str_choice.equals("q")) {
+                    restart = true;
+                }
+                else {
+                    // convert input to integer if possible
+                    try {
+                        choice = Integer.parseInt(str_choice);
+                    }
+                    catch (Exception e) {
+                        System.out.println("Input must be integer!");
+                    }
+                }
+            }
+            if (!restart) {
+                // check if move involves pawn promotion before returning it
+                return checkPawnPromotion(possible_moves.get(choice - 1), choice);
+            }
+        }
     }
 }
