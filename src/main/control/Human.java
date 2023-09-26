@@ -21,8 +21,11 @@ public class Human extends Player {
         if (!Character.isDigit(input_string.charAt(1))) {
             return false;
         }
+        int second_digit = Character.getNumericValue(input_string.charAt(1));
+        if (second_digit > 8 || second_digit < 1) {
+            return false;
+        }
 
-        boolean valid_letter = true;
         switch (input_string.charAt(0)) {
             case 'a':
             case 'b':
@@ -34,10 +37,10 @@ public class Human extends Player {
             case 'h':
                 break;
             default:
-                valid_letter = false;
+                return false;
         }
 
-        return valid_letter;
+        return true;
     }
 
     public Space convertInputToSpace(Board chess_board) {
@@ -45,36 +48,41 @@ public class Human extends Player {
 
         String first_space_loc = "";
 
-        // ensure input is valid
         boolean is_valid = false;
         while (!is_valid) {
             System.out.println("Please select a space (e.g. d2)");
             first_space_loc = SCANNER.nextLine();
+
+            // ensure input is valid
             is_valid = verifySpaceInput(first_space_loc);
+            if (!is_valid) {
+                System.out.println("Invalid input!");
+            }
         }
 
+        // convert string notation to space object
         return chess_board.getSpaceByString(first_space_loc);
     }
 
     public List<Move> userSelectSpace(Board chess_board) {
         /* Loop for user to select a space to move a piece */
-        
+
         while (true) {
             Space selected_space = null;
-            boolean can_move = false;
-            while (!can_move) {
+            while (true) {
                 selected_space = convertInputToSpace(chess_board);
                 if (selected_space.isFriendly(isWhite())) {
                     if (isCheck(chess_board)) {
                         // check if piece is not pinned
                         if (canSpacePreventCheck(selected_space, chess_board)) {
-                            can_move = true;
+                            break;
                         }
                     }
                     else {
-                        can_move = true;
+                        break;
                     }
                 }
+                System.out.println("No piece to control here!");
             }
 
             // get moves method automatically filters out moves that lead to check (illegal moves)
@@ -99,11 +107,11 @@ public class Human extends Player {
         }
     }
 
-    private Move checkPawnPromotion(Move chosen_move, int choice) {
+    private Move checkPawnPromotion(Move chosen_move) {
         /* Check if pawn is being promoted and get user input accordingly */
         
         if (chosen_move instanceof PromotePawnMove) {
-            choice = -1; // reset choice variable for another input
+            int choice = -1; // reset choice variable for another input
             while (choice <= 0 || choice > 4) {
                 System.out.println("You have promoted a pawn!\nPlease choose a new piece:");
                 System.out.println("1: Queen\n2: Rook\n3: Bishop\n4: Knight");
@@ -153,7 +161,7 @@ public class Human extends Player {
             }
             if (!restart) {
                 // check if move involves pawn promotion before returning it
-                return checkPawnPromotion(possible_moves.get(choice - 1), choice);
+                return checkPawnPromotion(possible_moves.get(choice - 1));
             }
         }
     }

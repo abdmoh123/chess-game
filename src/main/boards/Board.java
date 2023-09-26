@@ -138,10 +138,13 @@ public abstract class Board {
                 x_loc = 7;
                 break;
             default:
-                throw new RuntimeException("Invalid input!");
+                throw new RuntimeException("Invalid input: Must be within board!");
         }
         // convert 2nd character (1-8) to corresponding integer value (0-7)
         y_loc = Character.getNumericValue(input_string.charAt(1)) - 1;
+        if (y_loc > 7 || y_loc < 0) {
+            throw new RuntimeException("Invalid input: Must be within board!");
+        }
 
         return getSpace(x_loc, y_loc);
     }
