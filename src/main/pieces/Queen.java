@@ -33,7 +33,7 @@ public class Queen extends Piece {
         computeVision(location, chess_board);
 
         for (Space visible_space : getVisibleSpaces()) {
-            possible_moves.add(new StandardMove(location, visible_space));
+            possible_moves.add(new StandardMove(location, visible_space, this, chess_board.getPiece(visible_space)));
         }
 
         return possible_moves;

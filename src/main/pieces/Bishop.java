@@ -15,20 +15,17 @@ public class Bishop extends Piece {
 
     private boolean search_bishop_spaces(
         Space location,
-        Board chess_board,
-        int x_loc,
-        int y_loc
+        Space next_space,
+        Board chess_board
     ) {
-        Space next_space = chess_board.getSpace(x_loc, y_loc);
-
         // check move is legal
-        if (!Move.is_legal(location, next_space)) {
+        if (!Move.is_legal(chess_board, location, next_space)) {
             return false;
         }
 
         addVisibleSpace(next_space);
         // stops search after finding a piece (doesn't have x-ray vision)
-        return next_space.isEmpty();
+        return chess_board.isSpaceEmpty(next_space);
     }
 
     @Override
@@ -45,7 +42,7 @@ public class Bishop extends Piece {
             if (!keep_searching) {
                 break;
             }
-            keep_searching = search_bishop_spaces(location, chess_board, i, j);
+            keep_searching = search_bishop_spaces(location, new Space(i, j), chess_board);
         }
         // down-right diagonal
         keep_searching = true;
@@ -54,7 +51,7 @@ public class Bishop extends Piece {
             if (!keep_searching) {
                 break;
             }
-            keep_searching = search_bishop_spaces(location, chess_board, i, j);
+            keep_searching = search_bishop_spaces(location, new Space(i, j), chess_board);
         }
         // down-left diagonal
         keep_searching = true;
@@ -63,7 +60,7 @@ public class Bishop extends Piece {
             if (!keep_searching) {
                 break;
             }
-            keep_searching = search_bishop_spaces(location, chess_board, i, j);
+            keep_searching = search_bishop_spaces(location, new Space(i, j), chess_board);
         }
         // up-left diagonal
         keep_searching = true;
@@ -72,7 +69,7 @@ public class Bishop extends Piece {
             if (!keep_searching) {
                 break;
             }
-            keep_searching = search_bishop_spaces(location, chess_board, i, j);
+            keep_searching = search_bishop_spaces(location, new Space(i, j), chess_board);
         }
     }
 
@@ -83,7 +80,7 @@ public class Bishop extends Piece {
         computeVision(location, chess_board);
 
         for (Space visible_space : getVisibleSpaces()) {
-            possible_moves.add(new StandardMove(location, visible_space));
+            possible_moves.add(new StandardMove(location, visible_space, this, chess_board.getPiece(visible_space)));
         }
 
         return possible_moves;

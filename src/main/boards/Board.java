@@ -8,32 +8,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Board {
-    protected Space[][] spaces;
+    protected Piece[][] spaces;
+    protected int LENGTH;
 
-    public Board() {
+    public Board(int size) {
         // initialise 2D array
-        initialiseSpaces();
+        this.spaces = new Piece[size][size];
+        this.LENGTH = size;
     }
 
-    private void initialiseSpaces() {
-        // fills board with empty spaces
-        this.spaces = new Space[8][8];
-        for (int i = 0; i < 8; ++i) {
-            for (int j = 0; j < 8; ++j) {
-                this.spaces[i][j] = new Space(j, i);
-            }
-        }
-    }
+    public abstract void initialise();
+
     public List<Space> getCheckedSpaces(boolean is_white_turn) {
         List<Space> checked_spaces = new ArrayList<>();
         List<Space> enemy_spaces = new ArrayList<>();
 
         // get and separate white and black spaces into 2 lists
-        for (Space[] row : getSpaces()) {
-            for (Space space : row) {
+        for (int i = 0; i < 8; ++i) {
+            for (int j = 0; j < 8; ++j) {
+                Space space = new Space(i, j);
                 // skip space if empty
-                if (!space.isEmpty()) {
-                    if (space.getPiece().isWhite() != is_white_turn) {
+                if (!isSpaceEmpty(space)) {
+                    if (getPiece(space).isWhite() != is_white_turn) {
                         enemy_spaces.add(space);
                     }
                 }
@@ -43,8 +39,8 @@ public abstract class Board {
         // search through all spaces that are covered by enemy (if king is in one, it is in check)
         for (Space space : enemy_spaces) {
             // update vision of each enemy piece
-            space.getPiece().computeVision(space, this);
-            List<Space> piece_vision = space.getPiece().getVisibleSpaces();
+            getPiece(space).computeVision(space, this);
+            List<Space> piece_vision = getPiece(space).getVisibleSpaces();
             for (Space visible_space : piece_vision) {
                 // prevent duplicate spaces
                 if (!checked_spaces.contains(visible_space)) {
@@ -58,10 +54,11 @@ public abstract class Board {
     public List<Space> getSpacesByPieceName(String piece_name) {
         List<Space> selected_pieces = new ArrayList<>();
 
-        for (Space[] row : getSpaces()) {
-            for (Space space : row) {
-                if (!space.isEmpty()) {
-                    if (space.getPiece().getName().equals(piece_name)) {
+        for (int i = 0; i < 8; ++i) {
+            for (int j = 0; j < 8; ++j) {
+                Space space = new Space(i, j);
+                if (!isSpaceEmpty(space)) {
+                    if (getPiece(space).getName().equals(piece_name)) {
                         selected_pieces.add(space);
                     }
                 }
@@ -76,17 +73,18 @@ public abstract class Board {
 
         for (int j = 7; j >= 0; --j) {
             for (int i = 0; i < 8; ++i) {
-                Space space = getSpace(i, j);
-                if (space.isEmpty()) {
+                Space space = new Space(i, j);
+
+                if (isSpaceEmpty(space)) {
                     System.out.print("o ");
                 }
                 else {
                     char piece_letter = ' ';
-                    if (space.getPiece() instanceof Knight) {
+                    if (getPiece(space) instanceof Knight) {
                         piece_letter = 'N';
                     }
                     else {
-                        piece_letter = space.getPiece().getName().charAt(0);
+                        piece_letter = getPiece(space).getName().charAt(0);
                     }
                     System.out.print(piece_letter + " ");
                 }
@@ -95,96 +93,86 @@ public abstract class Board {
         }
     }
 
-    public Space[][] getSpaces() {
+    public Piece[][] getSpaces() {
         return spaces;
     }
-    public Space getSpace(int x, int y) {
+    public int getLength() {
+        return LENGTH;
+    }
+    public Piece getPiece(int x, int y) {
         // only returns a space within the board coordinates
-        if (x >= 0 && x < 8 && y >= 0 && y < 8) {
+        if (x >= 0 && x < getLength() && y >= 0 && y < getLength()) {
             return spaces[y][x];
         }
         else throw new ArrayIndexOutOfBoundsException("Invalid coordinate! " + x + " " + y);
     }
-    public Space getSpaceByString(String input_string) {
-        /* Returns a space on the board based on Chess notation (a-h and 1-8 for row and
-        column). For example space "d2" corresponds to space[1][3]. */
-
-        int x_loc, y_loc;
-
-        // convert 1st character (a-h) to corresponding integer value (0-7)
-        switch (input_string.charAt(0)) {
-            case 'a':
-                x_loc = 0;
-                break;
-            case 'b':
-                x_loc = 1;
-                break;
-            case 'c':
-                x_loc = 2;
-                break;
-            case 'd':
-                x_loc = 3;
-                break;
-            case 'e':
-                x_loc = 4;
-                break;
-            case 'f':
-                x_loc = 5;
-                break;
-            case 'g':
-                x_loc = 6;
-                break;
-            case 'h':
-                x_loc = 7;
-                break;
-            default:
-                throw new RuntimeException("Invalid input: Must be within board!");
-        }
-        // convert 2nd character (1-8) to corresponding integer value (0-7)
-        y_loc = Character.getNumericValue(input_string.charAt(1)) - 1;
-        if (y_loc > 7 || y_loc < 0) {
-            throw new RuntimeException("Invalid input: Must be within board!");
-        }
-
-        return getSpace(x_loc, y_loc);
+    public Piece getPiece(Space space_in) {
+        return getPiece(space_in.getX(), space_in.getY());
     }
-    public Space[] getRow(int y) {
+    public abstract Space getSpaceByString(String input_string);
+    
+    public Piece[] getRow(int y) {
         /* Return row of chess board */
         return this.spaces[y];
     }
-    public Space[] getColumn(int x) {
+    public Piece[] getColumn(int x) {
         /* Return column of chess board */
 
-        Space[] column = new Space[8];
+        Piece[] column = new Piece[8];
         for (int i = 0; i < 8; ++i) {
-            column[i] = getSpace(x, i);
+            column[i] = getPiece(x, i);
         }
         return column;
     }
     public void updateSpace(Space space_in, Piece piece_in) {
         // only allows spaces within the board coordinates
-        if (space_in.isWithinBoard()) {
-            spaces[space_in.getY()][space_in.getX()].setPiece(piece_in);
+        if (isSpaceWithinBoard(space_in)) {
+            spaces[space_in.getY()][space_in.getX()] = piece_in;
         }
+    }
+
+    public boolean isSpaceEmpty(Space space_in) {
+        if (getPiece(space_in.getX(), space_in.getY()) == null) {
+            return true;
+        }
+        return false;
+    }
+    public boolean isSpaceWithinBoard(Space space_in) {
+        if (space_in.getX() > 7 || space_in.getX() < 0) {
+            return false;
+        }
+        if (space_in.getY() > 7 || space_in.getY() < 0) {
+            return false;
+        }
+        return true;
+    }
+    public boolean isSpaceFriendly(Space space_in, boolean player_is_white) {
+        if (!isSpaceWithinBoard(space_in)) {
+            return false;
+        }
+        if (isSpaceEmpty(space_in)) {
+            return false;
+        }
+        return getPiece(space_in).isWhite() == player_is_white;
     }
 
     public boolean isSpacePieceUniqueOnRow(Space space_in) {
         /* Search through row to see if a given piece is unique within the row */
 
         // get row of piece by getting the space coordinates
-        Space[] row = getRow(space_in.getY());
+        Piece[] row = getRow(space_in.getY());
         
-        String piece_name = space_in.getPiece().getName();
+        String piece_name = getPiece(space_in).getName();
 
         int count = 0;
-        for (Space space : row) {
+        for (Piece piece : row) {
             // stop searching if found more than one of the same type of piece
             if (count == 2) {
                 break;
             }
-            if (!space.isEmpty()) {
+            if (piece != null) {
                 // check if piece is the same type and same team as given piece
-                if (space.getPiece().getName().equals(piece_name) && space.getPiece().isWhite() == space_in.getPiece().isWhite()) {
+                if (piece.getName().equals(piece_name) && piece.isWhite() == getPiece(space_in).isWhite()) {
                     ++count;
                 }
             }

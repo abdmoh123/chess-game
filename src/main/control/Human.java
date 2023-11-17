@@ -71,7 +71,7 @@ public class Human extends Player {
             Space selected_space = null;
             while (true) {
                 selected_space = convertInputToSpace(chess_board);
-                if (selected_space.isFriendly(isWhite())) {
+                if (chess_board.isSpaceFriendly(selected_space, isWhite())) {
                     if (isCheck(chess_board)) {
                         // check if piece is not pinned
                         if (canSpacePreventCheck(selected_space, chess_board)) {

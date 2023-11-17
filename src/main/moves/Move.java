@@ -12,27 +12,34 @@ public abstract class Move {
     private final Space NEW_LOCATION;
     private int kill_points;
 
-    public Move(Space old_location_in, Space new_location_in) {
-        if (old_location_in.isEmpty()) {
-            throw new RuntimeException("No piece was selected!");
-        }
-        this.CHESS_PIECE = old_location_in.getPiece();
+    public Move(Space old_location_in, Space new_location_in, Piece piece_in) {
+        // Only use for quiet moves (no piece killed)
         this.OLD_LOCATION = old_location_in;
         this.NEW_LOCATION = new_location_in;
+        this.CHESS_PIECE = piece_in;
         this.kill_points = 0;
-        if (!new_location_in.isEmpty()) {
-            this.kill_points = new_location_in.getPiece().getValue();
+    }
+    public Move(Space old_location_in, Space new_location_in, Piece piece_in, Piece piece_killed) {
+        // Useful when capturing material (piece killed)
+        this.OLD_LOCATION = old_location_in;
+        this.NEW_LOCATION = new_location_in;
+        this.CHESS_PIECE = piece_in;
+        if (piece_killed != null) {
+            this.kill_points = piece_killed.getValue();
+        }
+        else {
+            this.kill_points = 0;
         }
     }
 
     public abstract void apply(Board chess_board);
 
-    public static boolean is_legal(Space old_location_in, Space new_location_in) {
+    public static boolean is_legal(Board chess_board, Space old_location_in, Space new_location_in) {
         // ensure moves stay within the predefined board coordinates
-        if (!old_location_in.isWithinBoard()) {
+        if (!chess_board.isSpaceWithinBoard(old_location_in)) {
             return false;
         }
-        if (!new_location_in.isWithinBoard()) {
+        if (!chess_board.isSpaceWithinBoard(new_location_in)) {
             return false;
         }
 
@@ -42,7 +49,7 @@ public abstract class Move {
         }
 
         // prevent piece from friendly fire
-        if (new_location_in.isFriendly(old_location_in.getPiece().isWhite())) {
+        if (chess_board.isSpaceFriendly(new_location_in, chess_board.getPiece(old_location_in).isWhite())) {
             return false;
         }
 
@@ -68,10 +75,6 @@ public abstract class Move {
     
     public String getMoveAsString(boolean is_check_in, boolean be_precise) {
         /* Get the move in algebraic notation (for human readability) */
-
-        if (getOldLocation().isEmpty()) {
-            throw new RuntimeException("Move is not valid!");
-        }
 
         String move_string = "";
 

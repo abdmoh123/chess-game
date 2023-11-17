@@ -31,7 +31,7 @@ public abstract class Player {
 
         for (Move move : move_list) {
             if (move instanceof CastlingMove) {
-                Move temp_move = new StandardMove(move.getOldLocation(), ((CastlingMove) move).getNewRookSpace());
+                Move temp_move = new StandardMove(move.getOldLocation(), ((CastlingMove) move).getNewRookSpace(), move.getChessPiece());
                 // both the king and rook space must not be in check
                 if (!doesMoveCauseCheck(temp_move, chess_board) && !doesMoveCauseCheck(move, chess_board)) {
                     filtered_moves.add(move);
@@ -48,10 +48,10 @@ public abstract class Player {
 
     public List<Move> getMoves(Space space_in, Board chess_board) {
         // list of moves is empty if space has no piece or if the piece cannot move
-        if (!space_in.isFriendly(isWhite())) {
+        if (!chess_board.isSpaceFriendly(space_in, isWhite())) {
             return new ArrayList<>();
         }
-        List<Move> possible_moves = space_in.getPiece().getPossibleMoves(space_in, chess_board);
+        List<Move> possible_moves = chess_board.getPiece(space_in).getPossibleMoves(space_in, chess_board);
 
         return filterMoves(possible_moves, chess_board);
     }
@@ -64,8 +64,8 @@ public abstract class Player {
         List<Space> checked_spaces = chess_board.getCheckedSpaces(isWhite());
         for (Space checked_space : checked_spaces) {
             // ignore empty spaces or if enemy is in the space
-            if (checked_space.isFriendly(isWhite())) {
-                if (checked_space.getPiece() instanceof King) {
+            if (chess_board.isSpaceFriendly(checked_space, isWhite())) {
+                if (chess_board.getPiece(checked_space) instanceof King) {
                     this.is_check = true;
                     return true;
                 }
@@ -83,8 +83,8 @@ public abstract class Player {
         List<Space> checked_spaces = chess_board.getCheckedSpaces(!isWhite());
         for (Space checked_space : checked_spaces) {
             // ignore empty spaces or if own piece is in the space
-            if (checked_space.isEnemy(isWhite())) {
-                if (checked_space.getPiece() instanceof King) {
+            if (!chess_board.isSpaceFriendly(checked_space, isWhite())) {
+                if (chess_board.getPiece(checked_space) instanceof King) {
                     return true;
                 }
             }
@@ -105,7 +105,7 @@ public abstract class Player {
     public boolean canSpacePreventCheck(Space space_in, Board chess_board) {
         /* Check if piece is not pinned */
 
-        List<Move> possible_moves = space_in.getPiece().getPossibleMoves(space_in, chess_board);
+        List<Move> possible_moves = chess_board.getPiece(space_in).getPossibleMoves(space_in, chess_board);
 
         for (Move move : possible_moves) {
             if (!doesMoveCauseCheck(move, chess_board)) {

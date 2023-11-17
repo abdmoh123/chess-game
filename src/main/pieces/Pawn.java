@@ -35,37 +35,39 @@ public class Pawn extends Piece {
             --forward_y_loc;
         }
         // ensure movement above stays within the board
-        if (!(new Space(x_loc, y_loc).isWithinBoard())) {
+        if (!chess_board.isSpaceWithinBoard(new Space(x_loc, y_loc))) {
             return en_passant_moves;
         }
 
         Space horizontal_space, diagonal_space;
         // only check for en passant to left if space exists on the left
         if (x_loc > 0) {
-            horizontal_space = chess_board.getSpace(x_loc - 1, y_loc);
-            diagonal_space = chess_board.getSpace(x_loc - 1, forward_y_loc);
+            horizontal_space = new Space(x_loc - 1, y_loc);
+            diagonal_space = new Space(x_loc - 1, forward_y_loc);
             // check if an enemy piece exists in space
-            if (horizontal_space.isEnemy(isWhite())) {
+            if (!chess_board.isSpaceFriendly(horizontal_space, isWhite())) {
                 // check if piece is a pawn
-                if (horizontal_space.getPiece() instanceof Pawn) {
+                if (chess_board.getPiece(horizontal_space) instanceof Pawn) {
+                    Pawn adjacent_piece = (Pawn) chess_board.getPiece(horizontal_space);
                     // check if en passant can be applied
-                    if (((Pawn) horizontal_space.getPiece()).isEnPassant()) {
-                        en_passant_moves.add(new EnPassantMove(location, diagonal_space, horizontal_space));
+                    if (adjacent_piece.isEnPassant()) {
+                        en_passant_moves.add(new EnPassantMove(location, diagonal_space, horizontal_space, this, adjacent_piece));
                     }
                 }
             }
         }
         // only check for en passant to right if space exists on the right
-        if (x_loc < 7) {
-            horizontal_space = chess_board.getSpace(x_loc + 1, y_loc);
-            diagonal_space = chess_board.getSpace(x_loc + 1, forward_y_loc);
+        if (x_loc < chess_board.getLength() - 1) {
+            horizontal_space = new Space(x_loc + 1, y_loc);
+            diagonal_space = new Space(x_loc + 1, forward_y_loc);
             // check if an enemy piece exists in space
-            if (horizontal_space.isEnemy(isWhite())) {
+            if (!chess_board.isSpaceFriendly(horizontal_space, isWhite())) {
                 // check if piece is a pawn
-                if (horizontal_space.getPiece() instanceof Pawn) {
+                if (chess_board.getPiece(horizontal_space) instanceof Pawn) {
+                    Pawn adjacent_piece = (Pawn) chess_board.getPiece(horizontal_space);
                     // check if en passant can be applied
-                    if (((Pawn) horizontal_space.getPiece()).isEnPassant()) {
-                        en_passant_moves.add(new EnPassantMove(location, diagonal_space, horizontal_space));
+                    if (adjacent_piece.isEnPassant()) {
+                        en_passant_moves.add(new EnPassantMove(location, diagonal_space, horizontal_space, this, adjacent_piece));
                     }
                 }
             }
@@ -78,30 +80,30 @@ public class Pawn extends Piece {
         /* Diagonal killing */
 
         int x_loc = location.getX();
-        int y_loc = location.getY();
+        int new_y_loc = location.getY();
 
         List<Space> diagonal_spaces = new ArrayList<>();
 
-        // upwards if white
+        // move upwards if white
         if (isWhite()) {
-            ++y_loc;
+            ++new_y_loc;
         }
-        // downwards if black
+        // move downwards if black
         else {
-            --y_loc;
+            --new_y_loc;
         }
         // ensure movement above stays within the board
-        if (!(new Space(x_loc, y_loc).isWithinBoard())) {
+        if (!chess_board.isSpaceWithinBoard(new Space(x_loc, new_y_loc))) {
             return diagonal_spaces;
         }
 
         Space diagonal_space;
         if (x_loc > 0) {
-            diagonal_space = chess_board.getSpace(x_loc - 1, y_loc);
+            diagonal_space = new Space(x_loc - 1, new_y_loc);
             diagonal_spaces.add(diagonal_space);
         }
         if (x_loc < 7) {
-            diagonal_space = chess_board.getSpace(x_loc + 1, y_loc);
+            diagonal_space = new Space(x_loc + 1, new_y_loc);
             diagonal_spaces.add(diagonal_space);
         }
 
@@ -110,29 +112,30 @@ public class Pawn extends Piece {
 
     public Move getForwardMove(Space location, Board chess_board) {
         int x_loc = location.getX();
-        int y_loc = location.getY();
+        int new_y_loc = location.getY();
 
-        // moves forward if white
+        // move upwards if white
         if (isWhite()) {
-            ++y_loc;
+            ++new_y_loc;
         }
-        // moves backwards if black
+        // move downwards if black
         else {
-            --y_loc;
+            --new_y_loc;
         }
+        Space new_space = new Space(x_loc, new_y_loc);
+
         // ensure movement above stays within the board
-        if (!(new Space(x_loc, y_loc).isWithinBoard())) {
+        if (!chess_board.isSpaceWithinBoard(new_space)) {
             return null;
         }
 
-        // only moves forward if space is empty (cannot kill enemy piece)
-        Space new_space = chess_board.getSpace(x_loc, y_loc);
-        if (new_space.isEmpty()) {
+        // only move forward if space is empty (cannot kill enemy piece)
+        if (chess_board.isSpaceEmpty(new_space)) {
             // if pawn reaches horizontal edge of board, it can promote
-            if (new_space.getY() == 7 || new_space.getY() == 0) {
-                return new PromotePawnMove(location, chess_board.getSpace(x_loc, y_loc));
+            if (new_space.getY() == chess_board.getLength() - 1 || new_space.getY() == 0) {
+                return new PromotePawnMove(location, new_space, this);
             }
-            return new StandardMove(location, chess_board.getSpace(x_loc, y_loc));
+            return new StandardMove(location, new_space, this, chess_board.getPiece(new_space));
         }
         return null;
     }
@@ -144,20 +147,20 @@ public class Pawn extends Piece {
         if (isWhite()) {
             // if pawn is white, starting position should be on row 2 (1/7)
             if (location.getY() == 1) {
-                Space new_space = chess_board.getSpace(x_loc, y_loc + 2);
+                Space new_space = new Space(x_loc, y_loc + 2);
                 // only allows move if space is empty (cannot kill enemy pieces)
-                if (new_space.isEmpty()) {
-                    return new DoublePawnMove(location, new_space);
+                if (chess_board.isSpaceEmpty(new_space)) {
+                    return new DoublePawnMove(location, new_space, this);
                 }
             }
         }
         else {
             // if pawn is black, starting position should be on row 7 (6/7)
             if (location.getY() == 6) {
-                Space new_space = chess_board.getSpace(x_loc, y_loc - 2);
+                Space new_space = new Space(x_loc, y_loc - 2);
                 // only allows move if space is empty (cannot kill enemy pieces)
-                if (new_space.isEmpty()) {
-                    return new DoublePawnMove(location, new_space);
+                if (chess_board.isSpaceEmpty(new_space)) {
+                    return new DoublePawnMove(location, new_space, this);
                 }
             }
         }
@@ -172,7 +175,7 @@ public class Pawn extends Piece {
         List<Space> diagonal_spaces = getDiagonalSpaces(location, chess_board);
 
         for (Space diagonal_space : diagonal_spaces) {
-            if (Move.is_legal(location, diagonal_space)) {
+            if (Move.is_legal(chess_board, location, diagonal_space)) {
                 addVisibleSpace(diagonal_space);
             }
         }
@@ -202,13 +205,13 @@ public class Pawn extends Piece {
 
         // convert all visible spaces into potential moves
         for (Space visible_space : getVisibleSpaces()) {
-            if (!visible_space.isEmpty()) {
+            if (!chess_board.isSpaceEmpty(visible_space)) {
                 // allow diagonal killing move to be pawn promotion
-                if (visible_space.getY() == 7 || visible_space.getY() == 0) {
-                    possible_moves.add(new PromotePawnMove(location, visible_space));
+                if (visible_space.getY() == chess_board.getLength() - 1 || visible_space.getY() == 0) {
+                    possible_moves.add(new PromotePawnMove(location, visible_space, this));
                 }
                 else {
-                    possible_moves.add(new StandardMove(location, visible_space));
+                    possible_moves.add(new StandardMove(location, visible_space, this, chess_board.getPiece(visible_space)));
                 }
             }
         }

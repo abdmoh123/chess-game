@@ -8,8 +8,8 @@ import main.pieces.Rook;
 public class CastlingMove extends Move {
     private Space old_rook_space;
     private Space new_rook_space;
-    public CastlingMove(Space old_location_in, Space new_location_in, Space old_rook_space_in, Space new_rook_space_in) {
-        super(old_location_in, new_location_in);
+    public CastlingMove(Space old_location_in, Space new_location_in, King piece_in, Space old_rook_space_in, Space new_rook_space_in) {
+        super(old_location_in, new_location_in, piece_in);
         this.old_rook_space = old_rook_space_in;
         this.new_rook_space = new_rook_space_in;
     }
@@ -39,14 +39,17 @@ public class CastlingMove extends Move {
         Space old_rook_space = getOldRookSpace();
         Space new_rook_space = getNewRookSpace();
 
+        // get relevant pieces for castling
+        Rook castled_rook_copy = (Rook) chess_board.getPiece(old_rook_space).clone();
+        King castled_king_copy = (King) getChessPiece().clone();
         // prevent future castling
-        ((Rook) old_rook_space.getPiece()).activate();
-        ((King) getChessPiece()).disableCastling();
+        castled_rook_copy.activate();
+        castled_king_copy.disableCastling();
 
         // apply the move by updating the board
-        chess_board.updateSpace(new_space, old_space.getPiece());
+        chess_board.updateSpace(new_space, castled_king_copy);
         chess_board.updateSpace(old_space, null);
-        chess_board.updateSpace(new_rook_space, old_rook_space.getPiece());
+        chess_board.updateSpace(new_rook_space, castled_rook_copy);
         chess_board.updateSpace(old_rook_space, null);
     }
 }

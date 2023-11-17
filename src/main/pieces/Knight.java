@@ -35,9 +35,9 @@ public class Knight extends Piece {
         for (int[] set : space_coordinates) {
             // only adds spaces within the chess board
             if (set[0] >= 0 && set[0] < 8 && set[1] >= 0 && set[1] < 8) {
-                Space space = chess_board.getSpace(set[0], set[1]);
+                Space space = new Space(set[0], set[1]);
                 // ensure move follows the rules
-                if (Move.is_legal(location, space)) {
+                if (Move.is_legal(chess_board, location, space)) {
                     addVisibleSpace(space);
                 }
             }
@@ -51,8 +51,8 @@ public class Knight extends Piece {
         computeVision(location, chess_board);
 
         // only adds legal moves (within chess board coords)
-        for (Space space : getVisibleSpaces()) {
-            possible_moves.add(new StandardMove(location, space));
+        for (Space visible_space : getVisibleSpaces()) {
+            possible_moves.add(new StandardMove(location, visible_space, this, chess_board.getPiece(visible_space)));
         }
         return possible_moves;
     }

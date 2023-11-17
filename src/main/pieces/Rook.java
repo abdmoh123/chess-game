@@ -18,20 +18,17 @@ public class Rook extends Piece {
 
     private boolean search_rook_spaces(
         Space location,
-        Board chess_board,
-        int x_loc,
-        int y_loc
+        Space next_space,
+        Board chess_board
     ) {
-        Space next_space = chess_board.getSpace(x_loc, y_loc);
-
         // check horizontal move is legal
-        if (!Move.is_legal(location, next_space)) {
+        if (!Move.is_legal(chess_board, location, next_space)) {
             return false;
         }
         // add space as visible
         addVisibleSpace(next_space);
         // if current space isn't empty, rook cannot see any more pieces
-        return next_space.isEmpty();
+        return chess_board.isSpaceEmpty(next_space);
     }
 
     @Override
@@ -48,7 +45,7 @@ public class Rook extends Piece {
             if (!keep_searching) {
                 break;
             }
-            keep_searching = search_rook_spaces(location, chess_board, i, y_loc);
+            keep_searching = search_rook_spaces(location, new Space(i, y_loc), chess_board);
         }
         // up straight
         keep_searching = true;
@@ -57,7 +54,7 @@ public class Rook extends Piece {
             if (!keep_searching) {
                 break;
             }
-            keep_searching = search_rook_spaces(location, chess_board, x_loc, j);
+            keep_searching = search_rook_spaces(location, new Space(x_loc, j), chess_board);
         }
         // left straight
         keep_searching = true;
@@ -66,7 +63,7 @@ public class Rook extends Piece {
             if (!keep_searching) {
                 break;
             }
-            keep_searching = search_rook_spaces(location, chess_board, i, y_loc);
+            keep_searching = search_rook_spaces(location, new Space(i, y_loc), chess_board);
         }
         // down straight
         keep_searching = true;
@@ -75,7 +72,7 @@ public class Rook extends Piece {
             if (!keep_searching) {
                 break;
             }
-            keep_searching = search_rook_spaces(location, chess_board, x_loc, j);
+            keep_searching = search_rook_spaces(location, new Space(x_loc, j), chess_board);
         }
     }
 
@@ -88,7 +85,13 @@ public class Rook extends Piece {
 
         // convert the visible spaces into moves
         for (Space visible_space : getVisibleSpaces()) {
-            possible_moves.add(new StandardMove(location, visible_space));
+            // if (chess_board.isSpaceEmpty(visible_space)) {
+            //     possible_moves.add(new StandardMove(location, visible_space, this));
+            // }
+            // else {
+            //     possible_moves.add(new StandardMove(location, visible_space, this, chess_board.getPiece(visible_space)));
+            // }
+            possible_moves.add(new StandardMove(location, visible_space, this, chess_board.getPiece(visible_space)));
         }
 
         return possible_moves;

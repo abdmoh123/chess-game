@@ -8,8 +8,11 @@ import main.pieces.Rook;
 
 public class StandardMove extends Move {
 
-    public StandardMove(Space old_location_in, Space new_location_in) {
-        super(old_location_in, new_location_in);
+    public StandardMove(Space old_location_in, Space new_location_in, Piece piece_in) {
+        super(old_location_in, new_location_in, piece_in);
+    }
+    public StandardMove(Space old_location_in, Space new_location_in, Piece piece_in, Piece piece_killed) {
+        super(old_location_in, new_location_in, piece_in, piece_killed);
     }
 
     @Override

@@ -4,6 +4,7 @@ import main.Space;
 import main.boards.Board;
 import main.pieces.Bishop;
 import main.pieces.Knight;
+import main.pieces.Pawn;
 import main.pieces.Piece;
 import main.pieces.Queen;
 import main.pieces.Rook;
@@ -11,8 +12,8 @@ import main.pieces.Rook;
 public class PromotePawnMove extends Move {
     private Piece new_piece;
 
-    public PromotePawnMove(Space old_location_in, Space new_location_in) {
-        super(old_location_in, new_location_in);
+    public PromotePawnMove(Space old_location_in, Space new_location_in, Pawn piece_in) {
+        super(old_location_in, new_location_in, piece_in);
     }
 
     public Piece getNewPiece() {

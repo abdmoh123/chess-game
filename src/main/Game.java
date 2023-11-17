@@ -21,7 +21,9 @@ public class Game {
         this.player_1 = p1;
         this.player_2 = p2;
         this.p1_turn = p1.isWhite();
+        
         this.chess_board = new StandardBoard();
+        this.chess_board.initialise();
         this.game_state = GameState.ACTIVE;
     }
 
@@ -69,7 +71,7 @@ public class Game {
         List<Space> pawn_spaces = chess_board.getSpacesByPieceName("Pawn");
         for (Space pawn_space : pawn_spaces) {
             // disable en passant for selected pawn
-            Pawn pawn_piece = (Pawn) pawn_space.getPiece();
+            Pawn pawn_piece = (Pawn) chess_board.getPiece(pawn_space);
             pawn_piece.setEnPassant(false);
             // update board with new pawn piece
             chess_board.updateSpace(pawn_space, pawn_piece);
@@ -128,9 +130,10 @@ public class Game {
             return false;
         }
 
-        for (Space[] row : chess_board.getSpaces()) {
-            for (Space space : row) {
-                if (space.isFriendly(player_in.isWhite())) {
+        for (int i = 0; i < chess_board.getLength(); ++i) {
+            for (int j = 0; j < chess_board.getLength(); ++j) {
+                Space space = new Space(i, j);
+                if (chess_board.isSpaceFriendly(space, player_in.isWhite())) {
                     if (player_in.canSpacePreventCheck(space, chess_board)) {
                         return false;
                     }
@@ -147,10 +150,10 @@ public class Game {
 
         List<Piece> all_pieces = new ArrayList<>();
         // get all pieces on the board and put them in a list
-        for (Space[] row : chess_board.getSpaces()) {
-            for (Space space : row) {
-                if (!space.isEmpty()) {
-                    all_pieces.add(space.getPiece());
+        for (Piece[] row : chess_board.getSpaces()) {
+            for (Piece piece : row) {
+                if (piece != null) {
+                    all_pieces.add(piece);
                 }
             }
         }
@@ -165,11 +168,12 @@ public class Game {
             return false;
         }
 
-        for (Space[] row : chess_board.getSpaces()) {
-            for (Space space : row) {
-                if (space.isFriendly(player_in.isWhite())) {
+        for (int i = 0; i < chess_board.getLength(); ++i) {
+            for (int j = 0; j < chess_board.getLength(); ++j) {
+                Space space = new Space(i, j);
+                if (chess_board.isSpaceFriendly(space, player_in.isWhite())) {
                     // get all possible moves that the piece can make
-                    List<Move> possible_moves = space.getPiece().getPossibleMoves(space, chess_board);
+                    List<Move> possible_moves = chess_board.getPiece(space).getPossibleMoves(space, chess_board);
 
                     if (possible_moves.size() > 0) {
                         // check if move is possible (must not lead to check)

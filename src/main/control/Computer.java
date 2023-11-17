@@ -20,10 +20,10 @@ public class Computer extends Player {
 
         boolean valid_input = false;
         while (!valid_input) {
-            Space selected_space = chess_board.getSpace(0, 0);
-            if (selected_space.isFriendly(isWhite())) {
+            Space selected_space = new Space(0, 0);
+            if (chess_board.isSpaceFriendly(selected_space, isWhite())) {
                 // TODO: Make this safer (no crash)
-                possible_moves = selected_space.getPiece().getPossibleMoves(selected_space, chess_board);
+                possible_moves = chess_board.getPiece(selected_space).getPossibleMoves(selected_space, chess_board);
             }
         }
         return possible_moves.get(0);
