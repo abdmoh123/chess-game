@@ -40,16 +40,16 @@ public class CastlingMove extends Move {
         Space new_rook_space = getNewRookSpace();
 
         // get relevant pieces for castling
-        Rook castled_rook_copy = (Rook) chess_board.getPiece(old_rook_space).clone();
-        King castled_king_copy = (King) getChessPiece().clone();
+        Rook moving_rook = (Rook) chess_board.getPiece(old_rook_space);
+        King moving_king = (King) getChessPiece();
         // prevent future castling
-        castled_rook_copy.activate();
-        castled_king_copy.disableCastling();
+        moving_rook.activate();
+        moving_king.disableCastling();
 
         // apply the move by updating the board
-        chess_board.updateSpace(new_space, castled_king_copy);
+        chess_board.updateSpace(new_space, moving_king);
         chess_board.updateSpace(old_space, null);
-        chess_board.updateSpace(new_rook_space, castled_rook_copy);
+        chess_board.updateSpace(new_rook_space, moving_rook);
         chess_board.updateSpace(old_rook_space, null);
     }
 }

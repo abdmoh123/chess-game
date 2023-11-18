@@ -101,7 +101,7 @@ public class Human extends Player {
         for (int i = 0; i < possible_moves.size(); ++i) {
             Move move = possible_moves.get(i);
             String move_name = move.getMoveAsString(
-                doesMoveCauseEnemyCheck(move, chess_board), !chess_board.isSpacePieceUniqueOnRow(move.getOldLocation())
+                doesMoveCauseEnemyCheck(move, chess_board), !chess_board.isPieceUniqueOnRow(move.getOldLocation())
             );
             System.out.printf("%d: %s\n", i + 1, move_name);
         }

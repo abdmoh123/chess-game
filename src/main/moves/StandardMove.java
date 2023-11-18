@@ -21,19 +21,19 @@ public class StandardMove extends Move {
         Space old_space = getOldLocation();
         Space new_space = getNewLocation();
 
-        Piece piece_copy = getChessPiece().clone();
+        Piece moving_piece = getChessPiece();
 
         // prevent castling on moved rooks
-        if (piece_copy instanceof Rook) {
-            ((Rook) piece_copy).activate();
+        if (moving_piece instanceof Rook) {
+            ((Rook) moving_piece).activate();
         }
         // prevent castling if king moves
-        if (piece_copy instanceof King) {
-            ((King) piece_copy).disableCastling();
+        if (moving_piece instanceof King) {
+            ((King) moving_piece).disableCastling();
         }
 
         // apply the move by updating the board
-        chess_board.updateSpace(new_space, piece_copy);
+        chess_board.updateSpace(new_space, moving_piece);
         chess_board.updateSpace(old_space, null);
     }
 }

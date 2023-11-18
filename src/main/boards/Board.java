@@ -99,15 +99,15 @@ public abstract class Board {
     public int getLength() {
         return LENGTH;
     }
-    public Piece getPiece(int x, int y) {
-        // only returns a space within the board coordinates
-        if (x >= 0 && x < getLength() && y >= 0 && y < getLength()) {
-            return spaces[y][x];
+    public Piece getPieceByReference(Space space_in) {
+        if (!isSpaceWithinBoard(space_in)) {
+            throw new ArrayIndexOutOfBoundsException("Invalid coordinate! (" + space_in.getX() + ", " + space_in.getY() + ")");
         }
-        else throw new ArrayIndexOutOfBoundsException("Invalid coordinate! " + x + " " + y);
+        return spaces[space_in.getY()][space_in.getX()];
     }
     public Piece getPiece(Space space_in) {
-        return getPiece(space_in.getX(), space_in.getY());
+        // get piece by value
+        return getPieceByReference(space_in).clone();
     }
     public abstract Space getSpaceByString(String input_string);
     
@@ -120,7 +120,8 @@ public abstract class Board {
 
         Piece[] column = new Piece[8];
         for (int i = 0; i < 8; ++i) {
-            column[i] = getPiece(x, i);
+            Space space = new Space(x, i);
+            column[i] = getPiece(space);
         }
         return column;
     }
@@ -132,7 +133,7 @@ public abstract class Board {
     }
 
     public boolean isSpaceEmpty(Space space_in) {
-        if (getPiece(space_in.getX(), space_in.getY()) == null) {
+        if (getPiece(space_in) == null) {
             return true;
         }
         return false;
@@ -156,7 +157,7 @@ public abstract class Board {
         return getPiece(space_in).isWhite() == player_is_white;
     }
 
-    public boolean isSpacePieceUniqueOnRow(Space space_in) {
+    public boolean isPieceUniqueOnRow(Space space_in) {
         /* Search through row to see if a given piece is unique within the row */
 
         // get row of piece by getting the space coordinates
