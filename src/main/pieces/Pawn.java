@@ -35,7 +35,7 @@ public class Pawn extends Piece {
             --forward_y_loc;
         }
         // ensure movement above stays within the board
-        if (!chess_board.isSpaceWithinBoard(new Space(x_loc, y_loc))) {
+        if (!chess_board.isSpaceWithinBoard(new Space(x_loc, forward_y_loc))) {
             return en_passant_moves;
         }
 
@@ -123,7 +123,6 @@ public class Pawn extends Piece {
             --new_y_loc;
         }
         Space new_space = new Space(x_loc, new_y_loc);
-
         // ensure movement above stays within the board
         if (!chess_board.isSpaceWithinBoard(new_space)) {
             return null;

@@ -35,11 +35,11 @@ public abstract class Move {
     public abstract void apply(Board chess_board);
 
     public static boolean is_legal(Board chess_board, Space old_location_in, Space new_location_in) {
-        // ensure moves stay within the predefined board coordinates
-        if (!chess_board.isSpaceWithinBoard(old_location_in)) {
+        // ensure moves stay within the predefined board coordinates and are not null
+        if (!chess_board.isSpaceValid(old_location_in)) {
             return false;
         }
-        if (!chess_board.isSpaceWithinBoard(new_location_in)) {
+        if (!chess_board.isSpaceValid(new_location_in)) {
             return false;
         }
 

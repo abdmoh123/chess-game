@@ -35,7 +35,7 @@ public abstract class Board {
         return getPieceByReference(space_in).clone();
     }
     public Piece getPieceByReference(Space space_in) {
-        if (!isSpaceWithinBoard(space_in)) {
+        if (!isSpaceValid(space_in)) {
             throw new ArrayIndexOutOfBoundsException("Invalid coordinate! (" + space_in.getX() + ", " + space_in.getY() + ")");
         }
         return spaces[space_in.getY()][space_in.getX()];
@@ -121,8 +121,17 @@ public abstract class Board {
         }
         return true;
     }
-    public boolean isSpaceFriendly(Space space_in, boolean player_is_white) {
+    public boolean isSpaceValid(Space space_in) {
+        if (space_in == null) {
+            return false;
+        }
         if (!isSpaceWithinBoard(space_in)) {
+            return false;
+        }
+        return true;
+    }
+    public boolean isSpaceFriendly(Space space_in, boolean player_is_white) {
+        if (!isSpaceValid(space_in)) {
             return false;
         }
         if (isSpaceEmpty(space_in)) {
@@ -153,7 +162,7 @@ public abstract class Board {
     }
 
     public void updateSpace(Space space_in, Piece piece_in) {
-        if (isSpaceWithinBoard(space_in)) {
+        if (isSpaceValid(space_in)) {
             spaces[space_in.getY()][space_in.getX()] = piece_in;
         }
     }
