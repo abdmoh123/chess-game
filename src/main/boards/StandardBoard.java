@@ -102,7 +102,7 @@ public class StandardBoard extends Board {
             for (int j = 0; j < getLength(); ++j) {
                 Space space = new Space(i, j);
                 if (!isSpaceEmpty(space)) {
-                    new_board.updateSpace(space, getPiece(space));
+                    new_board.updateSpace(space, getPiece(space).clone());
                 }
             }
         }

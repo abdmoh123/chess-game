@@ -5,6 +5,7 @@ import main.boards.Board;
 import main.moves.Move;
 import main.moves.PromotePawnMove;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static main.ChessGame.SCANNER;
@@ -14,154 +15,102 @@ public class Human extends Player {
         super(is_white_in);
     }
 
-    private boolean verifySpaceInput(String input_string) {
-        if (input_string.length() != 2) {
-            return false;
-        }
-        if (!Character.isDigit(input_string.charAt(1))) {
-            return false;
-        }
-        int second_digit = Character.getNumericValue(input_string.charAt(1));
-        if (second_digit > 8 || second_digit < 1) {
-            return false;
-        }
-
-        switch (input_string.charAt(0)) {
-            case 'a':
-            case 'b':
-            case 'c':
-            case 'd':
-            case 'e':
-            case 'f':
-            case 'g':
-            case 'h':
-                break;
-            default:
-                return false;
-        }
-
-        return true;
-    }
-
-    public Space convertInputToSpace(Board chess_board) {
-        /* Convert inputted string into a space based on standard notation (e.g. e7) */
-
-        String first_space_loc = "";
-
-        boolean is_valid = false;
-        while (!is_valid) {
-            System.out.println("Please select a space (e.g. d2)");
-            first_space_loc = SCANNER.nextLine();
-
-            // ensure input is valid
-            is_valid = verifySpaceInput(first_space_loc);
-            if (!is_valid) {
-                System.out.println("Invalid input!");
-            }
-        }
-
-        // convert string notation to space object
-        return chess_board.getSpaceByString(first_space_loc);
-    }
-
-    public List<Move> userSelectSpace(Board chess_board) {
-        /* Loop for user to select a space to move a piece */
-
-        while (true) {
-            Space selected_space = null;
-            while (true) {
-                selected_space = convertInputToSpace(chess_board);
-                if (chess_board.isSpaceFriendly(selected_space, isWhite())) {
-                    if (isCheck(chess_board)) {
-                        // check if piece is not pinned
-                        if (canSpacePreventCheck(selected_space, chess_board)) {
-                            break;
-                        }
-                    }
-                    else {
-                        break;
-                    }
-                }
-                System.out.println("No piece to control here!");
-            }
-
-            // get moves method automatically filters out moves that lead to check (illegal moves)
-            List<Move> possible_moves = getMoves(selected_space, chess_board);
-            if (possible_moves.size() > 0) {
-                return possible_moves;
-            }
-            System.out.println("Piece cannot move!");
-        }
-    }
-
-    private void printMoves(List<Move> possible_moves, Board chess_board) {
-        /* Print list of moves user can select from */
-
-        System.out.println("Please select a move (or type 'Q' or 'q' to go back):");
-        for (int i = 0; i < possible_moves.size(); ++i) {
-            Move move = possible_moves.get(i);
+    private List<String> convertMoveListToStringList(List<Move> move_list, Board chess_board) {
+        List<String> move_string_list = new ArrayList<>();
+        for (Move move : move_list) {
             String move_name = move.getMoveAsString(
                 doesMoveCauseEnemyCheck(move, chess_board), !chess_board.isPieceUniqueOnRow(move.getOldLocation())
             );
-            System.out.printf("%d: %s\n", i + 1, move_name);
+            move_string_list.add(move_name);
         }
+        return move_string_list;
     }
 
-    private Move checkPawnPromotion(Move chosen_move) {
-        /* Check if pawn is being promoted and get user input accordingly */
+    private Move doPawnPromotion(PromotePawnMove chosen_move) {
+        /* Applies pawn promotion through user input */
         
-        if (chosen_move instanceof PromotePawnMove) {
-            int choice = -1; // reset choice variable for another input
-            while (choice <= 0 || choice > 4) {
-                System.out.println("You have promoted a pawn!\nPlease choose a new piece:");
-                System.out.println("1: Queen\n2: Rook\n3: Bishop\n4: Knight");
+        int choice = -1; // reset choice variable for another input
+        while (choice <= 0 || choice > 4) {
+            System.out.println("You have promoted a pawn!\nPlease choose a new piece:");
+            System.out.println("1: Queen\n2: Rook\n3: Bishop\n4: Knight");
 
-                String str_choice = SCANNER.nextLine();
-                // convert input to integer if possible
-                try {
-                    choice = Integer.parseInt(str_choice);
-                }
-                catch (Exception e) {
-                    System.out.println("Input must be integer!");
-                }
+            String str_choice = SCANNER.nextLine();
+            // convert input to integer if possible
+            try {
+                choice = Integer.parseInt(str_choice);
             }
-            // apply the chosen piece to the move
-            ((PromotePawnMove) chosen_move).setNewPiece(choice, isWhite());
+            catch (Exception e) {
+                System.out.println("Input must be integer!");
+            }
         }
+        // apply the chosen piece to the move
+        chosen_move.setNewPiece(choice, isWhite());
         return chosen_move;
     }
 
     @Override
     public Move startMove(Board chess_board) {
         while (true) {
-            // get all (excluding moves leading to check) moves based on user's selected piece
-            List<Move> possible_moves = userSelectSpace(chess_board);
+            Space first_space_input = null;
+            Move chosen_move = null;
 
-            // allow user to select which move to play
-            int choice = -1;
-            boolean restart = false;
-            while ((choice <= 0 || choice > possible_moves.size()) && !restart) {
-                printMoves(possible_moves, chess_board);
+            List<Move> possible_moves = new ArrayList<>();
 
-                // user chooses one of the printed moves
-                String str_choice = SCANNER.nextLine();
-                // allow user to go back in the menu
-                if (str_choice.equals("Q") || str_choice.equals("q")) {
-                    restart = true;
+            while (!chess_board.isSpaceFriendly(first_space_input, isWhite()) || possible_moves.size() == 0) {
+                System.out.println("Please select space from the board (e.g. d2):");
+                String first_space_input_string = SCANNER.nextLine();
+
+                try {
+                    first_space_input = chess_board.getSpaceByString(first_space_input_string);
                 }
-                else {
-                    // convert input to integer if possible
-                    try {
-                        choice = Integer.parseInt(str_choice);
-                    }
-                    catch (Exception e) {
-                        System.out.println("Input must be integer!");
-                    }
+                catch (RuntimeException e) {
+                    System.out.println(e);
+                }
+
+                possible_moves = getMoves(first_space_input, chess_board);
+                if (!chess_board.isSpaceFriendly(first_space_input, isWhite())) {
+                    System.out.println("Space does not contain a piece in your team!");
+                }
+                else if (possible_moves.size() == 0) {
+                    System.out.println("Piece cannot move!");
                 }
             }
-            if (!restart) {
-                // check if move involves pawn promotion before returning it
-                return checkPawnPromotion(possible_moves.get(choice - 1));
+
+            // convert move list to string format
+            List<String> possible_moves_string = convertMoveListToStringList(possible_moves, chess_board);
+
+            boolean go_back = false;
+            while (chosen_move == null && !go_back) {
+                System.out.println("Please select a move from the list or type 'Q'/'q' to go back:");
+                // print list of moves user can select from
+                for (String move_name : possible_moves_string) {
+                    System.out.printf("- %s\n", move_name);
+                }
+
+                String move_input_string = SCANNER.nextLine();
+
+                for (int i = 0; i < possible_moves_string.size(); ++i) {
+                    if (move_input_string.equals("Q") || move_input_string.equals("q")) {
+                        go_back = true;
+                        break;
+                    }
+                    if (move_input_string.equals(possible_moves_string.get(i))) {
+                        chosen_move = possible_moves.get(i);
+                        break;
+                    }
+                }
+
+                if (chosen_move == null && !go_back) {
+                    System.out.println("Invalid move!");
+                }
+            }
+
+            // check if move involves pawn promotion before returning it
+            if (!go_back) {
+                if (chosen_move instanceof PromotePawnMove) {
+                    chosen_move = doPawnPromotion((PromotePawnMove) chosen_move);
+                }
+                return chosen_move;
             }
         }
     }

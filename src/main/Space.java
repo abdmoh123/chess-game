@@ -9,6 +9,42 @@ public class Space {
         this.Y = y_in;
     }
 
+    @Override
+    public String toString() {
+        String x_axis = "";
+
+        switch (getX()) {
+            case 0:
+                x_axis = "a";
+                break;
+            case 1:
+                x_axis = "b";
+                break;
+            case 2:
+                x_axis = "c";
+                break;
+            case 3:
+                x_axis = "d";
+                break;
+            case 4:
+                x_axis = "e";
+                break;
+            case 5:
+                x_axis = "f";
+                break;
+            case 6:
+                x_axis = "g";
+                break;
+            case 7:
+                x_axis = "h";
+                break;
+            default:
+                throw new RuntimeException("Invalid space is outside board limits!");
+        }
+
+        return x_axis + (getY() + 1);
+    }
+
     public int getX() {
         return X;
     }

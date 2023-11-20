@@ -31,10 +31,7 @@ public abstract class Board {
     }
 
     public Piece getPiece(Space space_in) {
-        /* Return piece by value (copy of original piece) */
-        return getPieceByReference(space_in).clone();
-    }
-    public Piece getPieceByReference(Space space_in) {
+        /* Return piece by reference (changes made to piece affect the original) */
         if (!isSpaceValid(space_in)) {
             throw new ArrayIndexOutOfBoundsException("Invalid coordinate! (" + space_in.getX() + ", " + space_in.getY() + ")");
         }
@@ -107,6 +104,7 @@ public abstract class Board {
     }
 
     public boolean isSpaceEmpty(Space space_in) {
+        // getting piece by value requires clone(), which cannot run if piece is null
         if (getPiece(space_in) == null) {
             return true;
         }
