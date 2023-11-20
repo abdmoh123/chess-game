@@ -99,15 +99,11 @@ public abstract class Board {
     public int getLength() {
         return LENGTH;
     }
-    public Piece getPieceByReference(Space space_in) {
+    public Piece getPiece(Space space_in) {
         if (!isSpaceWithinBoard(space_in)) {
             throw new ArrayIndexOutOfBoundsException("Invalid coordinate! (" + space_in.getX() + ", " + space_in.getY() + ")");
         }
         return spaces[space_in.getY()][space_in.getX()];
-    }
-    public Piece getPiece(Space space_in) {
-        // get piece by value
-        return getPieceByReference(space_in).clone();
     }
     public abstract Space getSpaceByString(String input_string);
     

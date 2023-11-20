@@ -58,7 +58,7 @@ public abstract class Move {
     }
 
     public Piece getChessPiece() {
-        return CHESS_PIECE;
+        return CHESS_PIECE.clone();
     }
     public Space getOldLocation() {
         return OLD_LOCATION;
