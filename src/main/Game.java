@@ -68,7 +68,7 @@ public class Game {
         Move generated_move = player.startMove(chess_board);
 
         // disable en passant for all pawns after player made a move (except double pawn moves)
-        List<Space> pawn_spaces = chess_board.getSpacesByPieceName("Pawn");
+        List<Space> pawn_spaces = chess_board.getAllSpacesByPieceName("Pawn");
         for (Space pawn_space : pawn_spaces) {
             // disable en passant for selected pawn
             Pawn pawn_piece = (Pawn) chess_board.getPiece(pawn_space);

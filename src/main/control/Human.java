@@ -4,6 +4,8 @@ import main.Space;
 import main.boards.Board;
 import main.moves.Move;
 import main.moves.PromotePawnMove;
+import main.pieces.Piece;
+import main.pieces.Pawn;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,11 +17,54 @@ public class Human extends Player {
         super(is_white_in);
     }
 
+    private boolean canMultiplePiecesMoveToSameSpace(
+        Space chosen_space,
+        Space destination_space,
+        List<Space> similar_friendly_spaces,
+        Board chess_board
+    ) {
+        /* Check if no other pieces (of same type) can move to the same destination space */
+
+        for (Space space : similar_friendly_spaces) {
+            // only check pieces excluding chosen piece
+            if (!chosen_space.equals(space)) {
+                Piece other_piece = chess_board.getPiece(space);
+                List<Move> other_piece_possible_moves = other_piece.getPossibleMoves(
+                    space, chess_board
+                );
+                for (Move other_move : other_piece_possible_moves) {
+                    if (other_move.getNewLocation().equals(destination_space)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     private List<String> convertMoveListToStringList(List<Move> move_list, Board chess_board) {
         List<String> move_string_list = new ArrayList<>();
         for (Move move : move_list) {
-            String move_name = move.getMoveAsString(
-                doesMoveCauseEnemyCheck(move, chess_board), !chess_board.isPieceUniqueOnRow(move.getOldLocation())
+            List<Space> similar_friendly_spaces = chess_board.getFriendlySpacesByPieceName(
+                move.getChessPiece().getName(), isWhite()
+            );
+
+            boolean be_precise = false;
+            // if condition below is true, skip checking if move notation should be precise or not
+            if (move.getChessPiece() instanceof Pawn && move.getKillPoints() == 0) {
+                be_precise = false;
+            }
+            else if (similar_friendly_spaces.size() > 1) {
+                be_precise = canMultiplePiecesMoveToSameSpace(
+                    move.getOldLocation(),
+                    move.getNewLocation(),
+                    similar_friendly_spaces,
+                    chess_board
+                );
+            }
+            
+            String move_name = move.getNotation(
+                doesMoveCauseEnemyCheck(move, chess_board), be_precise
             );
             move_string_list.add(move_name);
         }

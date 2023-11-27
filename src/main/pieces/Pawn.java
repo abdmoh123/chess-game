@@ -174,7 +174,7 @@ public class Pawn extends Piece {
         List<Space> diagonal_spaces = getDiagonalSpaces(location, chess_board);
 
         for (Space diagonal_space : diagonal_spaces) {
-            if (Move.is_legal(chess_board, location, diagonal_space)) {
+            if (Move.isLegal(chess_board, location, diagonal_space)) {
                 addVisibleSpace(diagonal_space);
             }
         }

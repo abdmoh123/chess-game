@@ -90,7 +90,7 @@ public class King extends Piece {
         for (int[] set : space_coordinates) {
             Space space = new Space(set[0], set[1]);
             // ensure move follows the rules
-            if (Move.is_legal(chess_board, location, space)) {
+            if (Move.isLegal(chess_board, location, space)) {
                 addVisibleSpace(space);
             }
         }

@@ -45,7 +45,7 @@ public abstract class Board {
         /* Return column of chess board */
 
         Piece[] column = new Piece[8];
-        for (int i = 0; i < 8; ++i) {
+        for (int i = 0; i < getLength(); ++i) {
             Space space = new Space(x, i);
             column[i] = getPiece(space);
         }
@@ -58,8 +58,8 @@ public abstract class Board {
         List<Space> enemy_spaces = new ArrayList<>();
 
         // get and separate white and black spaces into 2 lists
-        for (int i = 0; i < 8; ++i) {
-            for (int j = 0; j < 8; ++j) {
+        for (int i = 0; i < getLength(); ++i) {
+            for (int j = 0; j < getLength(); ++j) {
                 Space space = new Space(i, j);
                 // skip space if empty
                 if (!isSpaceEmpty(space)) {
@@ -85,14 +85,31 @@ public abstract class Board {
 
         return checked_spaces;
     }
-    public List<Space> getSpacesByPieceName(String piece_name) {
+    public List<Space> getAllSpacesByPieceName(String piece_name) {
         /* Search through board and return all spaces that hold a given piece type */
         List<Space> selected_pieces = new ArrayList<>();
 
-        for (int i = 0; i < 8; ++i) {
-            for (int j = 0; j < 8; ++j) {
+        for (int i = 0; i < getLength(); ++i) {
+            for (int j = 0; j < getLength(); ++j) {
                 Space space = new Space(i, j);
                 if (!isSpaceEmpty(space)) {
+                    if (getPiece(space).getName().equals(piece_name)) {
+                        selected_pieces.add(space);
+                    }
+                }
+            }
+        }
+
+        return selected_pieces;
+    }
+    public List<Space> getFriendlySpacesByPieceName(String piece_name, boolean is_white) {
+        /* Search through board and return all friendly spaces that hold a given piece type */
+        List<Space> selected_pieces = new ArrayList<>();
+
+        for (int i = 0; i < getLength(); ++i) {
+            for (int j = 0; j < getLength(); ++j) {
+                Space space = new Space(i, j);
+                if (isSpaceFriendly(space, is_white)) {
                     if (getPiece(space).getName().equals(piece_name)) {
                         selected_pieces.add(space);
                     }
@@ -111,10 +128,10 @@ public abstract class Board {
         return false;
     }
     public boolean isSpaceWithinBoard(Space space_in) {
-        if (space_in.getX() > 7 || space_in.getX() < 0) {
+        if (space_in.getX() > getLength() - 1 || space_in.getX() < 0) {
             return false;
         }
-        if (space_in.getY() > 7 || space_in.getY() < 0) {
+        if (space_in.getY() > getLength() - 1 || space_in.getY() < 0) {
             return false;
         }
         return true;
@@ -168,22 +185,22 @@ public abstract class Board {
     public void display() {
         /* Display board layout on terminal */
 
-        for (int j = 7; j >= 0; --j) {
-            for (int i = 0; i < 8; ++i) {
+        for (int j = getLength() - 1; j >= 0; --j) {
+            for (int i = 0; i < getLength(); ++i) {
                 Space space = new Space(i, j);
 
                 if (isSpaceEmpty(space)) {
                     System.out.print("o ");
                 }
                 else {
-                    char piece_letter = ' ';
+                    char piece_symbol = ' ';
                     if (getPiece(space) instanceof Knight) {
-                        piece_letter = 'N';
+                        piece_symbol = 'N';
                     }
                     else {
-                        piece_letter = getPiece(space).getName().charAt(0);
+                        piece_symbol = getPiece(space).getName().charAt(0);
                     }
-                    System.out.print(piece_letter + " ");
+                    System.out.print(piece_symbol + " ");
                 }
             }
             System.out.print("\n");

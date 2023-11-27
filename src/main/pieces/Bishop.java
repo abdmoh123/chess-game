@@ -19,7 +19,7 @@ public class Bishop extends Piece {
         Board chess_board
     ) {
         // check move is legal
-        if (!Move.is_legal(chess_board, location, next_space)) {
+        if (!Move.isLegal(chess_board, location, next_space)) {
             return false;
         }
 

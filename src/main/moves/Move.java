@@ -34,7 +34,7 @@ public abstract class Move {
 
     public abstract void apply(Board chess_board);
 
-    public static boolean is_legal(Board chess_board, Space old_location_in, Space new_location_in) {
+    public static boolean isLegal(Board chess_board, Space old_location_in, Space new_location_in) {
         // ensure moves stay within the predefined board coordinates and are not null
         if (!chess_board.isSpaceValid(old_location_in)) {
             return false;
@@ -43,7 +43,6 @@ public abstract class Move {
             return false;
         }
 
-        // exclude moving piece to the same square
         if (old_location_in.getX() == new_location_in.getX() && old_location_in.getY() == new_location_in.getY()) {
             return false;
         }
@@ -53,7 +52,6 @@ public abstract class Move {
             return false;
         }
 
-        // if all criteria is met, move is considered legal
         return true;
     }
 
@@ -74,28 +72,30 @@ public abstract class Move {
         this.kill_points = points_in;
     }
     
-    public String getMoveAsString(boolean is_check_in, boolean be_precise) {
+    public String getNotation(boolean is_enemy_checked, boolean be_precise) {
         /* Get the move in algebraic notation (for human readability) */
 
         String move_string = getNewLocation().toString();
 
-        // add plus if enemy piece is checked
-        if (is_check_in) {
+        if (is_enemy_checked) {
             move_string += "+";
         }
         // add x if enemy piece is killed
         else if (getKillPoints() > 0) {
-            String old_location_x_axis = "";
-            if (be_precise) {
-                old_location_x_axis = String.valueOf(getOldLocation().toString().charAt(0));
-            }
-            move_string = old_location_x_axis + "x" + move_string;
+            move_string = "x" + move_string;
         }
 
-        // knight piece has different letter to differentiate it from king
+        // if multiple pieces of same type exist on the same row, column of moving piece is added to the string
+        if (be_precise) {
+            String old_location_x_axis = String.valueOf(getOldLocation().toString().charAt(0));
+            move_string = old_location_x_axis + move_string;
+        }
+
+        // knight piece has different symbol to differentiate it from king
         if (getChessPiece() instanceof Knight) {
             move_string = "N" + move_string;
         }
+        // only pawn doesn't have a symbol
         else if (!(getChessPiece() instanceof Pawn)) {
             move_string = getChessPiece().getName().charAt(0) + move_string;
         }

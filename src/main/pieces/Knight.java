@@ -37,7 +37,7 @@ public class Knight extends Piece {
             if (set[0] >= 0 && set[0] < 8 && set[1] >= 0 && set[1] < 8) {
                 Space space = new Space(set[0], set[1]);
                 // ensure move follows the rules
-                if (Move.is_legal(chess_board, location, space)) {
+                if (Move.isLegal(chess_board, location, space)) {
                     addVisibleSpace(space);
                 }
             }

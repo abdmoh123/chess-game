@@ -45,6 +45,19 @@ public class Space {
         return x_axis + (getY() + 1);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof Space)) {
+            return false;
+        }
+
+        Space space = (Space) obj;
+        return getX() == space.getX() && getY() == space.getY();
+    }
+
     public int getX() {
         return X;
     }
