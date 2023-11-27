@@ -12,7 +12,6 @@ import java.util.List;
 
 public abstract class Player {
     private final boolean IS_WHITE;
-    private boolean is_check;
 
     private List<Move> move_history;
     private int points;
@@ -25,7 +24,7 @@ public abstract class Player {
     public abstract Move startMove(Board chess_board);
 
     private List<Move> filterMoves(List<Move> move_list, Board chess_board) {
-        /* Remove check moves and make sure castling is legal */
+        /* Remove moves that cause check (for the current player) and ensure castling is legal */
 
         List<Move> filtered_moves = new ArrayList<>();
 
@@ -50,7 +49,7 @@ public abstract class Player {
     }
 
     public List<Move> getMoves(Space space_in, Board chess_board) {
-        // list of moves is empty if space has no piece or if the piece cannot move
+        // list of moves is empty if space is not controllable
         if (!chess_board.isSpaceFriendly(space_in, isWhite())) {
             return new ArrayList<>();
         }
@@ -63,36 +62,26 @@ public abstract class Player {
         return IS_WHITE;
     }
     public boolean isCheck(Board chess_board) {
-        // get spaces attacked by enemy team
-        List<Space> checked_spaces = chess_board.getCheckedSpaces(isWhite());
-        for (Space checked_space : checked_spaces) {
+        List<Space> attacked_spaces = chess_board.getCheckedSpaces(isWhite());
+        for (Space attacked_space : attacked_spaces) {
             // ignore empty spaces or if enemy is in the space
-            if (chess_board.isSpaceFriendly(checked_space, isWhite())) {
-                if (chess_board.getPiece(checked_space) instanceof King) {
-                    this.is_check = true;
+            if (chess_board.isSpaceFriendly(attacked_space, isWhite())) {
+                if (chess_board.getPiece(attacked_space) instanceof King) {
                     return true;
                 }
             }
         }
-        this.is_check = false;
         return false;
     }
-    public boolean quickCheck() {
-        /* Quick way of getting check status (needs to be recalculated after every move) */
-        return this.is_check;
-    }
-    public boolean isCheckforEnemy(Board chess_board) {
-        // get spaces attacking the enemy team
-        List<Space> checked_spaces = chess_board.getCheckedSpaces(!isWhite());
-        for (Space checked_space : checked_spaces) {
-            // ignore empty spaces or if own piece is in the space
-            if (!chess_board.isSpaceFriendly(checked_space, isWhite())) {
-                if (chess_board.getPiece(checked_space) instanceof King) {
+    public boolean isEnemyCheck(Board chess_board) {
+        List<Space> attacked_spaces = chess_board.getCheckedSpaces(!isWhite());
+        for (Space attacked_space : attacked_spaces) {
+            if (chess_board.isSpaceEnemy(attacked_space, isWhite())) {
+                if (chess_board.getPiece(attacked_space) instanceof King) {
                     return true;
                 }
             }
         }
-        this.is_check = false;
         return false;
     }
 
@@ -102,7 +91,7 @@ public abstract class Player {
     }
     public boolean doesMoveCauseEnemyCheck(Move move_in, Board chess_board) {
         Board board_after = chess_board.after(move_in);
-        return isCheckforEnemy(board_after);
+        return isEnemyCheck(board_after);
     }
 
     public boolean canPieceMove(Space space_in, Board chess_board) {

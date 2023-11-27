@@ -154,6 +154,15 @@ public abstract class Board {
         }
         return getPiece(space_in).isWhite() == player_is_white;
     }
+    public boolean isSpaceEnemy(Space space_in, boolean player_is_white) {
+        if (!isSpaceValid(space_in)) {
+            return false;
+        }
+        if (isSpaceEmpty(space_in)) {
+            return false;
+        }
+        return getPiece(space_in).isWhite() != player_is_white;
+    }
     public boolean isPieceUniqueOnRow(Space space_in) {
         // get row of piece by getting the space coordinates
         Piece[] row = getRow(space_in.getY());

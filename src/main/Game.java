@@ -12,14 +12,12 @@ import java.util.List;
 
 public class Game {
     private GameState game_state;
-    private Player player_1;
-    private Player player_2;
+    private Player[] players;
     private boolean p1_turn;
     private Board chess_board;
 
     public Game(Player p1, Player p2) {
-        this.player_1 = p1;
-        this.player_2 = p2;
+        this.players = new Player[] {p1, p2};
         this.p1_turn = p1.isWhite();
         
         this.chess_board = new StandardBoard();
@@ -27,15 +25,27 @@ public class Game {
         this.game_state = GameState.ACTIVE;
     }
 
-    public void run_game() {
+    public void runGame() {
         while (!hasEnded()) {
-            // game loop starts
             start_turn();
+        }
+
+        switch (game_state) {
+            case WHITE_WIN:
+                System.out.println("White has won the game! Black has been Checkmated!");
+                break;
+            case BLACK_WIN:
+                System.out.println("Black has won the game! White has been Checkmated!");
+                break;
+            case DRAW:
+                System.out.println("Game is a draw!");
+                break;
+            default:
+                throw new RuntimeException("Invalid game state!");
         }
     }
 
     private void start_turn() {
-        // determine whose turn it is
         Player player;
         if (isP1Turn()) {
             System.out.println("Player 1's turn:");
@@ -46,45 +56,35 @@ public class Game {
             player = getPlayer(2);
         }
 
-        // display the board onto the terminal/console
         chess_board.display();
 
-        if (player.quickCheck()) {
-            System.out.println("Your king is in check!");
-        }
-        // end game if player is checkmated
         if (isCheckMate(player, chess_board)) {
-            System.out.println("You have been checkmated!");
-            endGame(!player.isWhite());
+            endGame(player.isWhite());
             return;
         }
         if (isDraw(player, chess_board)) {
-            System.out.println("Game has ended in a draw!");
             setState(GameState.DRAW);
             return;
         }
+        if (player.isCheck(chess_board)) {
+            System.out.println("Your king is in check!");
+        }
 
-        // player generates move
         Move generated_move = player.startMove(chess_board);
 
-        // disable en passant for all pawns after player made a move (except double pawn moves)
+        // disable en passant for all pawns after player made a move
         List<Space> pawn_spaces = chess_board.getAllSpacesByPieceName("Pawn");
         for (Space pawn_space : pawn_spaces) {
-            // disable en passant for selected pawn
             Pawn pawn_piece = (Pawn) chess_board.getPiece(pawn_space);
             pawn_piece.setEnPassant(false);
-            // update board with new pawn piece
             chess_board.updateSpace(pawn_space, pawn_piece);
         }
 
-        // move is applied to board (piece is moved)
-        generated_move.apply(chess_board);;
+        generated_move.apply(chess_board);
 
-        // add points gained and saves move to history
         player.addPoints(generated_move.getKillPoints());
         player.recordMove(generated_move);
 
-        // turn switches after the move was made
         switchTurn();
     }
 
@@ -96,11 +96,10 @@ public class Game {
     }
 
     public Player getPlayer(int choice) {
-        if (choice == 1) { return this.player_1; }
-        else if (choice == 2) { return this.player_2; }
-        else {
+        if (choice > this.players.length) {
             throw new RuntimeException("Invalid input");
         }
+        return this.players[choice - 1]; // getPlayer(1) = player[0]
     }
     public Board getBoard() {
         return this.chess_board;
@@ -113,16 +112,14 @@ public class Game {
         this.game_state = new_state;
     }
 
-    // check if game has ended
     public boolean hasEnded() {
         return getState() != GameState.ACTIVE;
     }
-    public void endGame(boolean white_won) {
-        // set game state according to who lost the game
-        if (white_won) {
-            setState(GameState.WHITE_WIN);
+    public void endGame(boolean has_white_lost) {
+        if (has_white_lost) {
+            setState(GameState.BLACK_WIN);
         }
-        setState(GameState.BLACK_WIN);
+        setState(GameState.WHITE_WIN);
     }
 
     public boolean isCheckMate(Player player_in, Board chess_board) {

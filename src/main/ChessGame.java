@@ -14,7 +14,7 @@ public class ChessGame {
         player_2 = new Human(false);
         Game chess_game = new Game(player_1, player_2);
 
-        chess_game.run_game();
+        chess_game.runGame();
 
         SCANNER.close();
     }
