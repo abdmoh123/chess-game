@@ -105,9 +105,7 @@ public abstract class Player {
         return isCheckforEnemy(board_after);
     }
 
-    public boolean canSpacePreventCheck(Space space_in, Board chess_board) {
-        /* Check if piece is not pinned */
-
+    public boolean canPieceMove(Space space_in, Board chess_board) {
         List<Move> possible_moves = chess_board.getPiece(space_in).getPossibleMoves(space_in, chess_board);
 
         for (Move move : possible_moves) {

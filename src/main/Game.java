@@ -134,7 +134,7 @@ public class Game {
             for (int j = 0; j < chess_board.getLength(); ++j) {
                 Space space = new Space(i, j);
                 if (chess_board.isSpaceFriendly(space, player_in.isWhite())) {
-                    if (player_in.canSpacePreventCheck(space, chess_board)) {
+                    if (player_in.canPieceMove(space, chess_board)) {
                         return false;
                     }
                 }
