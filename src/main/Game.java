@@ -4,10 +4,8 @@ import main.boards.Board;
 import main.boards.StandardBoard;
 import main.control.Player;
 import main.moves.Move;
-import main.pieces.Piece;
 import main.pieces.Pawn;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Game {
@@ -127,62 +125,45 @@ public class Game {
             return false;
         }
 
-        for (int i = 0; i < chess_board.getLength(); ++i) {
-            for (int j = 0; j < chess_board.getLength(); ++j) {
-                Space space = new Space(i, j);
-                if (chess_board.isSpaceFriendly(space, player_in.isWhite())) {
-                    if (player_in.canPieceMove(space, chess_board)) {
-                        return false;
-                    }
-                }
+        List<Space> friendly_spaces = chess_board.getFriendlySpaces(player_in.isWhite());
+        for (Space friendly_space : friendly_spaces) {
+            if (player_in.canPieceMove(friendly_space, chess_board)) {
+                return false;
             }
         }
         return true;
     }
     public boolean isDraw(Player player_in, Board chess_board) {
-        // stalemate = draw
         if (isStalemate(player_in, chess_board)) {
             return true;
         }
 
-        List<Piece> all_pieces = new ArrayList<>();
-        // get all pieces on the board and put them in a list
-        for (Piece[] row : chess_board.getSpaces()) {
-            for (Piece piece : row) {
-                if (piece != null) {
-                    all_pieces.add(piece);
-                }
-            }
-        }
-        // returns true if only 2 kings remain
-        return all_pieces.size() == 2;
+        List<Space> all_spaces_with_pieces = chess_board.getAllSpacesWithPieces();
+        return all_spaces_with_pieces.size() == 2;  // returns true if only 2 kings remain
     }
     public boolean isStalemate(Player player_in, Board chess_board) {
-        /* Check if player has any moves that don't lead to check */
+        /* Check if player has any moves that don't lead getting checked */
 
         // can't be stalemate if player is in check
         if (player_in.isCheck(chess_board)) {
             return false;
         }
 
-        for (int i = 0; i < chess_board.getLength(); ++i) {
-            for (int j = 0; j < chess_board.getLength(); ++j) {
-                Space space = new Space(i, j);
-                if (chess_board.isSpaceFriendly(space, player_in.isWhite())) {
-                    // get all possible moves that the piece can make
-                    List<Move> possible_moves = chess_board.getPiece(space).getPossibleMoves(space, chess_board);
+        List<Space> friendly_spaces = chess_board.getFriendlySpaces(player_in.isWhite());
+        for (Space friendly_space : friendly_spaces) {
+            List<Move> possible_moves = chess_board.getPiece(friendly_space).getPossibleMoves(
+                friendly_space, chess_board
+            );
 
-                    if (possible_moves.size() > 0) {
-                        // check if move is possible (must not lead to check)
-                        for (Move move : possible_moves) {
-                            if (!player_in.doesMoveCauseCheck(move, chess_board)) {
-                                return false;
-                            }
-                        }
+            if (possible_moves.size() > 0) {
+                for (Move move : possible_moves) {
+                    if (!player_in.doesMoveCauseCheck(move, chess_board)) {
+                        return false;
                     }
                 }
             }
         }
+
         System.out.println("Game has ended in stalemate!");
         return true;
     }

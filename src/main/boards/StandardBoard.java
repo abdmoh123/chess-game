@@ -16,6 +16,8 @@ public class StandardBoard extends Board {
 
     @Override
     public void initialise() {
+        /* Setup board with pieces based on the layout of a standard chess game */
+
         // white pieces excluding pawns
         updateSpace(new Space(0, 0), new Rook(true));
         updateSpace(new Space(1, 0), new Knight(true));
@@ -45,8 +47,9 @@ public class StandardBoard extends Board {
 
     @Override
     public Space getSpaceByString(String input_string) {
-        /* Return a space on the board based on Chess notation (a-h and 1-8 for row and column).
-        For example space "d2" corresponds to space[1][3] or Space(3, 1). */
+        /* Return a space on the board based on algebraic chess notation.
+        Limits are a-h and 1-8 for row and column.
+        Example: Space "d2" corresponds to space[1][3] or Space(3, 1). */
 
         int x_loc, y_loc;
 
@@ -79,13 +82,13 @@ public class StandardBoard extends Board {
             default:
                 throw new RuntimeException("Invalid input: Must be within board!");
         }
+        
         // convert 2nd character (1-8) to corresponding integer value (0-7)
         y_loc = Character.getNumericValue(input_string.charAt(1)) - 1;
-        // error checking
         if (y_loc == -1 || y_loc == -2) {
             throw new RuntimeException("Second character must be an integer (0-9)!");
         }
-        else if (y_loc > 7 || y_loc < 0) {
+        else if (y_loc > getLength() - 1 || y_loc < 0) {
             throw new RuntimeException("Invalid input: Must be within board!");
         }
 

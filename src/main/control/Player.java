@@ -31,7 +31,7 @@ public abstract class Player {
         for (Move move : move_list) {
             if (move instanceof CastlingMove) {
                 Move temp_move = new StandardMove(move.getOldLocation(), ((CastlingMove) move).getNewRookSpace(), move.getChessPiece());
-                // cannot castle if king is in check (chess rule)
+                // cannot castle if king is in check
                 if (!isCheck(chess_board)) {
                     // both the new king and rook space must not be in check
                     if (!doesMoveCauseCheck(temp_move, chess_board) && !doesMoveCauseCheck(move, chess_board)) {
@@ -39,7 +39,6 @@ public abstract class Player {
                     }
                 }
             }
-            // remove moves that cause check (illegal moves)
             else if (!doesMoveCauseCheck(move, chess_board)) {
                 filtered_moves.add(move);
             }
@@ -63,10 +62,10 @@ public abstract class Player {
     }
     public boolean isCheck(Board chess_board) {
         List<Space> attacked_spaces = chess_board.getCheckedSpaces(isWhite());
+
         for (Space attacked_space : attacked_spaces) {
-            // ignore empty spaces or if enemy is in the space
-            if (chess_board.isSpaceFriendly(attacked_space, isWhite())) {
-                if (chess_board.getPiece(attacked_space) instanceof King) {
+            if (chess_board.getPiece(attacked_space) instanceof King) {
+                if (chess_board.isSpaceFriendly(attacked_space, isWhite())) {
                     return true;
                 }
             }
@@ -75,9 +74,10 @@ public abstract class Player {
     }
     public boolean isEnemyCheck(Board chess_board) {
         List<Space> attacked_spaces = chess_board.getCheckedSpaces(!isWhite());
+
         for (Space attacked_space : attacked_spaces) {
-            if (chess_board.isSpaceEnemy(attacked_space, isWhite())) {
-                if (chess_board.getPiece(attacked_space) instanceof King) {
+            if (chess_board.getPiece(attacked_space) instanceof King) {
+                if (chess_board.isSpaceEnemy(attacked_space, isWhite())) {
                     return true;
                 }
             }
