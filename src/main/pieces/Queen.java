@@ -15,6 +15,8 @@ public class Queen extends Piece {
 
     @Override
     public void computeVision(Space location, Board chess_board) {
+        /* Compute and find all spaces that are visible to the piece */
+        
         // queen is basically a combination of rook and bishop
         Piece temp_rook = new Rook(isWhite());
         Piece temp_bishop = new Bishop(isWhite());

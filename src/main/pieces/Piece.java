@@ -21,7 +21,9 @@ public abstract class Piece {
     public abstract String getName();
     public abstract Piece clone();
 
+    /* Compute and find all spaces that are visible to the piece */
     public abstract void computeVision(Space location, Board chess_board);
+    /* Generate a list holding all possible moves the piece can take */
     public abstract List<Move> getPossibleMoves(Space location, Board chess_board);
 
     public boolean isWhite() {

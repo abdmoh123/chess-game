@@ -13,23 +13,28 @@ public class Bishop extends Piece {
         super(is_white_in, 3);
     }
 
-    private boolean search_bishop_spaces(
+    private boolean searchBishopSpaces(
         Space location,
         Space next_space,
         Board chess_board
     ) {
-        // check move is legal
+        /* Search through the board for possible spaces the Bishop can move to.
+         * If the a piece is met (cannot go further), return false.
+         */
+
         if (!Move.isLegal(chess_board, location, next_space)) {
             return false;
         }
 
         addVisibleSpace(next_space);
-        // stops search after finding a piece (doesn't have x-ray vision)
+        // return false after finding a piece (cannot move any further)
         return chess_board.isSpaceEmpty(next_space);
     }
 
     @Override
     public void computeVision(Space location, Board chess_board) {
+        /* Compute and find all spaces that are visible to the Bishop */
+
         resetVision();
 
         int x_loc = location.getX();
@@ -38,38 +43,34 @@ public class Bishop extends Piece {
         // up-right diagonal
         boolean keep_searching = true;
         for (int i = x_loc + 1, j = y_loc + 1; i < 8 && j < 8; ++i, ++j) {
-            // stop searching after finding a piece
             if (!keep_searching) {
                 break;
             }
-            keep_searching = search_bishop_spaces(location, new Space(i, j), chess_board);
+            keep_searching = searchBishopSpaces(location, new Space(i, j), chess_board);
         }
         // down-right diagonal
         keep_searching = true;
         for (int i = x_loc + 1, j = y_loc - 1; i < 8 && j >= 0; ++i, --j) {
-            // stop searching after finding a piece
             if (!keep_searching) {
                 break;
             }
-            keep_searching = search_bishop_spaces(location, new Space(i, j), chess_board);
+            keep_searching = searchBishopSpaces(location, new Space(i, j), chess_board);
         }
         // down-left diagonal
         keep_searching = true;
         for (int i = x_loc - 1, j = y_loc - 1; i >= 0 && j >= 0; --i, --j) {
-            // stop searching after finding a piece
             if (!keep_searching) {
                 break;
             }
-            keep_searching = search_bishop_spaces(location, new Space(i, j), chess_board);
+            keep_searching = searchBishopSpaces(location, new Space(i, j), chess_board);
         }
         // up-left diagonal
         keep_searching = true;
         for (int i = x_loc - 1, j = y_loc + 1; i >= 0 && j < 8; --i, ++j) {
-            // stop searching after finding a piece
             if (!keep_searching) {
                 break;
             }
-            keep_searching = search_bishop_spaces(location, new Space(i, j), chess_board);
+            keep_searching = searchBishopSpaces(location, new Space(i, j), chess_board);
         }
     }
 
