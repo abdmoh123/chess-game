@@ -17,13 +17,12 @@ public class StandardMove extends Move {
 
     @Override
     public void apply(Board chess_board) {
-        // get the spaces included in the move
         Space old_space = getOldLocation();
         Space new_space = getNewLocation();
 
         Piece moving_piece = getChessPiece();
 
-        // prevent castling on moved rooks
+        // prevent castling if rook moves
         if (moving_piece instanceof Rook) {
             ((Rook) moving_piece).activate();
         }
@@ -32,7 +31,7 @@ public class StandardMove extends Move {
             ((King) moving_piece).disableCastling();
         }
 
-        // apply the move by updating the board
+        // update the board
         chess_board.updateSpace(new_space, moving_piece);
         chess_board.updateSpace(old_space, null);
     }

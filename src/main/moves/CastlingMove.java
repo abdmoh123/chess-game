@@ -33,20 +33,18 @@ public class CastlingMove extends Move {
 
     @Override
     public void apply(Board chess_board) {
-        // get the spaces included in the move
         Space old_space = getOldLocation();
         Space new_space = getNewLocation();
         Space old_rook_space = getOldRookSpace();
         Space new_rook_space = getNewRookSpace();
 
-        // get relevant pieces for castling
         Rook moving_rook = (Rook) chess_board.getPiece(old_rook_space);
         King moving_king = (King) getChessPiece();
         // prevent future castling
         moving_rook.activate();
         moving_king.disableCastling();
 
-        // apply the move by updating the board
+        // update the board
         chess_board.updateSpace(new_space, moving_king);
         chess_board.updateSpace(old_space, null);
         chess_board.updateSpace(new_rook_space, moving_rook);

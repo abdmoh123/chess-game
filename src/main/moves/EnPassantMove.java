@@ -13,18 +13,17 @@ public class EnPassantMove extends Move {
         setKillPoints(1);
     }
 
-    public Space get_killed_pawn_space() {
+    public Space getKilledPawnSpace() {
         return killed_pawn_space;
     }
 
     @Override
     public void apply(Board chess_board) {
-        // get the spaces included in the move
         Space old_space = getOldLocation();
         Space new_space = getNewLocation();
-        Space pawn_space = get_killed_pawn_space();
+        Space pawn_space = getKilledPawnSpace();
 
-        // apply the move by updating the board
+        // update the board
         chess_board.updateSpace(new_space, getChessPiece());
         chess_board.updateSpace(old_space, null);
         chess_board.updateSpace(pawn_space, null);

@@ -121,7 +121,7 @@ public class Human extends Player {
                 }
             }
 
-            // convert move list to string format
+            // convert move list to algebraic notation string format
             List<String> possible_moves_string = convertMoveListToStringList(possible_moves, chess_board);
 
             boolean go_back = false;

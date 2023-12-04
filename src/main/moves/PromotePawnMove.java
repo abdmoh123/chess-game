@@ -42,11 +42,10 @@ public class PromotePawnMove extends Move {
 
     @Override
     public void apply(Board chess_board) {
-        // get the spaces included in the move
         Space old_space = getOldLocation();
         Space new_space = getNewLocation();
 
-        // apply the move by updating the board
+        // update the board
         chess_board.updateSpace(new_space, getNewPiece());
         chess_board.updateSpace(old_space, null);
     }
