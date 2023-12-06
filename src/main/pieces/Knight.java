@@ -2,8 +2,8 @@ package main.pieces;
 
 import main.moves.Move;
 import main.moves.StandardMove;
-import main.Space;
 import main.boards.Board;
+import main.boards.Space;
 
 import java.util.ArrayList;
 import java.util.List;

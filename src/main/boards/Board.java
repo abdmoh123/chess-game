@@ -1,6 +1,5 @@
 package main.boards;
 
-import main.Space;
 import main.moves.*;
 import main.pieces.*;
 

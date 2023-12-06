@@ -1,6 +1,7 @@
 package main;
 
 import main.boards.Board;
+import main.boards.Space;
 import main.boards.StandardBoard;
 import main.control.Player;
 import main.moves.Move;

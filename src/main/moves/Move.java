@@ -1,7 +1,7 @@
 package main.moves;
 
-import main.Space;
 import main.boards.Board;
+import main.boards.Space;
 import main.pieces.Knight;
 import main.pieces.Pawn;
 import main.pieces.Piece;

@@ -1,4 +1,4 @@
-package main;
+package main.boards;
 
 public class Space {
     private final int X; // a to h = 0 to 7

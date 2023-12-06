@@ -1,6 +1,5 @@
 package main.boards;
 
-import main.Space;
 import main.pieces.Bishop;
 import main.pieces.King;
 import main.pieces.Knight;
