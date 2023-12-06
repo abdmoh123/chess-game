@@ -30,14 +30,16 @@ public abstract class Player {
         }
         List<Move> possible_moves = chess_board.getPiece(space_in).getPossibleMoves(space_in, chess_board);
 
-        /* Remove moves that cause check (for the current player) and ensure castling is legal */
+        // remove moves that cause check (for the current player) and ensure castling is legal
         List<Move> filtered_moves = new ArrayList<>();
         for (Move move : possible_moves) {
             if (move instanceof CastlingMove) {
-                Move temp_move = new StandardMove(move.getOldLocation(), ((CastlingMove) move).getNewRookSpace(), move.getChessPiece());
                 // cannot castle if king is in check
                 if (!isCheck(chess_board)) {
                     // both the new king and rook space must not be in check
+                    Move temp_move = new StandardMove(
+                        move.getOldLocation(), ((CastlingMove) move).getNewRookSpace(), move.getChessPiece()
+                    );
                     if (!doesMoveCauseCheck(temp_move, chess_board) && !doesMoveCauseCheck(move, chess_board)) {
                         filtered_moves.add(move);
                     }
