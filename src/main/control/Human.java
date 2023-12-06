@@ -7,10 +7,10 @@ import main.moves.PromotePawnMove;
 import main.pieces.Piece;
 import main.pieces.Pawn;
 
+import static main.ChessGame.SCANNER;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import static main.ChessGame.SCANNER;
 
 public class Human extends Player {
     public Human(boolean is_white_in) {
@@ -43,6 +43,8 @@ public class Human extends Player {
     }
 
     private List<String> convertMoveListToStringList(List<Move> move_list, Board chess_board) {
+        /* Convert a list of moves into a list of strings representing moves based on algebraic chess notation */
+
         List<String> move_string_list = new ArrayList<>();
         for (Move move : move_list) {
             List<Space> similar_friendly_spaces = chess_board.getFriendlySpacesByPieceName(
@@ -71,16 +73,15 @@ public class Human extends Player {
         return move_string_list;
     }
 
-    private Move doPawnPromotion(PromotePawnMove chosen_move) {
+    private Move promotePawn(PromotePawnMove chosen_move) {
         /* Applies pawn promotion through user input */
         
-        int choice = -1; // reset choice variable for another input
+        int choice = 0;
         while (choice <= 0 || choice > 4) {
             System.out.println("You have promoted a pawn!\nPlease choose a new piece:");
             System.out.println("1: Queen\n2: Rook\n3: Bishop\n4: Knight");
 
             String str_choice = SCANNER.nextLine();
-            // convert input to integer if possible
             try {
                 choice = Integer.parseInt(str_choice);
             }
@@ -127,7 +128,6 @@ public class Human extends Player {
             boolean go_back = false;
             while (chosen_move == null && !go_back) {
                 System.out.println("Please select a move from the list or type 'Q'/'q' to go back:");
-                // print list of moves user can select from
                 for (String move_name : possible_moves_string) {
                     System.out.printf("- %s\n", move_name);
                 }
@@ -153,7 +153,7 @@ public class Human extends Player {
             // check if move involves pawn promotion before returning it
             if (!go_back) {
                 if (chosen_move instanceof PromotePawnMove) {
-                    chosen_move = doPawnPromotion((PromotePawnMove) chosen_move);
+                    chosen_move = promotePawn((PromotePawnMove) chosen_move);
                 }
                 return chosen_move;
             }
