@@ -23,12 +23,16 @@ public abstract class Player {
 
     public abstract Move startMove(Board chess_board);
 
-    private List<Move> filterMoves(List<Move> move_list, Board chess_board) {
+    public List<Move> getMoves(Space space_in, Board chess_board) {
+        // list of moves is empty if space is not controllable
+        if (!chess_board.isSpaceFriendly(space_in, isWhite())) {
+            return new ArrayList<>();
+        }
+        List<Move> possible_moves = chess_board.getPiece(space_in).getPossibleMoves(space_in, chess_board);
+
         /* Remove moves that cause check (for the current player) and ensure castling is legal */
-
         List<Move> filtered_moves = new ArrayList<>();
-
-        for (Move move : move_list) {
+        for (Move move : possible_moves) {
             if (move instanceof CastlingMove) {
                 Move temp_move = new StandardMove(move.getOldLocation(), ((CastlingMove) move).getNewRookSpace(), move.getChessPiece());
                 // cannot castle if king is in check
@@ -45,16 +49,6 @@ public abstract class Player {
         }
 
         return filtered_moves;
-    }
-
-    public List<Move> getMoves(Space space_in, Board chess_board) {
-        // list of moves is empty if space is not controllable
-        if (!chess_board.isSpaceFriendly(space_in, isWhite())) {
-            return new ArrayList<>();
-        }
-        List<Move> possible_moves = chess_board.getPiece(space_in).getPossibleMoves(space_in, chess_board);
-
-        return filterMoves(possible_moves, chess_board);
     }
 
     public boolean isWhite() {
