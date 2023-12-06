@@ -46,7 +46,7 @@ public class StandardBoard extends Board {
 
     @Override
     public Space getSpaceByString(String input_string) {
-        /* Return a space on the board based on algebraic chess notation.
+        /* Return a space on the board based on chess notation.
          * Limits are a-h and 1-8 for row and column.
          * Example: Space "d2" corresponds to space[1][3] or Space(3, 1).
          */
