@@ -135,6 +135,10 @@ public class Game {
         return true;
     }
     public boolean isDraw(Player player_in, Board chess_board) {
+        // TODO: Add check for 3 fold repetition
+        // TODO: Add check for 50 move rule (draw if 50 quiet moves happen consecutively)
+        // TODO: Add check for dead position (impossible to checkmate)
+
         if (isStalemate(player_in, chess_board)) {
             return true;
         }
