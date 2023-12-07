@@ -69,7 +69,7 @@ public abstract class Board {
     }
 
     public Piece getPiece(Space space_in) {
-        /* Return piece by reference (changes made to piece affect the original) */
+        /* Return piece by reference (changes made to a piece affect the piece on the board) */
 
         if (!isSpaceValid(space_in)) {
             throw new ArrayIndexOutOfBoundsException("Invalid coordinate! (" + space_in.getX() + ", " + space_in.getY() + ")");
