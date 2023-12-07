@@ -17,6 +17,13 @@ public class King extends Piece {
         this.castling_state = false;
     }
 
+    public boolean hasCastled() {
+        return this.castling_state;
+    }
+    public void disableCastling() {
+        this.castling_state = true;
+    }
+
     private boolean isStartingPosition(Space location) {
         if (!hasCastled()) {
             if (location.getX() != 4) {
@@ -150,12 +157,5 @@ public class King extends Piece {
         new_king.castling_state = hasCastled();
         new_king.setVisibleSpaces(getVisibleSpaces());
         return new_king;
-    }
-
-    public boolean hasCastled() {
-        return this.castling_state;
-    }
-    public void disableCastling() {
-        this.castling_state = true;
     }
 }

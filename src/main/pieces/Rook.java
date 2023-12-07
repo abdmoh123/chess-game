@@ -16,6 +16,13 @@ public class Rook extends Piece {
         this.activated = false;
     }
 
+    public boolean isActivated() {
+        return this.activated;
+    }
+    public void activate() {
+        this.activated = true;
+    }
+
     private boolean searchRookSpaces(
         Space location,
         Space next_space,
@@ -100,12 +107,5 @@ public class Rook extends Piece {
         new_rook.activated = isActivated();
         new_rook.setVisibleSpaces(getVisibleSpaces());
         return new_rook;
-    }
-
-    public boolean isActivated() {
-        return this.activated;
-    }
-    public void activate() {
-        this.activated = true;
     }
 }

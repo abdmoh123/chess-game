@@ -18,14 +18,6 @@ public abstract class Piece {
         this.visible_spaces = new ArrayList<>();
     }
 
-    public abstract String getName();
-    public abstract Piece copy();
-
-    /* Compute and find all spaces that are visible to the piece */
-    public abstract void computeVision(Space location, Board chess_board);
-    /* Generate a list holding all possible moves the piece can take */
-    public abstract List<Move> getPossibleMoves(Space location, Board chess_board);
-
     public boolean isWhite() {
         return this.IS_WHITE;
     }
@@ -49,4 +41,12 @@ public abstract class Piece {
     public void resetVision() {
         this.visible_spaces.clear();
     }
+
+    /* Compute and find all spaces that are visible to the piece */
+    public abstract void computeVision(Space location, Board chess_board);
+    /* Generate a list holding all possible moves the piece can take */
+    public abstract List<Move> getPossibleMoves(Space location, Board chess_board);
+
+    public abstract String getName();
+    public abstract Piece copy();
 }

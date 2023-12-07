@@ -19,6 +19,13 @@ public class Pawn extends Piece {
         this.en_passant = false;
     }
 
+    public boolean isEnPassant() {
+        return this.en_passant;
+    }
+    public void setEnPassant(boolean is_en_passant_in) {
+        this.en_passant = is_en_passant_in;
+    }
+
     public List<Move> getEnPassantMoves(Space location, Board chess_board) {
         /* Search for possible en passant moves. Return empty list if none are found */
 
@@ -227,12 +234,5 @@ public class Pawn extends Piece {
         new_pawn.setEnPassant(isEnPassant());
         new_pawn.setVisibleSpaces(getVisibleSpaces());
         return new_pawn;
-    }
-
-    public boolean isEnPassant() {
-        return this.en_passant;
-    }
-    public void setEnPassant(boolean is_en_passant_in) {
-        this.en_passant = is_en_passant_in;
     }
 }
