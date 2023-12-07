@@ -58,31 +58,31 @@ public class Game {
             player = getPlayer(2);
         }
 
-        chess_board.display();
+        getBoard().display();
 
-        if (isCheckMate(player, chess_board)) {
+        if (isCheckMate(player, getBoard())) {
             endGame(player.isWhite());
             return;
         }
-        if (isDraw(player, chess_board)) {
+        if (isDraw(player, getBoard())) {
             setState(GameState.DRAW);
             return;
         }
-        if (player.isCheck(chess_board)) {
+        if (player.isCheck(getBoard())) {
             System.out.println("Your king is in check!");
         }
 
-        Move generated_move = player.startMove(chess_board);
+        Move generated_move = player.startMove(getBoard());
 
         // disable en passant for all pawns after player made a move
-        List<Space> pawn_spaces = chess_board.getAllSpacesByPieceName("Pawn");
+        List<Space> pawn_spaces = getBoard().getAllSpacesByPieceName("Pawn");
         for (Space pawn_space : pawn_spaces) {
-            Pawn pawn_piece = (Pawn) chess_board.getPiece(pawn_space);
+            Pawn pawn_piece = (Pawn) getBoard().getPiece(pawn_space);
             pawn_piece.setEnPassant(false);
-            chess_board.updateSpace(pawn_space, pawn_piece);
+            getBoard().updateSpace(pawn_space, pawn_piece);
         }
 
-        generated_move.apply(chess_board);
+        generated_move.apply(getBoard());
 
         player.addPoints(generated_move.getKillPoints());
         recordMove(generated_move);
