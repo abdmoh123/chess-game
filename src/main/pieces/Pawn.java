@@ -222,7 +222,7 @@ public class Pawn extends Piece {
     }
 
     @Override
-    public Piece clone() {
+    public Piece copy() {
         Pawn new_pawn = new Pawn(isWhite());
         new_pawn.setEnPassant(isEnPassant());
         new_pawn.setVisibleSpaces(getVisibleSpaces());

@@ -95,7 +95,7 @@ public class Rook extends Piece {
         return "Rook";
     }
     @Override
-    public Piece clone() {
+    public Piece copy() {
         Rook new_rook = new Rook(isWhite());
         new_rook.activated = isActivated();
         new_rook.setVisibleSpaces(getVisibleSpaces());

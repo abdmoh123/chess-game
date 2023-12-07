@@ -93,7 +93,7 @@ public class Bishop extends Piece {
     }
 
     @Override
-    public Piece clone() {
+    public Piece copy() {
         return new Bishop(isWhite());
     }
 }

@@ -55,7 +55,7 @@ public class Knight extends Piece {
     }
 
     @Override
-    public Piece clone() {
+    public Piece copy() {
         Knight new_knight = new Knight(isWhite());
         new_knight.setVisibleSpaces(getVisibleSpaces());
         return new_knight;

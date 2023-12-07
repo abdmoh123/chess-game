@@ -145,7 +145,7 @@ public class King extends Piece {
     }
 
     @Override
-    public Piece clone() {
+    public Piece copy() {
         King new_king = new King(isWhite());
         new_king.castling_state = hasCastled();
         new_king.setVisibleSpaces(getVisibleSpaces());

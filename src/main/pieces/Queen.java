@@ -47,7 +47,7 @@ public class Queen extends Piece {
     }
 
     @Override
-    public Piece clone() {
+    public Piece copy() {
         Queen new_queen = new Queen(isWhite());
         new_queen.setVisibleSpaces(getVisibleSpaces());
         return new_queen;

@@ -19,7 +19,7 @@ public abstract class Piece {
     }
 
     public abstract String getName();
-    public abstract Piece clone();
+    public abstract Piece copy();
 
     /* Compute and find all spaces that are visible to the piece */
     public abstract void computeVision(Space location, Board chess_board);

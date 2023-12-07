@@ -18,7 +18,7 @@ public abstract class Board {
     /* Fill the board with pieces */
     public abstract void initialise();
     /* Create a deep copy/clone of a given board (any changes won't affect the original) */
-    public abstract Board clone();
+    public abstract Board copy();
     /* Return a Space object based on inputted string (e.g. a1 = Space(0, 0)) */
     public abstract Space getSpaceByString(String input_string);
 
@@ -241,7 +241,7 @@ public abstract class Board {
     public Board after(Move move_in) {
         /* Create a temporary board with the move applied. Useful for handling checks and pinned pieces. */
 
-        Board new_board = clone();
+        Board new_board = copy();
         move_in.apply(new_board);
         return new_board;
     }

@@ -57,7 +57,7 @@ public abstract class Move {
 
     public Piece getChessPiece() {
         /* Return chess piece by value (cannot change attributes of original piece) */
-        return this.CHESS_PIECE.clone();
+        return this.CHESS_PIECE.copy();
     }
     public Space getOldLocation() {
         return this.OLD_LOCATION;

@@ -96,7 +96,7 @@ public class StandardBoard extends Board {
     }
 
     @Override
-    public Board clone() {
+    public Board copy() {
         /* Create a deep copy/clone of a given board (any changes won't affect the original) */
 
         Board new_board = new StandardBoard();
@@ -105,7 +105,7 @@ public class StandardBoard extends Board {
             for (int j = 0; j < getLength(); ++j) {
                 Space space = new Space(i, j);
                 if (!isSpaceEmpty(space)) {
-                    new_board.updateSpace(space, getPiece(space).clone());
+                    new_board.updateSpace(space, getPiece(space).copy());
                 }
             }
         }
