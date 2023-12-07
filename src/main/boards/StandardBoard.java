@@ -1,7 +1,5 @@
 package main.boards;
 
-import main.Space;
-import main.moves.Move;
 import main.pieces.Bishop;
 import main.pieces.King;
 import main.pieces.Knight;
@@ -12,11 +10,14 @@ import main.pieces.Rook;
 public class StandardBoard extends Board {
     
     public StandardBoard() {
-        super(8); // create 8 by 8 board
+        super(8); // 8 x 8 board
     }
 
+    @Override
     public void initialise() {
-        // places the white pieces
+        /* Setup board with pieces based on the layout of a standard chess game */
+
+        // white pieces excluding pawns
         updateSpace(new Space(0, 0), new Rook(true));
         updateSpace(new Space(1, 0), new Knight(true));
         updateSpace(new Space(2, 0), new Bishop(true));
@@ -26,7 +27,7 @@ public class StandardBoard extends Board {
         updateSpace(new Space(6, 0), new Knight(true));
         updateSpace(new Space(7, 0), new Rook(true));
 
-        // places the black pieces
+        // black pieces excluding pawns
         updateSpace(new Space(0, 7), new Rook(false));
         updateSpace(new Space(1, 7), new Knight(false));
         updateSpace(new Space(2, 7), new Bishop(false));
@@ -36,16 +37,19 @@ public class StandardBoard extends Board {
         updateSpace(new Space(6, 7), new Knight(false));
         updateSpace(new Space(7, 7), new Rook(false));
 
-        // places white and black pawns
+        // pawn pieces
         for (int i = 0; i < 8; ++i) {
-            updateSpace(new Space(i, 1), new Pawn(true));
-            updateSpace(new Space(i, 6), new Pawn(false));
+            updateSpace(new Space(i, 1), new Pawn(true)); // white
+            updateSpace(new Space(i, 6), new Pawn(false)); // black
         }
     }
 
+    @Override
     public Space getSpaceByString(String input_string) {
-        /* Returns a space on the board based on Chess notation (a-h and 1-8 for row and
-        column). For example space "d2" corresponds to space[1][3]. */
+        /* Return a space on the board based on chess notation.
+         * Limits are a-h and 1-8 for row and column.
+         * Example: Space "d2" corresponds to space[1][3] or Space(3, 1).
+         */
 
         int x_loc, y_loc;
 
@@ -78,36 +82,33 @@ public class StandardBoard extends Board {
             default:
                 throw new RuntimeException("Invalid input: Must be within board!");
         }
+        
         // convert 2nd character (1-8) to corresponding integer value (0-7)
         y_loc = Character.getNumericValue(input_string.charAt(1)) - 1;
-        if (y_loc > 7 || y_loc < 0) {
+        if (y_loc == -1 || y_loc == -2) {
+            throw new RuntimeException("Second character must be an integer (0-9)!");
+        }
+        else if (y_loc > getLength() - 1 || y_loc < 0) {
             throw new RuntimeException("Invalid input: Must be within board!");
         }
 
         return new Space(x_loc, y_loc);
     }
 
-    public StandardBoard clone() {
+    @Override
+    public Board copy() {
         /* Create a deep copy/clone of a given board (any changes won't affect the original) */
 
-        StandardBoard new_board = new StandardBoard();
+        Board new_board = new StandardBoard();
+
         for (int i = 0; i < getLength(); ++i) {
             for (int j = 0; j < getLength(); ++j) {
                 Space space = new Space(i, j);
                 if (!isSpaceEmpty(space)) {
-                    new_board.updateSpace(space, getPiece(space).clone());
+                    new_board.updateSpace(space, getPiece(space).copy());
                 }
             }
         }
-        return new_board;
-    }
-
-    @Override
-    public StandardBoard after(Move move_in) {
-        /* Create a temporary board with the move applied. Useful for handling checks and pinned pieces. */
-
-        StandardBoard new_board = clone();
-        move_in.apply(new_board);
         return new_board;
     }
 }

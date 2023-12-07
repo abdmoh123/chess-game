@@ -2,8 +2,8 @@ package main.pieces;
 
 import main.moves.Move;
 import main.moves.StandardMove;
-import main.Space;
 import main.boards.Board;
+import main.boards.Space;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,12 +15,14 @@ public class Knight extends Piece {
 
     @Override
     public void computeVision(Space location, Board chess_board) {
+        /* Compute and find all spaces that are visible to the Knight */
+
         resetVision();
 
         int x_loc = location.getX();
         int y_loc = location.getY();
 
-        // max 8 possible spaces
+        // eight predetermined spaces knight can move to
         int[][] space_coordinates = {
             {x_loc + 1, y_loc + 2},
             {x_loc + 2, y_loc + 1},
@@ -33,13 +35,9 @@ public class Knight extends Piece {
         };
 
         for (int[] set : space_coordinates) {
-            // only adds spaces within the chess board
-            if (set[0] >= 0 && set[0] < 8 && set[1] >= 0 && set[1] < 8) {
-                Space space = new Space(set[0], set[1]);
-                // ensure move follows the rules
-                if (Move.is_legal(chess_board, location, space)) {
-                    addVisibleSpace(space);
-                }
+            Space space = new Space(set[0], set[1]);
+            if (Move.isLegal(chess_board, location, space)) {
+                addVisibleSpace(space);
             }
         }
     }
@@ -50,7 +48,6 @@ public class Knight extends Piece {
 
         computeVision(location, chess_board);
 
-        // only adds legal moves (within chess board coords)
         for (Space visible_space : getVisibleSpaces()) {
             possible_moves.add(new StandardMove(location, visible_space, this, chess_board.getPiece(visible_space)));
         }
@@ -58,14 +55,14 @@ public class Knight extends Piece {
     }
 
     @Override
-    public Piece clone() {
+    public String getName() {
+        return "Knight";
+    }
+    
+    @Override
+    public Piece copy() {
         Knight new_knight = new Knight(isWhite());
         new_knight.setVisibleSpaces(getVisibleSpaces());
         return new_knight;
-    }
-
-    @Override
-    public String getName() {
-        return "Knight";
     }
 }

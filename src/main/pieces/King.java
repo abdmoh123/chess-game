@@ -3,8 +3,8 @@ package main.pieces;
 import main.moves.CastlingMove;
 import main.moves.Move;
 import main.moves.StandardMove;
-import main.Space;
 import main.boards.Board;
+import main.boards.Space;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,46 +17,54 @@ public class King extends Piece {
         this.castling_state = false;
     }
 
-    private boolean is_starting_position(Space location) {
-        // check if castling was already done
+    public boolean hasCastled() {
+        return this.castling_state;
+    }
+    public void disableCastling() {
+        this.castling_state = true;
+    }
+
+    private boolean isStartingPosition(Space location) {
         if (!hasCastled()) {
+            if (location.getX() != 4) {
+                return false;
+            }
             if (isWhite()) {
-                // check if white king is at starting state
-                return location.getX() == 4 && location.getY() == 0;
+                return location.getY() == 0;
             }
-            else {
-                // check if black king is at starting state
-                return location.getX() == 4 && location.getY() == 7;
-            }
+            return location.getY() == 7;
         }
         return false;
     }
 
-    /* Check if rooks are deactivated (not moved) to allow castling */
-    private boolean check_kingside(Space location, Board chess_board) {
+    private boolean checkKingside(Space location, Board chess_board) {
+        /* Check if king-side rook is deactivated (not moved) to allow castling */
+
         Space kingside_rook_space = new Space(7, location.getY());
 
-        // check if king-side space has a rook
         if (!(chess_board.getPiece(kingside_rook_space) instanceof Rook)) {
             return false;
         }
+
         // check if no pieces are between the king and king-side rook
         if (
             chess_board.isSpaceEmpty(new Space(6, location.getY())) &&
             chess_board.isSpaceEmpty(new Space(5, location.getY()))
         ) {
             // check if rook has moved
-            return !((Rook) chess_board.getPiece(kingside_rook_space)).is_activated();
+            return !((Rook) chess_board.getPiece(kingside_rook_space)).isActivated();
         }
         return false;
     }
-    private boolean check_queenside(Space location, Board chess_board) {
+    private boolean checkQueenside(Space location, Board chess_board) {
+        /* Check if queen-side rook is deactivated (not moved) to allow castling */
+
         Space queenside_rook_space = new Space(0, location.getY());
 
-        // check if queen-side space has a rook
         if (!(chess_board.getPiece(queenside_rook_space) instanceof Rook)) {
             return false;
         }
+
         // check if no pieces are between the king and queen-side rook
         if (
             chess_board.isSpaceEmpty(new Space(1, location.getY())) &&
@@ -64,18 +72,21 @@ public class King extends Piece {
             chess_board.isSpaceEmpty(new Space(3, location.getY()))
         ) {
             // check if rook has moved
-            return !((Rook) chess_board.getPiece(queenside_rook_space)).is_activated();
+            return !((Rook) chess_board.getPiece(queenside_rook_space)).isActivated();
         }
         return false;
     }
 
     @Override
     public void computeVision(Space location, Board chess_board) {
+        /* Compute and find all spaces that are visible to the King */
+
         resetVision();
 
         int x_loc = location.getX();
         int y_loc = location.getY();
 
+        // predetermined spaces king can move to (8 spaces around it)
         int[][] space_coordinates = {
             {x_loc + 1, y_loc},
             {x_loc + 1, y_loc - 1},
@@ -89,12 +100,8 @@ public class King extends Piece {
 
         for (int[] set : space_coordinates) {
             Space space = new Space(set[0], set[1]);
-            // only adds spaces within the chess board
-            if (chess_board.isSpaceWithinBoard(space)) {
-                // ensure move follows the rules
-                if (Move.is_legal(chess_board, location, space)) {
-                    addVisibleSpace(space);
-                }
+            if (Move.isLegal(chess_board, location, space)) {
+                addVisibleSpace(space);
             }
         }
     }
@@ -103,36 +110,37 @@ public class King extends Piece {
     public List<Move> getPossibleMoves(Space location, Board chess_board) {
         List<Move> possible_moves = new ArrayList<>();
 
-        // get all spaces visible by the king
         computeVision(location, chess_board);
 
-        // convert all visible spaces to moves
         for (Space visible_space : getVisibleSpaces()) {
             possible_moves.add(new StandardMove(location, visible_space, this, chess_board.getPiece(visible_space)));
         }
 
+        // no need to check for castling if condition below is true
+        if (!isStartingPosition(location)) {
+            return possible_moves;
+        }
+        
         // add castling moves if possible and available
-        if (is_starting_position(location)) {
-            if (check_kingside(location, chess_board)) {
-                Move kingside = new CastlingMove(
-                    location,
-                    new Space(6, location.getY()),
-                    this,
-                    new Space(7, location.getY()),
-                    new Space(5, location.getY())
-                );
-                possible_moves.add(kingside);
-            }
-            if (check_queenside(location, chess_board)) {
-                Move queenside = new CastlingMove(
-                    location,
-                    new Space(2, location.getY()),
-                    this,
-                    new Space(0, location.getY()),
-                    new Space(3, location.getY())
-                );
-                possible_moves.add(queenside);
-            }
+        if (checkKingside(location, chess_board)) {
+            Move kingside = new CastlingMove(
+                location,
+                new Space(6, location.getY()),
+                this,
+                new Space(7, location.getY()),
+                new Space(5, location.getY())
+            );
+            possible_moves.add(kingside);
+        }
+        if (checkQueenside(location, chess_board)) {
+            Move queenside = new CastlingMove(
+                location,
+                new Space(2, location.getY()),
+                this,
+                new Space(0, location.getY()),
+                new Space(3, location.getY())
+            );
+            possible_moves.add(queenside);
         }
 
         return possible_moves;
@@ -144,17 +152,10 @@ public class King extends Piece {
     }
 
     @Override
-    public Piece clone() {
+    public Piece copy() {
         King new_king = new King(isWhite());
         new_king.castling_state = hasCastled();
         new_king.setVisibleSpaces(getVisibleSpaces());
         return new_king;
-    }
-
-    public boolean hasCastled() {
-        return castling_state;
-    }
-    public void disableCastling() {
-        this.castling_state = true;
     }
 }

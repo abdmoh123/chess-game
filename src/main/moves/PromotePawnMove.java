@@ -1,7 +1,7 @@
 package main.moves;
 
-import main.Space;
 import main.boards.Board;
+import main.boards.Space;
 import main.pieces.Bishop;
 import main.pieces.Knight;
 import main.pieces.Pawn;
@@ -42,12 +42,8 @@ public class PromotePawnMove extends Move {
 
     @Override
     public void apply(Board chess_board) {
-        // get the spaces included in the move
-        Space old_space = getOldLocation();
-        Space new_space = getNewLocation();
-
-        // apply the move by updating the board
-        chess_board.updateSpace(new_space, getNewPiece());
-        chess_board.updateSpace(old_space, null);
+        // update the board
+        chess_board.updateSpace(getNewLocation(), getNewPiece());
+        chess_board.updateSpace(getOldLocation(), null);
     }
 }

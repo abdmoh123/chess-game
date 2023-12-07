@@ -1,13 +1,12 @@
 package main.moves;
 
-import main.Space;
 import main.boards.Board;
+import main.boards.Space;
 import main.pieces.King;
 import main.pieces.Piece;
 import main.pieces.Rook;
 
 public class StandardMove extends Move {
-
     public StandardMove(Space old_location_in, Space new_location_in, Piece piece_in) {
         super(old_location_in, new_location_in, piece_in);
     }
@@ -17,13 +16,9 @@ public class StandardMove extends Move {
 
     @Override
     public void apply(Board chess_board) {
-        // get the spaces included in the move
-        Space old_space = getOldLocation();
-        Space new_space = getNewLocation();
-
         Piece moving_piece = getChessPiece();
 
-        // prevent castling on moved rooks
+        // prevent castling if rook moves
         if (moving_piece instanceof Rook) {
             ((Rook) moving_piece).activate();
         }
@@ -32,8 +27,8 @@ public class StandardMove extends Move {
             ((King) moving_piece).disableCastling();
         }
 
-        // apply the move by updating the board
-        chess_board.updateSpace(new_space, moving_piece);
-        chess_board.updateSpace(old_space, null);
+        // update the board
+        chess_board.updateSpace(getNewLocation(), moving_piece);
+        chess_board.updateSpace(getOldLocation(), null);
     }
 }

@@ -1,7 +1,7 @@
 package main.moves;
 
-import main.Space;
 import main.boards.Board;
+import main.boards.Space;
 import main.pieces.Pawn;
 
 public class DoublePawnMove extends Move {
@@ -11,16 +11,12 @@ public class DoublePawnMove extends Move {
 
     @Override
     public void apply(Board chess_board) {
-        // get the spaces included in the move
-        Space old_space = getOldLocation();
-        Space new_space = getNewLocation();
-
         Pawn moving_pawn = (Pawn) getChessPiece();
         // allow pawn to be taken through en passant rule
         moving_pawn.setEnPassant(true);
 
-        // apply the move by updating the board
-        chess_board.updateSpace(new_space, moving_pawn);
-        chess_board.updateSpace(old_space, null);
+        // update the board
+        chess_board.updateSpace(getNewLocation(), moving_pawn);
+        chess_board.updateSpace(getOldLocation(), null);
     }
 }

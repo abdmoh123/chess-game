@@ -1,10 +1,10 @@
 package main;
 
 import main.boards.Board;
+import main.boards.Space;
 import main.boards.StandardBoard;
 import main.control.Player;
 import main.moves.Move;
-import main.pieces.Piece;
 import main.pieces.Pawn;
 
 import java.util.ArrayList;
@@ -12,30 +12,42 @@ import java.util.List;
 
 public class Game {
     private GameState game_state;
-    private Player player_1;
-    private Player player_2;
+    private Player[] players;
     private boolean p1_turn;
     private Board chess_board;
+    private List<Move> move_history;
 
-    public Game(Player p1, Player p2) {
-        this.player_1 = p1;
-        this.player_2 = p2;
-        this.p1_turn = p1.isWhite();
+    public Game(Player[] players_in) {
+        this.players = players_in;
+        this.p1_turn = getPlayer(1).isWhite();
+        this.move_history = new ArrayList<>();
         
         this.chess_board = new StandardBoard();
         this.chess_board.initialise();
         this.game_state = GameState.ACTIVE;
     }
 
-    public void run_game() {
+    public void runGame() {
         while (!hasEnded()) {
-            // game loop starts
             start_turn();
+        }
+
+        switch (game_state) {
+            case WHITE_WIN:
+                System.out.println("White has won the game! Black has been Checkmated!");
+                break;
+            case BLACK_WIN:
+                System.out.println("Black has won the game! White has been Checkmated!");
+                break;
+            case DRAW:
+                System.out.println("Game is a draw!");
+                break;
+            default:
+                throw new RuntimeException("Invalid game state!");
         }
     }
 
     private void start_turn() {
-        // determine whose turn it is
         Player player;
         if (isP1Turn()) {
             System.out.println("Player 1's turn:");
@@ -46,45 +58,35 @@ public class Game {
             player = getPlayer(2);
         }
 
-        // display the board onto the terminal/console
-        chess_board.display();
+        getBoard().display();
 
-        if (player.quickCheck()) {
-            System.out.println("Your king is in check!");
-        }
-        // end game if player is checkmated
-        if (isCheckMate(player, chess_board)) {
-            System.out.println("You have been checkmated!");
-            endGame(!player.isWhite());
+        if (isCheckMate(player, getBoard())) {
+            endGame(player.isWhite());
             return;
         }
-        if (isDraw(player, chess_board)) {
-            System.out.println("Game has ended in a draw!");
+        if (isDraw(player, getBoard())) {
             setState(GameState.DRAW);
             return;
         }
-
-        // player generates move
-        Move generated_move = player.startMove(chess_board);
-
-        // disable en passant for all pawns after player made a move (except double pawn moves)
-        List<Space> pawn_spaces = chess_board.getSpacesByPieceName("Pawn");
-        for (Space pawn_space : pawn_spaces) {
-            // disable en passant for selected pawn
-            Pawn pawn_piece = (Pawn) chess_board.getPiece(pawn_space);
-            pawn_piece.setEnPassant(false);
-            // update board with new pawn piece
-            chess_board.updateSpace(pawn_space, pawn_piece);
+        if (player.isCheck(getBoard())) {
+            System.out.println("Your king is in check!");
         }
 
-        // move is applied to board (piece is moved)
-        generated_move.apply(chess_board);;
+        Move generated_move = player.startMove(getBoard());
 
-        // add points gained and saves move to history
+        // disable en passant for all pawns after player made a move
+        List<Space> pawn_spaces = getBoard().getAllSpacesByPieceName("Pawn");
+        for (Space pawn_space : pawn_spaces) {
+            Pawn pawn_piece = (Pawn) getBoard().getPiece(pawn_space);
+            pawn_piece.setEnPassant(false);
+            getBoard().updateSpace(pawn_space, pawn_piece);
+        }
+
+        generated_move.apply(getBoard());
+
         player.addPoints(generated_move.getKillPoints());
-        player.recordMove(generated_move);
+        recordMove(generated_move);
 
-        // turn switches after the move was made
         switchTurn();
     }
 
@@ -95,12 +97,18 @@ public class Game {
         this.p1_turn = !isP1Turn();
     }
 
+    public List<Move> getMoveHistory() {
+        return this.move_history;
+    }
+    public void recordMove(Move move_in) {
+        this.move_history.add(move_in);
+    }
+
     public Player getPlayer(int choice) {
-        if (choice == 1) { return this.player_1; }
-        else if (choice == 2) { return this.player_2; }
-        else {
+        if (choice > this.players.length) {
             throw new RuntimeException("Invalid input");
         }
+        return this.players[choice - 1]; // getPlayer(1) = player[0]
     }
     public Board getBoard() {
         return this.chess_board;
@@ -113,16 +121,14 @@ public class Game {
         this.game_state = new_state;
     }
 
-    // check if game has ended
     public boolean hasEnded() {
         return getState() != GameState.ACTIVE;
     }
-    public void endGame(boolean white_won) {
-        // set game state according to who lost the game
-        if (white_won) {
-            setState(GameState.WHITE_WIN);
+    public void endGame(boolean has_white_lost) {
+        if (has_white_lost) {
+            setState(GameState.BLACK_WIN);
         }
-        setState(GameState.BLACK_WIN);
+        setState(GameState.WHITE_WIN);
     }
 
     public boolean isCheckMate(Player player_in, Board chess_board) {
@@ -130,62 +136,49 @@ public class Game {
             return false;
         }
 
-        for (int i = 0; i < chess_board.getLength(); ++i) {
-            for (int j = 0; j < chess_board.getLength(); ++j) {
-                Space space = new Space(i, j);
-                if (chess_board.isSpaceFriendly(space, player_in.isWhite())) {
-                    if (player_in.canSpacePreventCheck(space, chess_board)) {
-                        return false;
-                    }
-                }
+        List<Space> friendly_spaces = chess_board.getFriendlySpaces(player_in.isWhite());
+        for (Space friendly_space : friendly_spaces) {
+            if (player_in.canPieceMove(friendly_space, chess_board)) {
+                return false;
             }
         }
         return true;
     }
     public boolean isDraw(Player player_in, Board chess_board) {
-        // stalemate = draw
+        // TODO: Add check for 3 fold repetition
+        // TODO: Add check for 50 move rule (draw if 50 quiet moves happen consecutively)
+        // TODO: Add check for dead position (impossible to checkmate)
+
         if (isStalemate(player_in, chess_board)) {
             return true;
         }
 
-        List<Piece> all_pieces = new ArrayList<>();
-        // get all pieces on the board and put them in a list
-        for (Piece[] row : chess_board.getSpaces()) {
-            for (Piece piece : row) {
-                if (piece != null) {
-                    all_pieces.add(piece);
-                }
-            }
-        }
-        // returns true if only 2 kings remain
-        return all_pieces.size() == 2;
+        List<Space> all_spaces_with_pieces = chess_board.getAllSpacesWithPieces();
+        return all_spaces_with_pieces.size() == 2;  // returns true if only 2 kings remain
     }
     public boolean isStalemate(Player player_in, Board chess_board) {
-        /* Check if player has any moves that don't lead to check */
+        /* Check if player has any moves that don't lead getting checked */
 
         // can't be stalemate if player is in check
         if (player_in.isCheck(chess_board)) {
             return false;
         }
 
-        for (int i = 0; i < chess_board.getLength(); ++i) {
-            for (int j = 0; j < chess_board.getLength(); ++j) {
-                Space space = new Space(i, j);
-                if (chess_board.isSpaceFriendly(space, player_in.isWhite())) {
-                    // get all possible moves that the piece can make
-                    List<Move> possible_moves = chess_board.getPiece(space).getPossibleMoves(space, chess_board);
+        List<Space> friendly_spaces = chess_board.getFriendlySpaces(player_in.isWhite());
+        for (Space friendly_space : friendly_spaces) {
+            List<Move> possible_moves = chess_board.getPiece(friendly_space).getPossibleMoves(
+                friendly_space, chess_board
+            );
 
-                    if (possible_moves.size() > 0) {
-                        // check if move is possible (must not lead to check)
-                        for (Move move : possible_moves) {
-                            if (!player_in.doesMoveCauseCheck(move, chess_board)) {
-                                return false;
-                            }
-                        }
+            if (possible_moves.size() > 0) {
+                for (Move move : possible_moves) {
+                    if (!player_in.doesMoveCauseCheck(move, chess_board)) {
+                        return false;
                     }
                 }
             }
         }
+
         System.out.println("Game has ended in stalemate!");
         return true;
     }

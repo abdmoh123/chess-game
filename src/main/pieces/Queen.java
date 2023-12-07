@@ -2,8 +2,8 @@ package main.pieces;
 
 import main.moves.Move;
 import main.moves.StandardMove;
-import main.Space;
 import main.boards.Board;
+import main.boards.Space;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +15,8 @@ public class Queen extends Piece {
 
     @Override
     public void computeVision(Space location, Board chess_board) {
+        /* Compute and find all spaces that are visible to the piece */
+        
         // queen is basically a combination of rook and bishop
         Piece temp_rook = new Rook(isWhite());
         Piece temp_bishop = new Bishop(isWhite());
@@ -45,7 +47,7 @@ public class Queen extends Piece {
     }
 
     @Override
-    public Piece clone() {
+    public Piece copy() {
         Queen new_queen = new Queen(isWhite());
         new_queen.setVisibleSpaces(getVisibleSpaces());
         return new_queen;
