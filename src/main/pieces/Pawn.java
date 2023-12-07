@@ -230,9 +230,9 @@ public class Pawn extends Piece {
     }
 
     public boolean isEnPassant() {
-        return en_passant;
+        return this.en_passant;
     }
-    public void setEnPassant(boolean choice) {
-        en_passant = choice;
+    public void setEnPassant(boolean is_en_passant_in) {
+        this.en_passant = is_en_passant_in;
     }
 }

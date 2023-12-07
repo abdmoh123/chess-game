@@ -97,13 +97,13 @@ public class Rook extends Piece {
     @Override
     public Piece clone() {
         Rook new_rook = new Rook(isWhite());
-        new_rook.activated = this.activated;
+        new_rook.activated = isActivated();
         new_rook.setVisibleSpaces(getVisibleSpaces());
         return new_rook;
     }
 
     public boolean isActivated() {
-        return activated;
+        return this.activated;
     }
     public void activate() {
         this.activated = true;

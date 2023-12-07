@@ -150,7 +150,7 @@ public class King extends Piece {
     }
 
     public boolean hasCastled() {
-        return castling_state;
+        return this.castling_state;
     }
     public void disableCastling() {
         this.castling_state = true;
