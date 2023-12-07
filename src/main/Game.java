@@ -17,9 +17,9 @@ public class Game {
     private Board chess_board;
     private List<Move> move_history;
 
-    public Game(Player p1, Player p2) {
-        this.players = new Player[] {p1, p2};
-        this.p1_turn = p1.isWhite();
+    public Game(Player[] players_in) {
+        this.players = players_in;
+        this.p1_turn = getPlayer(1).isWhite();
         this.move_history = new ArrayList<>();
         
         this.chess_board = new StandardBoard();
