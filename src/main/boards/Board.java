@@ -15,13 +15,6 @@ public abstract class Board {
         this.LENGTH = length_in;
     }
 
-    /* Fill the board with pieces */
-    public abstract void initialise();
-    /* Create a deep copy/clone of a given board (any changes won't affect the original) */
-    public abstract Board copy();
-    /* Return a Space object based on inputted string (e.g. a1 = Space(0, 0)) */
-    public abstract Space getSpaceByString(String input_string);
-
     public Piece[][] getAllSpaces() {
         return spaces;
     }
@@ -245,4 +238,11 @@ public abstract class Board {
         move_in.apply(new_board);
         return new_board;
     }
+
+    /* Fill the board with pieces */
+    public abstract void initialise();
+    /* Return a Space object based on inputted string (e.g. a1 = Space(0, 0)) */
+    public abstract Space getSpaceByString(String input_string);
+    /* Create a deep copy/clone of a given board (any changes won't affect the original) */
+    public abstract Board copy();
 }

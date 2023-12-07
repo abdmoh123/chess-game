@@ -18,8 +18,6 @@ public abstract class Player {
         this.IS_WHITE = is_white_in;
     }
 
-    public abstract Move startMove(Board chess_board);
-
     public List<Move> getMoves(Space space_in, Board chess_board) {
         // list of moves is empty if space is not controllable
         if (!chess_board.isSpaceFriendly(space_in, isWhite())) {
@@ -104,4 +102,6 @@ public abstract class Player {
     public void addPoints(int points_in) {
         this.points += points_in;
     }
+
+    public abstract Move startMove(Board chess_board);
 }

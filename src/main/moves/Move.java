@@ -32,8 +32,6 @@ public abstract class Move {
         }
     }
 
-    public abstract void apply(Board chess_board);
-
     public static boolean isLegal(Board chess_board, Space old_location_in, Space new_location_in) {
         // ensure moves stay within the predefined board coordinates and are not null
         if (!chess_board.isSpaceValid(old_location_in)) {
@@ -102,4 +100,6 @@ public abstract class Move {
 
         return move_string;
     }
+
+    public abstract void apply(Board chess_board);
 }
