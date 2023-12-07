@@ -51,7 +51,7 @@ public abstract class Player {
     }
 
     public boolean isWhite() {
-        return IS_WHITE;
+        return this.IS_WHITE;
     }
     public boolean isCheck(Board chess_board) {
         List<Space> attacked_spaces = chess_board.getCheckedSpaces(isWhite());
@@ -99,9 +99,9 @@ public abstract class Player {
     }
 
     public int getPoints() {
-        return points;
+        return this.points;
     }
     public void addPoints(int points_in) {
-        points += points_in;
+        this.points += points_in;
     }
 }
