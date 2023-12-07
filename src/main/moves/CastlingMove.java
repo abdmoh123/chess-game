@@ -6,25 +6,26 @@ import main.pieces.King;
 import main.pieces.Rook;
 
 public class CastlingMove extends Move {
-    private Space old_rook_space;
-    private Space new_rook_space;
+    private final Space OLD_ROOK_SPACE;
+    private final Space NEW_ROOK_SPACE;
+
     public CastlingMove(Space old_location_in, Space new_location_in, King piece_in, Space old_rook_space_in, Space new_rook_space_in) {
         super(old_location_in, new_location_in, piece_in);
-        this.old_rook_space = old_rook_space_in;
-        this.new_rook_space = new_rook_space_in;
+        this.OLD_ROOK_SPACE = old_rook_space_in;
+        this.NEW_ROOK_SPACE = new_rook_space_in;
     }
 
     public Space getOldRookSpace() {
-        return this.old_rook_space;
+        return this.OLD_ROOK_SPACE;
     }
     public Space getNewRookSpace() {
-        return this.new_rook_space;
+        return this.NEW_ROOK_SPACE;
     }
 
     @Override
     public String getNotation(boolean is_check_in, boolean be_precise) {
         // if castling king-side, move = "O-O"
-        if (old_rook_space.getX() == 7) {
+        if (getOldRookSpace().getX() == 7) {
             return "O-O";
         }
         // if castling queen-side, move = "O-O-O"
@@ -33,21 +34,16 @@ public class CastlingMove extends Move {
 
     @Override
     public void apply(Board chess_board) {
-        Space old_space = getOldLocation();
-        Space new_space = getNewLocation();
-        Space old_rook_space = getOldRookSpace();
-        Space new_rook_space = getNewRookSpace();
-
-        Rook moving_rook = (Rook) chess_board.getPiece(old_rook_space);
+        Rook moving_rook = (Rook) chess_board.getPiece(getOldRookSpace());
         King moving_king = (King) getChessPiece();
         // prevent future castling
         moving_rook.activate();
         moving_king.disableCastling();
 
         // update the board
-        chess_board.updateSpace(new_space, moving_king);
-        chess_board.updateSpace(old_space, null);
-        chess_board.updateSpace(new_rook_space, moving_rook);
-        chess_board.updateSpace(old_rook_space, null);
+        chess_board.updateSpace(getNewLocation(), moving_king);
+        chess_board.updateSpace(getOldLocation(), null);
+        chess_board.updateSpace(getNewRookSpace(), moving_rook);
+        chess_board.updateSpace(getOldRookSpace(), null);
     }
 }

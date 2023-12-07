@@ -11,15 +11,12 @@ public class DoublePawnMove extends Move {
 
     @Override
     public void apply(Board chess_board) {
-        Space old_space = getOldLocation();
-        Space new_space = getNewLocation();
-
         Pawn moving_pawn = (Pawn) getChessPiece();
         // allow pawn to be taken through en passant rule
         moving_pawn.setEnPassant(true);
 
         // update the board
-        chess_board.updateSpace(new_space, moving_pawn);
-        chess_board.updateSpace(old_space, null);
+        chess_board.updateSpace(getNewLocation(), moving_pawn);
+        chess_board.updateSpace(getOldLocation(), null);
     }
 }

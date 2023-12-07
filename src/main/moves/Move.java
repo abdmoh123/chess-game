@@ -57,16 +57,16 @@ public abstract class Move {
 
     public Piece getChessPiece() {
         /* Return chess piece by value (cannot change attributes of original piece) */
-        return CHESS_PIECE.clone();
+        return this.CHESS_PIECE.clone();
     }
     public Space getOldLocation() {
-        return OLD_LOCATION;
+        return this.OLD_LOCATION;
     }
     public Space getNewLocation() {
-        return NEW_LOCATION;
+        return this.NEW_LOCATION;
     }
     public int getKillPoints() {
-        return kill_points;
+        return this.kill_points;
     }
     public void setKillPoints(int points_in) {
         this.kill_points = points_in;
