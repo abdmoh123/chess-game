@@ -12,13 +12,10 @@ import java.util.List;
 
 public abstract class Player {
     private final boolean IS_WHITE;
-
-    private List<Move> move_history;
     private int points;
 
     protected Player(boolean is_white_in) {
         this.IS_WHITE = is_white_in;
-        this.move_history = new ArrayList<>();
     }
 
     public abstract Move startMove(Board chess_board);
@@ -99,13 +96,6 @@ public abstract class Player {
             }
         }
         return false;
-    }
-
-    public List<Move> getMoveHistory() {
-        return move_history;
-    }
-    public void recordMove(Move move_in) {
-        this.move_history.add(move_in);
     }
 
     public int getPoints() {

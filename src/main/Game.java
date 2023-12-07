@@ -7,6 +7,7 @@ import main.control.Player;
 import main.moves.Move;
 import main.pieces.Pawn;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Game {
@@ -14,10 +15,12 @@ public class Game {
     private Player[] players;
     private boolean p1_turn;
     private Board chess_board;
+    private List<Move> move_history;
 
     public Game(Player p1, Player p2) {
         this.players = new Player[] {p1, p2};
         this.p1_turn = p1.isWhite();
+        this.move_history = new ArrayList<>();
         
         this.chess_board = new StandardBoard();
         this.chess_board.initialise();
@@ -82,7 +85,7 @@ public class Game {
         generated_move.apply(chess_board);
 
         player.addPoints(generated_move.getKillPoints());
-        player.recordMove(generated_move);
+        recordMove(generated_move);
 
         switchTurn();
     }
@@ -92,6 +95,13 @@ public class Game {
     }
     public void switchTurn() {
         this.p1_turn = !isP1Turn();
+    }
+
+    public List<Move> getMoveHistory() {
+        return this.move_history;
+    }
+    public void recordMove(Move move_in) {
+        this.move_history.add(move_in);
     }
 
     public Player getPlayer(int choice) {
