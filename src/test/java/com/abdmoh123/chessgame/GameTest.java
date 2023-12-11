@@ -14,26 +14,32 @@ import com.abdmoh123.chessgame.pieces.Piece;
 import com.abdmoh123.chessgame.pieces.Queen;
 
 public class GameTest {
+    King white_king;
+    King black_king;
+    Queen black_queen;
+    Bishop black_bishop;
+
     @Before
     public void init() {
+        // initialise pieces for use in tests
+        white_king = new King(true);
+        black_king = new King(false);
+        black_queen = new Queen(false);
+        black_bishop = new Bishop(false);
     }
 
     @Test
     public void isCheckmateTrueTest() {
-        // initialise contents of board
-        King white_king = new King(true);
-        King black_king = new King(false);
-        Queen black_queen = new Queen(false);
-        Bishop black_bishop = new Bishop(false);
+        // initialise board layout
         Piece[][] layout = {
-            {null, null, null, null, null, null, null, black_king.copy()},
+            {null, null, null, null, null, null, null, this.black_king.copy()},
             {null, null, null, null, null, null, null, null},
             {null, null, null, null, null, null, null, null},
             {null, null, null, null, null, null, null, null},
             {null, null, null, null, null, null, null, null},
-            {null, null, black_bishop.copy(), null, null, null, null, null},
-            {null, black_queen.copy(), null, null, null, null, null, null},
-            {white_king.copy(), null, null, null, null, null, null, null}
+            {null, null, this.black_bishop.copy(), null, null, null, null, null},
+            {null, this.black_queen.copy(), null, null, null, null, null, null},
+            {this.white_king.copy(), null, null, null, null, null, null, null}
         };
 
         // initialise chess board, players and game
@@ -48,20 +54,16 @@ public class GameTest {
 
     @Test
     public void isCheckmateFalseTest() {
-        // initialise contents of board
-        King white_king = new King(true);
-        King black_king = new King(false);
-        Queen black_queen = new Queen(false);
-        Bishop black_bishop = new Bishop(false);
+        // initialise board layout
         Piece[][] layout = {
-            {null, null, null, null, null, null, null, black_king.copy()},
+            {null, null, null, null, null, null, null, this.black_king.copy()},
             {null, null, null, null, null, null, null, null},
             {null, null, null, null, null, null, null, null},
             {null, null, null, null, null, null, null, null},
             {null, null, null, null, null, null, null, null},
-            {null, null, black_bishop.copy(), null, null, null, null, null},
-            {black_queen.copy(), null, null, null, null, null, null, null},
-            {white_king.copy(), null, null, null, null, null, null, null}
+            {null, null, this.black_bishop.copy(), null, null, null, null, null},
+            {this.black_queen.copy(), null, null, null, null, null, null, null},
+            {this.white_king.copy(), null, null, null, null, null, null, null}
         };
 
         // initialise chess board, players and game
@@ -76,19 +78,16 @@ public class GameTest {
 
     @Test
     public void isStalemateTrueTest() {
-        // initialise contents of board
-        King white_king = new King(true);
-        King black_king = new King(false);
-        Queen black_queen = new Queen(false);
+        // initialise board layout
         Piece[][] layout = {
-            {null, null, null, null, null, null, null, black_king.copy()},
+            {null, null, null, null, null, null, null, this.black_king.copy()},
             {null, null, null, null, null, null, null, null},
             {null, null, null, null, null, null, null, null},
             {null, null, null, null, null, null, null, null},
             {null, null, null, null, null, null, null, null},
             {null, null, null, null, null, null, null, null},
-            {null, null, black_queen.copy(), null, null, null, null, null},
-            {white_king.copy(), null, null, null, null, null, null, null}
+            {null, null, this.black_queen.copy(), null, null, null, null, null},
+            {this.white_king.copy(), null, null, null, null, null, null, null}
         };
 
         // initialise chess board, players and game
@@ -103,18 +102,16 @@ public class GameTest {
 
     @Test
     public void isStalemateFalseTest() {
-        // initialise contents of board
-        King white_king = new King(true);
-        King black_king = new King(false);
+        // initialise board layout
         Piece[][] layout = {
-            {null, null, null, null, null, null, null, black_king.copy()},
+            {null, null, null, null, null, null, null, this.black_king.copy()},
             {null, null, null, null, null, null, null, null},
             {null, null, null, null, null, null, null, null},
             {null, null, null, null, null, null, null, null},
             {null, null, null, null, null, null, null, null},
             {null, null, null, null, null, null, null, null},
             {null, null, null, null, null, null, null, null},
-            {white_king.copy(), null, null, null, null, null, null, null}
+            {this.white_king.copy(), null, null, null, null, null, null, null}
         };
 
         // initialise chess board, players and game
