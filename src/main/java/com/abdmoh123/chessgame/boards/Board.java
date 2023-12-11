@@ -3,15 +3,38 @@ package com.abdmoh123.chessgame.boards;
 import com.abdmoh123.chessgame.moves.*;
 import com.abdmoh123.chessgame.pieces.*;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Board {
-    private Piece[][] spaces;
+    protected Piece[][] spaces;
     private final int LENGTH;
 
     public Board(int length_in) {
         this.spaces = new Piece[length_in][length_in]; // length_in x length_in grid
+        this.LENGTH = length_in;
+    }
+    public Board(int length_in, Piece[][] spaces_in) {
+        /* Create a board with a given layout of pieces */
+
+        // ensure given array matches axes length of board
+        if (spaces_in.length != length_in) {
+            String message = "Given array is incorrect size! Expected: {0}, Actual: {1}" ;
+            throw new ExceptionInInitializerError(
+                MessageFormat.format(message, new Object[] {length_in, spaces_in.length})
+            );
+        }
+        for (Piece[] row : spaces_in) {
+            if (row.length != length_in) {
+                String message = "Given array is incorrect size! Expected: {0}, Actual: {1}" ;
+                throw new ExceptionInInitializerError(
+                    MessageFormat.format(message, new Object[] {length_in, row.length})
+                );
+            }
+        }
+
+        this.spaces = spaces_in;
         this.LENGTH = length_in;
     }
 

@@ -4,6 +4,7 @@ import com.abdmoh123.chessgame.pieces.Bishop;
 import com.abdmoh123.chessgame.pieces.King;
 import com.abdmoh123.chessgame.pieces.Knight;
 import com.abdmoh123.chessgame.pieces.Pawn;
+import com.abdmoh123.chessgame.pieces.Piece;
 import com.abdmoh123.chessgame.pieces.Queen;
 import com.abdmoh123.chessgame.pieces.Rook;
 
@@ -11,6 +12,9 @@ public class StandardBoard extends Board {
     
     public StandardBoard() {
         super(8); // 8 x 8 board
+    }
+    public StandardBoard(Piece[][] spaces_in) {
+        super(8, spaces_in);
     }
 
     @Override

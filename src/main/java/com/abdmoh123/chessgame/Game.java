@@ -2,7 +2,6 @@ package com.abdmoh123.chessgame;
 
 import com.abdmoh123.chessgame.boards.Board;
 import com.abdmoh123.chessgame.boards.Space;
-import com.abdmoh123.chessgame.boards.StandardBoard;
 import com.abdmoh123.chessgame.control.Player;
 import com.abdmoh123.chessgame.moves.Move;
 import com.abdmoh123.chessgame.pieces.Pawn;
@@ -17,13 +16,12 @@ public class Game {
     private Board chess_board;
     private List<Move> move_history;
 
-    public Game(Player[] players_in) {
+    public Game(Player[] players_in, Board chess_board_in) {
         this.players = players_in;
         this.p1_turn = getPlayer(1).isWhite();
         this.move_history = new ArrayList<>();
         
-        this.chess_board = new StandardBoard();
-        this.chess_board.initialise();
+        this.chess_board = chess_board_in;
         this.game_state = GameState.ACTIVE;
     }
 
