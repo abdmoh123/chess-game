@@ -1,11 +1,16 @@
 package com.abdmoh123.chessgame.boards;
 
-import com.abdmoh123.chessgame.moves.*;
-import com.abdmoh123.chessgame.pieces.*;
-
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.opencsv.exceptions.CsvValidationException;
+
+import com.abdmoh123.chessgame.moves.*;
+import com.abdmoh123.chessgame.pieces.*;
+import com.abdmoh123.chessgame.utils.ChessCSVReader;
 
 public abstract class Board {
     protected Piece[][] spaces;
@@ -13,28 +18,6 @@ public abstract class Board {
 
     public Board(int length_in) {
         this.spaces = new Piece[length_in][length_in]; // length_in x length_in grid
-        this.LENGTH = length_in;
-    }
-    public Board(int length_in, Piece[][] spaces_in) {
-        /* Create a board with a given layout of pieces */
-
-        // ensure given array matches axes length of board
-        if (spaces_in.length != length_in) {
-            String message = "Given array is incorrect size! Expected: {0}, Actual: {1}" ;
-            throw new ExceptionInInitializerError(
-                MessageFormat.format(message, new Object[] {length_in, spaces_in.length})
-            );
-        }
-        for (Piece[] row : spaces_in) {
-            if (row.length != length_in) {
-                String message = "Given array is incorrect size! Expected: {0}, Actual: {1}" ;
-                throw new ExceptionInInitializerError(
-                    MessageFormat.format(message, new Object[] {length_in, row.length})
-                );
-            }
-        }
-
-        this.spaces = spaces_in;
         this.LENGTH = length_in;
     }
 
@@ -268,4 +251,33 @@ public abstract class Board {
     public abstract Space getSpaceByString(String input_string);
     /* Create a deep copy/clone of a given board (any changes won't affect the original) */
     public abstract Board copy();
+
+    public void initialise(Piece[][] spaces_in) {
+        /* Fill board with a given layout of pieces */
+
+        // ensure given array matches axes length of board
+        if (spaces_in.length != getLength()) {
+            String message = "Given array is incorrect size! Expected: {0}, Actual: {1}" ;
+            throw new ExceptionInInitializerError(
+                MessageFormat.format(message, new Object[] {getLength(), spaces_in.length})
+            );
+        }
+        for (Piece[] row : spaces_in) {
+            if (row.length != getLength()) {
+                String message = "Given array is incorrect size! Expected: {0}, Actual: {1}" ;
+                throw new ExceptionInInitializerError(
+                    MessageFormat.format(message, new Object[] {getLength(), row.length})
+                );
+            }
+        }
+
+        this.spaces = spaces_in;
+    }
+    public void initialise(String file_name_in) throws CsvValidationException, URISyntaxException, IOException {
+        /* Fill board with pieces based on a CSV file */
+
+        Piece[][] spaces_in = ChessCSVReader.readBoardCSV(file_name_in);
+        
+        initialise(spaces_in);
+    }
 }
