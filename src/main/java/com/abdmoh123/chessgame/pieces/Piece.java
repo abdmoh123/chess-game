@@ -49,4 +49,17 @@ public abstract class Piece {
 
     public abstract String getName();
     public abstract Piece copy();
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof Piece)) {
+            return false;
+        }
+
+        Piece piece_in = (Piece) obj;
+        return isWhite() == piece_in.isWhite() && getValue() == piece_in.getValue() && getVisibleSpaces().equals(piece_in.getVisibleSpaces());
+    }
 }

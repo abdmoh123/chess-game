@@ -51,8 +51,8 @@ public class ChessCSVReader {
     public static Piece[][] readBoardCSV(String file_path) throws URISyntaxException, IOException, CsvValidationException {
         Path path = Paths.get(ClassLoader.getSystemResource(file_path).toURI());
 
+        // read csv file and put data into 2d list
         List<List<String>> layout = new ArrayList<List<String>>();
-
         try (Reader reader = Files.newBufferedReader(path)) {
             try (CSVReader csv_reader = new CSVReader(reader)) {
                 String[] row = null;
@@ -62,6 +62,7 @@ public class ChessCSVReader {
             }
         }
         
+        // convert read string data into piece type and put into 2d square array
         Piece[][] board_contents = new Piece[layout.size()][layout.size()];
         for (int i = 0; i < layout.size(); i++) {
             for (int j = 0; j < layout.size(); ++j) {

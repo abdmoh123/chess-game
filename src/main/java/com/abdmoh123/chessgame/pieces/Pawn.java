@@ -235,4 +235,14 @@ public class Pawn extends Piece {
         new_pawn.setVisibleSpaces(getVisibleSpaces());
         return new_pawn;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Pawn) {
+            if (isEnPassant() != ((Pawn)obj).isEnPassant()) {
+                return false;
+            }
+        }
+        return super.equals(obj);
+    }
 }

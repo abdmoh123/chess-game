@@ -158,4 +158,14 @@ public class King extends Piece {
         new_king.setVisibleSpaces(getVisibleSpaces());
         return new_king;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof King) {
+            if (hasCastled() != ((King)obj).hasCastled()) {
+                return false;
+            }
+        }
+        return super.equals(obj);
+    }
 }

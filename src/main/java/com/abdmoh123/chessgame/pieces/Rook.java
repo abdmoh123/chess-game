@@ -108,4 +108,14 @@ public class Rook extends Piece {
         new_rook.setVisibleSpaces(getVisibleSpaces());
         return new_rook;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Rook) {
+            if (isActivated() != ((Rook)obj).isActivated()) {
+                return false;
+            }
+        }
+        return super.equals(obj);
+    }
 }
