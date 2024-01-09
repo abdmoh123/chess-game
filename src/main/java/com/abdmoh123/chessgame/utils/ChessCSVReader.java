@@ -64,10 +64,11 @@ public class ChessCSVReader {
         
         // convert read string data into piece type and put into 2d square array
         Piece[][] board_contents = new Piece[layout.size()][layout.size()];
-        for (int i = 0; i < layout.size(); i++) {
+        for (int i = 0; i < layout.size(); ++i) {
             for (int j = 0; j < layout.size(); ++j) {
                 String symbol = layout.get(i).get(j);
-                board_contents[i][j] = convertSymbolToPiece(symbol);
+                // reverse order so bottom left = (0, 0)
+                board_contents[layout.size() - i - 1][j] = convertSymbolToPiece(symbol);
             }
         }
 

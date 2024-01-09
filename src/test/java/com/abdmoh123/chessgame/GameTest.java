@@ -18,7 +18,7 @@ public class GameTest {
     public void isCheckmateTrueTest() {
         try {
             Board test_board = new StandardBoard();
-            test_board.initialise("game_test/checkmate_true.csv");
+            test_board.initialise("board_layouts/game_test/checkmate_true.csv");
 
             Player[] players = {new Human(true), new Human(false)};
             Game chess_game = new Game(players, test_board);
@@ -37,7 +37,7 @@ public class GameTest {
     public void isCheckmateFalseTest() {
         try{
             Board test_board = new StandardBoard();
-            test_board.initialise("game_test/checkmate_false.csv");
+            test_board.initialise("board_layouts/game_test/checkmate_false.csv");
 
             Player[] players = {new Human(true), new Human(false)};
             Game chess_game = new Game(players, test_board);
@@ -56,7 +56,7 @@ public class GameTest {
     public void isStalemateTrueTest() {
         try {
             Board test_board = new StandardBoard();
-            test_board.initialise("game_test/stalemate_true.csv");
+            test_board.initialise("board_layouts/game_test/stalemate_true.csv");
 
             Player[] players = {new Human(true), new Human(false)};
             Game chess_game = new Game(players, test_board);
@@ -75,7 +75,7 @@ public class GameTest {
     public void isStalemateFalseTest() {
         try {
             Board test_board = new StandardBoard();
-            test_board.initialise("game_test/stalemate_false.csv");
+            test_board.initialise("board_layouts/game_test/stalemate_false.csv");
 
             Player[] players = {new Human(true), new Human(false)};
             Game chess_game = new Game(players, test_board);
