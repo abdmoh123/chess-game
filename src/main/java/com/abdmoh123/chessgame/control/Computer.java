@@ -6,6 +6,7 @@ import com.abdmoh123.chessgame.moves.Move;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Computer extends Player {
     public Computer(boolean is_white_in) {
@@ -14,18 +15,28 @@ public class Computer extends Player {
 
     @Override
     public Move startMove(Board chess_board) {
-        // TODO: Implement a better chess bot
+        Random rand = new Random();
 
+        List<Space> friendly_spaces = chess_board.getFriendlySpaces(isWhite());
         List<Move> possible_moves = new ArrayList<>();
 
         boolean valid_input = false;
         while (!valid_input) {
-            Space selected_space = new Space(0, 0);
-            if (chess_board.isSpaceFriendly(selected_space, isWhite())) {
-                // TODO: Make this safer (no crash)
-                possible_moves = chess_board.getPiece(selected_space).getPossibleMoves(selected_space, chess_board);
+            int space_choice = rand.nextInt(friendly_spaces.size());
+
+            Space selected_space = friendly_spaces.get(space_choice);
+            friendly_spaces.remove(space_choice); // prevent choosing the same piece multiple times
+
+            // automatically filter out illegal moves (e.g. moving irrelevant piece when king is in check)
+            possible_moves = getLegalMoves(selected_space, chess_board);
+            // stop searching if selected piece can move
+            if (possible_moves.size() > 0) {
+                valid_input = true;
             }
         }
-        return possible_moves.get(0);
+
+        // select a random move from all possible legal moves
+        int choice = rand.nextInt(possible_moves.size());
+        return possible_moves.get(choice);
     }
 }

@@ -18,7 +18,9 @@ public abstract class Player {
         this.IS_WHITE = is_white_in;
     }
 
-    public List<Move> getMoves(Space space_in, Board chess_board) {
+    public List<Move> getLegalMoves(Space space_in, Board chess_board) {
+        /* Filters out any moves that cannot be played (e.g. when king is in check) */
+
         // list of moves is empty if space is not controllable
         if (!chess_board.isSpaceFriendly(space_in, isWhite())) {
             return new ArrayList<>();

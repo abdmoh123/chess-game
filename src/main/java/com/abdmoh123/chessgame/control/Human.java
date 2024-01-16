@@ -113,7 +113,7 @@ public class Human extends Player {
                     System.out.println(e);
                 }
 
-                possible_moves = getMoves(first_space_input, chess_board);
+                possible_moves = getLegalMoves(first_space_input, chess_board);
                 if (!chess_board.isSpaceFriendly(first_space_input, isWhite())) {
                     System.out.println("Space does not contain a piece in your team!");
                 }
