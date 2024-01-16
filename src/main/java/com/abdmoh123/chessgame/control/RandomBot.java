@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class Computer extends Player {
-    public Computer(boolean is_white_in) {
+public class RandomBot extends Player {
+    public RandomBot(boolean is_white_in) {
         super(is_white_in);
     }
 

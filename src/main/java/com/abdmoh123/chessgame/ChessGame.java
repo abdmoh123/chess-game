@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 import com.abdmoh123.chessgame.boards.Board;
 import com.abdmoh123.chessgame.boards.StandardBoard;
-import com.abdmoh123.chessgame.control.Computer;
+import com.abdmoh123.chessgame.control.RandomBot;
 import com.abdmoh123.chessgame.control.Human;
 import com.abdmoh123.chessgame.control.Player;
 
@@ -44,15 +44,15 @@ public class ChessGame {
                 System.out.println("Starting Human vs Human...");
                 break;
             case 2:
-                players = new Player[]{new Human(true), new Computer(false)};
+                players = new Player[]{new Human(true), new RandomBot(false)};
                 System.out.println("Starting Human vs Bot...");
                 break;
             case 3:
-                players = new Player[]{new Computer(true), new Computer(false)};
+                players = new Player[]{new RandomBot(true), new RandomBot(false)};
                 System.out.println("Starting Bot vs Bot...");
                 break;
             case 4:
-                players = new Player[]{new Computer(true), new Human(false)};
+                players = new Player[]{new RandomBot(true), new Human(false)};
                 System.out.println("Starting Bot vs Human...");
                 break;
             default:
