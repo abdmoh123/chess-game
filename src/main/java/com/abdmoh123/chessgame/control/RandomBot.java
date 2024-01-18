@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class RandomBot extends Player {
+public class RandomBot extends BotPlayer {
     public RandomBot(boolean is_white_in) {
-        super(is_white_in);
+        super(is_white_in, 0);
     }
 
     @Override
