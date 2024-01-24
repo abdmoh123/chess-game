@@ -36,7 +36,25 @@ public abstract class Move {
         }
     }
 
-    public static boolean isLegal(Board chess_board, Space old_location_in, Space new_location_in) {
+    public boolean isPseudoLegal(Board chess_board) {
+        /* More thorough check for legality of move (excludes checks) */
+        
+        if (!isValid(chess_board, OLD_LOCATION, NEW_LOCATION)) {
+            return false;
+        }
+
+        if (!getMovingPiece().equals(chess_board.getPiece(getOldLocation()))) {
+            return false;
+        }
+        if (!getKilledPiece().equals(chess_board.getPiece(getNewLocation()))) {
+            return false;
+        }
+
+        return getMovingPiece().canSee(getOldLocation(), getNewLocation(), chess_board);
+    }
+    public static boolean isValid(Board chess_board, Space old_location_in, Space new_location_in) {
+        /* Quick and simple validity check without creating a move */
+
         // ensure moves stay within the predefined board coordinates and are not null
         if (!chess_board.isSpaceValid(old_location_in)) {
             return false;

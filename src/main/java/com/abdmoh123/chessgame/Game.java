@@ -170,7 +170,7 @@ public class Game {
 
             if (possible_moves.size() > 0) {
                 for (Move move : possible_moves) {
-                    if (!player_in.doesMoveCauseCheck(move, chess_board)) {
+                    if (!player_in.isCheckAfterMove(move, chess_board)) {
                         return false;
                     }
                 }

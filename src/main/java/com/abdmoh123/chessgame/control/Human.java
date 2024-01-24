@@ -66,7 +66,7 @@ public class Human extends Player {
             }
             
             String move_name = move.getNotation(
-                doesMoveCauseEnemyCheck(move, chess_board), be_precise
+                isEnemyCheckAfterMove(move, chess_board), be_precise
             );
             move_string_list.add(move_name);
         }
