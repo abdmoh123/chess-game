@@ -22,6 +22,9 @@ public class Rook extends Piece {
     public void activate() {
         this.activated = true;
     }
+    public void deactivate() {
+        this.activated = false;
+    }
 
     private boolean searchRookSpaces(
         Space location,

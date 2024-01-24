@@ -244,6 +244,13 @@ public abstract class Board {
         move_in.apply(new_board);
         return new_board;
     }
+    public Board before(Move move_in) {
+        /* Undo a move on a board. Useful for bots. */
+
+        Board new_board = copy();
+        move_in.reverse(new_board);
+        return new_board;
+    }
 
     /* Fill the board with pieces */
     public abstract void initialise();

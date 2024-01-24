@@ -212,7 +212,7 @@ public class Pawn extends Piece {
             if (!chess_board.isSpaceEmpty(visible_space)) {
                 // allow diagonal killing move to be a pawn promotion move
                 if (visible_space.getY() == chess_board.getLength() - 1 || visible_space.getY() == 0) {
-                    possible_moves.add(new PromotePawnMove(location, visible_space, this));
+                    possible_moves.add(new PromotePawnMove(location, visible_space, this, chess_board.getPiece(visible_space)));
                 }
                 else {
                     possible_moves.add(new StandardMove(location, visible_space, this, chess_board.getPiece(visible_space)));

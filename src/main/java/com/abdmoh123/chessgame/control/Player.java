@@ -35,7 +35,7 @@ public abstract class Player {
                 if (!isCheck(chess_board)) {
                     // both the new king and rook space must not be in check
                     Move temp_move = new StandardMove(
-                        move.getOldLocation(), ((CastlingMove) move).getNewRookSpace(), move.getChessPiece()
+                        move.getOldLocation(), ((CastlingMove) move).getNewRookSpace(), move.getMovingPiece()
                     );
                     if (!doesMoveCauseCheck(temp_move, chess_board) && !doesMoveCauseCheck(move, chess_board)) {
                         filtered_moves.add(move);

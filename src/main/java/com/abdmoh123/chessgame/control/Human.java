@@ -48,12 +48,12 @@ public class Human extends Player {
         List<String> move_string_list = new ArrayList<>();
         for (Move move : move_list) {
             List<Space> similar_friendly_spaces = chess_board.getFriendlySpacesByPieceName(
-                move.getChessPiece().getName(), isWhite()
+                move.getMovingPiece().getName(), isWhite()
             );
 
             boolean be_precise = false;
             // if condition below is true, skip checking if move notation should be precise or not
-            if (move.getChessPiece() instanceof Pawn && move.getKillPoints() == 0) {
+            if (move.getMovingPiece() instanceof Pawn && move.getKillPoints() == 0) {
                 be_precise = false;
             }
             else if (similar_friendly_spaces.size() > 1) {

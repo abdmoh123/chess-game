@@ -7,27 +7,31 @@ import com.abdmoh123.chessgame.pieces.Pawn;
 import com.abdmoh123.chessgame.pieces.Piece;
 
 public abstract class Move {
-    private final Piece CHESS_PIECE;
+    private final Piece MOVING_PIECE;
+    private final Piece KILLED_PIECE;
     private final Space OLD_LOCATION;
     private final Space NEW_LOCATION;
     private int kill_points;
 
-    public Move(Space old_location_in, Space new_location_in, Piece piece_in) {
+    public Move(Space old_location_in, Space new_location_in, Piece moving_piece_in) {
         // Only use for quiet moves (no piece killed)
         this.OLD_LOCATION = old_location_in;
         this.NEW_LOCATION = new_location_in;
-        this.CHESS_PIECE = piece_in;
+        this.MOVING_PIECE = moving_piece_in;
+        this.KILLED_PIECE = null;
         this.kill_points = 0;
     }
-    public Move(Space old_location_in, Space new_location_in, Piece piece_in, Piece piece_killed) {
+    public Move(Space old_location_in, Space new_location_in, Piece moving_piece_in, Piece killed_piece_in) {
         // Useful when capturing material (piece killed)
         this.OLD_LOCATION = old_location_in;
         this.NEW_LOCATION = new_location_in;
-        this.CHESS_PIECE = piece_in;
-        if (piece_killed != null) {
-            this.kill_points = piece_killed.getValue();
+        this.MOVING_PIECE = moving_piece_in;
+        if (killed_piece_in != null) {
+            this.KILLED_PIECE = killed_piece_in;
+            this.kill_points = killed_piece_in.getValue();
         }
         else {
+            this.KILLED_PIECE = null;
             this.kill_points = 0;
         }
     }
@@ -53,9 +57,13 @@ public abstract class Move {
         return true;
     }
 
-    public Piece getChessPiece() {
+    public Piece getMovingPiece() {
         /* Return chess piece by value (cannot change attributes of original piece) */
-        return this.CHESS_PIECE.copy();
+        return this.MOVING_PIECE.copy();
+    }
+    public Piece getKilledPiece() {
+        /* Return chess piece by value (cannot change attributes of original piece) */
+        return this.KILLED_PIECE.copy();
     }
     public Space getOldLocation() {
         return this.OLD_LOCATION;
@@ -90,16 +98,17 @@ public abstract class Move {
         }
 
         // knight piece has different symbol to differentiate it from king
-        if (getChessPiece() instanceof Knight) {
+        if (getMovingPiece() instanceof Knight) {
             move_string = "N" + move_string;
         }
         // only pawn doesn't have a symbol
-        else if (!(getChessPiece() instanceof Pawn)) {
-            move_string = getChessPiece().getName().charAt(0) + move_string;
+        else if (!(getMovingPiece() instanceof Pawn)) {
+            move_string = getMovingPiece().getName().charAt(0) + move_string;
         }
 
         return move_string;
     }
 
     public abstract void apply(Board chess_board);
+    public abstract void reverse(Board chess_board);
 }

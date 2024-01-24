@@ -10,18 +10,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class King extends Piece {
-    private boolean castling_state;
+    private boolean cannot_castle;
 
     public King(boolean is_white_in) {
         super(is_white_in, 999);
-        this.castling_state = false;
+        this.cannot_castle = false;
     }
 
     public boolean hasCastled() {
-        return this.castling_state;
+        return this.cannot_castle;
     }
     public void disableCastling() {
-        this.castling_state = true;
+        this.cannot_castle = true;
+    }
+    public void enableCastling() {
+        this.cannot_castle = false;
     }
 
     private boolean isStartingPosition(Space location) {
@@ -154,7 +157,7 @@ public class King extends Piece {
     @Override
     public Piece copy() {
         King new_king = new King(isWhite());
-        new_king.castling_state = hasCastled();
+        new_king.cannot_castle = hasCastled();
         new_king.setVisibleSpaces(getVisibleSpaces());
         return new_king;
     }

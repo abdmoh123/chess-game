@@ -12,8 +12,11 @@ import com.abdmoh123.chessgame.pieces.Rook;
 public class PromotePawnMove extends Move {
     private Piece new_piece;
 
-    public PromotePawnMove(Space old_location_in, Space new_location_in, Pawn piece_in) {
-        super(old_location_in, new_location_in, piece_in);
+    public PromotePawnMove(Space old_location_in, Space new_location_in, Pawn moving_piece_in) {
+        super(old_location_in, new_location_in, moving_piece_in);
+    }
+    public PromotePawnMove(Space old_location_in, Space new_location_in, Pawn moving_piece_in, Piece piece_killed) {
+        super(old_location_in, new_location_in, moving_piece_in, piece_killed);
     }
 
     public Piece getNewPiece() {
@@ -45,5 +48,12 @@ public class PromotePawnMove extends Move {
         // update the board
         chess_board.updateSpace(getNewLocation(), getNewPiece());
         chess_board.updateSpace(getOldLocation(), null);
+    }
+
+    @Override
+    public void reverse(Board chess_board) {
+        // update the board
+        chess_board.updateSpace(getNewLocation(), getKilledPiece()); // can be null
+        chess_board.updateSpace(getOldLocation(), getMovingPiece());
     }
 }
