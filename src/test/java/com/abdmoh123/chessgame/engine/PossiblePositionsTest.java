@@ -83,6 +83,7 @@ public class PossiblePositionsTest {
         6 | 120921506
         7 | 3284294545
         */
+        // TODO: Make code pass this test
 
         Player[] players = {new RandomBot(true), new RandomBot(false)};
         Assert.assertEquals(expected_num_positions, countNumPositions(standard_board, 0, num_iterations, players));
