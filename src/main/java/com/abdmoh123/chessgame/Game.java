@@ -27,7 +27,7 @@ public class Game {
 
     public void runGame() {
         while (!hasEnded()) {
-            start_turn();
+            startTurn();
         }
 
         switch (game_state) {
@@ -45,54 +45,66 @@ public class Game {
         }
     }
 
-    private void start_turn() {
-        Player player;
-        if (isP1Turn()) {
+    private void startTurn() {
+        getBoard().display();
+
+        Player current_player = selectPlayer();
+
+        checkGameEnded(current_player);
+        if (hasEnded()) {
+            return;
+        }
+
+        displayPlayerMessage(current_player);
+
+        Move generated_move = current_player.startMove(getBoard());
+        getBoard().refreshEnPassant();
+        // apply after refreshing en passant so double pawn moves work correctly
+        generated_move.apply(getBoard());
+
+        current_player.addPoints(generated_move.getKillPoints());
+        recordMove(generated_move);
+    }
+
+    private void displayPlayerMessage(Player player) {
+        if (!isP1Turn()) {
             System.out.println("Player 1's turn:");
-            player = getPlayer(1);
         }
         else {
             System.out.println("Player 2's turn:");
-            player = getPlayer(2);
         }
 
-        getBoard().display();
-
-        if (isCheckMate(player, getBoard())) {
-            endGame(player.isWhite());
-            return;
-        }
-        if (isDraw(player, getBoard())) {
-            setState(GameState.DRAW);
-            return;
-        }
         if (player.isCheck(getBoard())) {
             System.out.println("Your king is in check!");
         }
+    }
 
-        Move generated_move = player.startMove(getBoard());
+    public Player selectPlayer() {
+        /* Automatically select the correct player for the turn */
 
-        // disable en passant for all pawns after player made a move
-        List<Space> pawn_spaces = getBoard().getAllSpacesByPieceName("Pawn");
-        for (Space pawn_space : pawn_spaces) {
-            Pawn pawn_piece = (Pawn) getBoard().getPiece(pawn_space);
-            pawn_piece.setEnPassant(false);
-            getBoard().updateSpace(pawn_space, pawn_piece);
+        if (isP1Turn()) {
+            this.p1_turn = !isP1Turn(); // switch turn for next time
+            return getPlayer(1);
         }
+        else {
+            this.p1_turn = !isP1Turn(); // switch turn for next time
+            return getPlayer(2);
+        }
+    }
 
-        generated_move.apply(getBoard());
+    public void checkGameEnded(Player player_in) {
+        /* Check if current position is a check mate or draw and set game state accordingly */
 
-        player.addPoints(generated_move.getKillPoints());
-        recordMove(generated_move);
-
-        switchTurn();
+        if (isCheckMate(player_in, getBoard())) {
+            endGame(player_in.isWhite());
+        }
+        if (isDraw(player_in, getBoard())) {
+            setState(GameState.DRAW);
+        }
     }
 
     public boolean isP1Turn() {
         return this.p1_turn;
-    }
-    public void switchTurn() {
-        this.p1_turn = !isP1Turn();
     }
 
     public List<Move> getMoveHistory() {

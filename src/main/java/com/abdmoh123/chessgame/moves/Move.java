@@ -46,7 +46,11 @@ public abstract class Move {
         if (!getMovingPiece().equals(chess_board.getPiece(getOldLocation()))) {
             return false;
         }
-        if (getKilledPiece() != null && !getKilledPiece().equals(chess_board.getPiece(getNewLocation()))) {
+        if (
+            getKilledPiece() != null &&
+            !(this instanceof EnPassantMove) &&
+            !getKilledPiece().equals(chess_board.getPiece(getNewLocation()))
+        ) {
             return false;
         }
 

@@ -19,9 +19,10 @@ import com.abdmoh123.chessgame.moves.Move;
 
 @RunWith(Parameterized.class)
 public class PossiblePositionsTest {
-    private int num_iterations;
+    private int depth;
     private int expected_num_positions;
     private Board standard_board;
+    private static boolean is_depth_odd;
 
     @Before
     public void init() {
@@ -29,17 +30,27 @@ public class PossiblePositionsTest {
         standard_board.initialise();
     }
 
-    private static int countNumPositions(Board chess_board, int current_iteration, int max_iterations, Player[] players) {
-        if (current_iteration == max_iterations) {
+    private static int countNumPositions(Board chess_board, int depth, Player[] players) {
+        if (depth == 0) {
             return 1;
         }
 
         Player current_player;
-        if (current_iteration % 2 == 0) {
-            current_player = players[0];
+        if (is_depth_odd) {
+            if (depth % 2 == 1) {
+                current_player = players[0];
+            }
+            else {
+                current_player = players[1];
+            }
         }
         else {
-            current_player = players[1];
+            if (depth % 2 == 0) {
+                current_player = players[0];
+            }
+            else {
+                current_player = players[1];
+            }
         }
 
         int num_positions = 0;
@@ -47,16 +58,17 @@ public class PossiblePositionsTest {
         for (Space space : friendly_spaces) {
             List<Move> legal_moves = current_player.getLegalMoves(space, chess_board);
             for (Move move : legal_moves) {
-                num_positions += countNumPositions(chess_board.after(move), current_iteration + 1, max_iterations, players);
+                num_positions += countNumPositions(chess_board.after(move), depth - 1, players);
             }
         }
 
         return num_positions;
     }
 
-    public PossiblePositionsTest(int num_iterations, int expected_num_positions) {
-        this.num_iterations = num_iterations;
-        this.expected_num_positions = expected_num_positions;
+    public PossiblePositionsTest(int depth_in, int expected_num_positions_in) {
+        this.depth = depth_in;
+        this.expected_num_positions = expected_num_positions_in;
+        is_depth_odd = depth_in % 2 == 1;
     }
 
     @Parameterized.Parameters
@@ -66,7 +78,8 @@ public class PossiblePositionsTest {
             { 1, 20 },
             { 2, 400 },
             { 3, 8902 },
-            { 4, 197742 }
+            { 4, 197742 },
+            { 5, 4897256 }
         });
     }
 
@@ -86,6 +99,6 @@ public class PossiblePositionsTest {
         // TODO: Make code pass this test
 
         Player[] players = {new RandomBot(true), new RandomBot(false)};
-        Assert.assertEquals(expected_num_positions, countNumPositions(standard_board, 0, num_iterations, players));
+        Assert.assertEquals(expected_num_positions, countNumPositions(standard_board, this.depth, players));
     }
 }

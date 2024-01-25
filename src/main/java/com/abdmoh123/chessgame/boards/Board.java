@@ -211,16 +211,27 @@ public abstract class Board {
             spaces[space_in.getY()][space_in.getX()] = piece_in;
         }
     }
+    public void refreshEnPassant() {
+        /* Disable en passant for all pawns after player made a move */
+
+        List<Space> pawn_spaces = getAllSpacesByPieceName("Pawn");
+        for (Space pawn_space : pawn_spaces) {
+            Pawn pawn_piece = (Pawn) getPiece(pawn_space);
+            pawn_piece.setEnPassant(false);
+            updateSpace(pawn_space, pawn_piece);
+        }
+    }
 
     public void display() {
         /* Display board layout on terminal */
 
+        System.out.print("\n");
         for (int j = getLength() - 1; j >= 0; --j) {
             for (int i = 0; i < getLength(); ++i) {
                 Space space = new Space(i, j);
 
                 if (isSpaceEmpty(space)) {
-                    System.out.print("o ");
+                    System.out.print(". ");
                 }
                 else {
                     char piece_symbol = ' ';
@@ -230,17 +241,23 @@ public abstract class Board {
                     else {
                         piece_symbol = getPiece(space).getName().charAt(0);
                     }
+                    // white is upper case, black is lower case
+                    if (!getPiece(space).isWhite()) {
+                        piece_symbol = Character.toLowerCase(piece_symbol);
+                    }
                     System.out.print(piece_symbol + " ");
                 }
             }
             System.out.print("\n");
         }
+        System.out.print("\n");
     }
 
     public Board after(Move move_in) {
         /* Create a temporary board with the move applied. Useful for handling checks and pinned pieces. */
 
         Board new_board = copy();
+        new_board.refreshEnPassant();
         move_in.apply(new_board);
         return new_board;
     }

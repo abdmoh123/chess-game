@@ -286,6 +286,14 @@ public class Pawn extends Piece {
             }
         }
 
+        // en passant moves
+        List<Move> en_passant_moves = getEnPassantMoves(current_location_in, chess_board);
+        for (Move move : en_passant_moves) {
+            if (move.getNewLocation().equals(new_location_in)) {
+                return true;
+            }
+        }
+
         return false;
     }
 
