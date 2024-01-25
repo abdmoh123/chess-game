@@ -48,7 +48,7 @@ public class CastlingMove extends Move {
     }
 
     @Override
-    public void reverse(Board chess_board) {
+    public void undo(Board chess_board) {
         Rook moving_rook = (Rook) chess_board.getPiece(getNewRookSpace());
         King moving_king = (King) getMovingPiece();
         // allow castling again

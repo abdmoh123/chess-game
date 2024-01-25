@@ -22,6 +22,6 @@ public class BoardTest {
         Board standard_board = new StandardBoard();
         standard_board.initialise();
 
-        Assert.assertArrayEquals(expected_standard_board_contents, standard_board.getAllSpaces());
+        Assert.assertArrayEquals(expected_standard_board_contents, standard_board.getContents());
     }
 }

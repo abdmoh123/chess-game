@@ -89,7 +89,7 @@ public class PromotePawnMove extends Move {
     }
 
     @Override
-    public void reverse(Board chess_board) {
+    public void undo(Board chess_board) {
         // update the board
         chess_board.updateSpace(getNewLocation(), getKilledPiece()); // can be null
         chess_board.updateSpace(getOldLocation(), getMovingPiece());

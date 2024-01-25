@@ -21,7 +21,7 @@ public class DoublePawnMove extends Move {
     }
 
     @Override
-    public void reverse(Board chess_board) {
+    public void undo(Board chess_board) {
         Pawn moving_pawn = (Pawn) getMovingPiece();
         // prevent pawn from being taken through en passant rule
         moving_pawn.setEnPassant(false);

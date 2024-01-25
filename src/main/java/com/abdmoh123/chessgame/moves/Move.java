@@ -134,5 +134,5 @@ public abstract class Move {
     }
 
     public abstract void apply(Board chess_board);
-    public abstract void reverse(Board chess_board);
+    public abstract void undo(Board chess_board);
 }

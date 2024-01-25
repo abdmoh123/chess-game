@@ -22,32 +22,36 @@ public class PossiblePositionsTest {
     private int depth;
     private int expected_num_positions;
     private Board standard_board;
+    private Player[] players;
 
     @Before
     public void init() {
-        standard_board = new StandardBoard();
-        standard_board.initialise();
+        this.standard_board = new StandardBoard();
+        this.standard_board.initialise();
+        this.players = new Player[]{new RandomBot(true), new RandomBot(false)};
     }
 
-    private int countNumPositions(Board chess_board, int current_depth, Player[] players) {
+    private int countNumPositions(int current_depth) {
         if (current_depth == 0) {
             return 1;
         }
 
         Player current_player;
         if ((this.depth - current_depth) % 2 == 0) {
-            current_player = players[0];
+            current_player = this.players[0];
         }
         else {
-            current_player = players[1];
+            current_player = this.players[1];
         }
 
         int num_positions = 0;
-        List<Space> friendly_spaces = chess_board.getFriendlySpaces(current_player.isWhite());
+        List<Space> friendly_spaces = this.standard_board.getFriendlySpaces(current_player.isWhite());
         for (Space space : friendly_spaces) {
-            List<Move> legal_moves = current_player.getLegalMoves(space, chess_board);
+            List<Move> legal_moves = current_player.getLegalMoves(space, this.standard_board);
             for (Move move : legal_moves) {
-                num_positions += countNumPositions(chess_board.after(move), current_depth - 1, players);
+                this.standard_board = this.standard_board.after(move);
+                num_positions += countNumPositions(current_depth - 1);
+                this.standard_board = this.standard_board.before(move);
             }
         }
 
@@ -86,7 +90,6 @@ public class PossiblePositionsTest {
         */
         // TODO: Make code pass this test
 
-        Player[] players = {new RandomBot(true), new RandomBot(false)};
-        Assert.assertEquals(expected_num_positions, countNumPositions(standard_board, this.depth, players));
+        Assert.assertEquals(expected_num_positions, countNumPositions(this.depth));
     }
 }

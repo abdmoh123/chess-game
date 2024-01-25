@@ -21,7 +21,7 @@ public abstract class Board {
         this.LENGTH = length_in;
     }
 
-    public Piece[][] getAllSpaces() {
+    public Piece[][] getContents() {
         return spaces;
     }
     public List<Space> getAllSpacesWithPieces() {
@@ -265,7 +265,7 @@ public abstract class Board {
         /* Undo a move on a board. Useful for bots. */
 
         Board new_board = copy();
-        move_in.reverse(new_board);
+        move_in.undo(new_board);
         return new_board;
     }
 

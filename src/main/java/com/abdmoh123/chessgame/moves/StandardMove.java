@@ -33,7 +33,7 @@ public class StandardMove extends Move {
     }
 
     @Override
-    public void reverse(Board chess_board) {
+    public void undo(Board chess_board) {
         Piece moving_piece = getMovingPiece();
 
         // allow castling if rook moves back to starting position

@@ -26,7 +26,7 @@ public class EnPassantMove extends Move {
     }
 
     @Override
-    public void reverse(Board chess_board) {
+    public void undo(Board chess_board) {
         // killed pawn is brought back an is en-passant-able again
         Pawn killed_pawn = (Pawn) getKilledPiece();
         killed_pawn.setEnPassant(true);
