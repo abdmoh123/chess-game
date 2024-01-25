@@ -4,7 +4,6 @@ import com.abdmoh123.chessgame.boards.Board;
 import com.abdmoh123.chessgame.boards.Space;
 import com.abdmoh123.chessgame.control.Player;
 import com.abdmoh123.chessgame.moves.Move;
-import com.abdmoh123.chessgame.pieces.Pawn;
 
 import java.util.ArrayList;
 import java.util.List;
