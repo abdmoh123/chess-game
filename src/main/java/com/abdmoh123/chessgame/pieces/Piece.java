@@ -18,8 +18,8 @@ public abstract class Piece {
         this.visible_spaces = new ArrayList<>();
     }
 
-    public boolean canSee(Space current_location_in, Space new_location_in, Board chess_board) {
-        /* Check if a piece can move to a given location */
+    public boolean canMove(Space current_location_in, Space new_location_in, Board chess_board) {
+        /* Check if a piece can move to a given location (doesn't take into account checks) */
 
         computeVision(current_location_in, chess_board);
 

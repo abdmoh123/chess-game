@@ -19,6 +19,12 @@ public class Pawn extends Piece {
         this.en_passant = false;
     }
 
+    public int getStartingRow() {
+        if (isWhite()) {
+            return 1;
+        }
+        return 6;
+    }
     public boolean isEnPassant() {
         return this.en_passant;
     }
@@ -117,7 +123,7 @@ public class Pawn extends Piece {
         return diagonal_spaces;
     }
 
-    public Move getForwardMove(Space location, Board chess_board) {
+    public Move[] getForwardMove(Space location, Board chess_board) {
         int x_loc = location.getX();
         int new_y_loc = location.getY();
 
@@ -138,9 +144,15 @@ public class Pawn extends Piece {
 
         // if pawn reaches horizontal edge of board, it can promote
         if (new_space.getY() == chess_board.getLength() - 1 || new_space.getY() == 0) {
-            return new PromotePawnMove(location, new_space, this);
+            // 4 pieces to promote to
+            return new Move[] {
+                new PromotePawnMove(location, new_space, this, 1),
+                new PromotePawnMove(location, new_space, this, 2),
+                new PromotePawnMove(location, new_space, this, 3),
+                new PromotePawnMove(location, new_space, this, 4)
+            };
         }
-        return new StandardMove(location, new_space, this, chess_board.getPiece(new_space));
+        return new Move[]{new StandardMove(location, new_space, this, chess_board.getPiece(new_space))};
     }
 
     public DoublePawnMove getDoubleMove(Space location, Board chess_board) {
@@ -191,9 +203,11 @@ public class Pawn extends Piece {
         List<Move> possible_moves = new ArrayList<>();
 
         /* Basic forward moves (+ promotion) */
-        Move forward_move = getForwardMove(location, chess_board);
-        if (forward_move != null) {
-            possible_moves.add(forward_move);
+        Move[] forward_moves = getForwardMove(location, chess_board);
+        if (forward_moves != null) {
+            for (Move move : forward_moves) {
+                possible_moves.add(move);
+            }
         }
 
         /* Allow pawn to move 2 squares if at starting position */
@@ -212,7 +226,16 @@ public class Pawn extends Piece {
             if (!chess_board.isSpaceEmpty(visible_space)) {
                 // allow diagonal killing move to be a pawn promotion move
                 if (visible_space.getY() == chess_board.getLength() - 1 || visible_space.getY() == 0) {
-                    possible_moves.add(new PromotePawnMove(location, visible_space, this, chess_board.getPiece(visible_space)));
+                    // 4 pieces to promote to
+                    Move[] promotion_moves = {
+                        new PromotePawnMove(location, visible_space, this, 1, chess_board.getPiece(visible_space)),
+                        new PromotePawnMove(location, visible_space, this, 2, chess_board.getPiece(visible_space)),
+                        new PromotePawnMove(location, visible_space, this, 3, chess_board.getPiece(visible_space)),
+                        new PromotePawnMove(location, visible_space, this, 4, chess_board.getPiece(visible_space))
+                    };
+                    for (Move move : promotion_moves) {
+                        possible_moves.add(move);
+                    }
                 }
                 else {
                     possible_moves.add(new StandardMove(location, visible_space, this, chess_board.getPiece(visible_space)));
@@ -221,6 +244,49 @@ public class Pawn extends Piece {
         }
 
         return possible_moves;
+    }
+
+    @Override
+    public boolean canMove(Space current_location_in, Space new_location_in, Board chess_board) {
+        /* Overriden due to complex pawn behaviour */
+
+        int forward_offset;
+        int double_forward_offset;
+        if (isWhite()) {
+            forward_offset = 1;
+            double_forward_offset = 2;
+        }
+        else {
+            forward_offset = -1;
+            double_forward_offset = -2;
+        }
+
+        // basic forward move
+        if (
+            new_location_in.getY() == current_location_in.getY() + forward_offset &&
+            new_location_in.getX() == current_location_in.getX()
+        ) {
+            return chess_board.isSpaceEmpty(new_location_in);
+        }
+
+        // double forward move
+        int starting_row = getStartingRow();
+        if (
+            new_location_in.getY() == current_location_in.getY() + double_forward_offset &&
+            new_location_in.getX() == current_location_in.getX()
+        ) {
+            return current_location_in.getY() == starting_row && chess_board.isSpaceEmpty(new_location_in);
+        }
+
+        // diagonal moves
+        List<Space> diagonal_spaces = getDiagonalSpaces(current_location_in, chess_board);
+        for (Space space : diagonal_spaces) {
+            if (space.equals(new_location_in)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override

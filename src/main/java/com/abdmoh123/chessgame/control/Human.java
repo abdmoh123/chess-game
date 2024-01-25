@@ -3,7 +3,6 @@ package com.abdmoh123.chessgame.control;
 import com.abdmoh123.chessgame.boards.Board;
 import com.abdmoh123.chessgame.boards.Space;
 import com.abdmoh123.chessgame.moves.Move;
-import com.abdmoh123.chessgame.moves.PromotePawnMove;
 import com.abdmoh123.chessgame.pieces.Pawn;
 import com.abdmoh123.chessgame.pieces.Piece;
 
@@ -73,27 +72,6 @@ public class Human extends Player {
         return move_string_list;
     }
 
-    private Move promotePawn(PromotePawnMove chosen_move) {
-        /* Applies pawn promotion through user input */
-        
-        int choice = 0;
-        while (choice <= 0 || choice > 4) {
-            System.out.println("You have promoted a pawn!\nPlease choose a new piece:");
-            System.out.println("1: Queen\n2: Rook\n3: Bishop\n4: Knight");
-
-            String str_choice = SCANNER.nextLine();
-            try {
-                choice = Integer.parseInt(str_choice);
-            }
-            catch (Exception e) {
-                System.out.println("Input must be integer!");
-            }
-        }
-        // apply the chosen piece to the move
-        chosen_move.setNewPiece(choice, isWhite());
-        return chosen_move;
-    }
-
     @Override
     public Move startMove(Board chess_board) {
         while (true) {
@@ -152,9 +130,6 @@ public class Human extends Player {
 
             // check if move involves pawn promotion before returning it
             if (!go_back) {
-                if (chosen_move instanceof PromotePawnMove) {
-                    chosen_move = promotePawn((PromotePawnMove) chosen_move);
-                }
                 return chosen_move;
             }
         }

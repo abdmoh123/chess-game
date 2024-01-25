@@ -46,11 +46,11 @@ public abstract class Move {
         if (!getMovingPiece().equals(chess_board.getPiece(getOldLocation()))) {
             return false;
         }
-        if (!getKilledPiece().equals(chess_board.getPiece(getNewLocation()))) {
+        if (getKilledPiece() != null && !getKilledPiece().equals(chess_board.getPiece(getNewLocation()))) {
             return false;
         }
 
-        return getMovingPiece().canSee(getOldLocation(), getNewLocation(), chess_board);
+        return getMovingPiece().canMove(getOldLocation(), getNewLocation(), chess_board);
     }
     public static boolean isValid(Board chess_board, Space old_location_in, Space new_location_in) {
         /* Quick and simple validity check without creating a move */
@@ -76,11 +76,13 @@ public abstract class Move {
     }
 
     public Piece getMovingPiece() {
-        /* Return chess piece by value (cannot change attributes of original piece) */
+        /* Return chess piece by value (cannot change attributes of original piece) unless null */
+        if (this.MOVING_PIECE == null) { return null; }
         return this.MOVING_PIECE.copy();
     }
     public Piece getKilledPiece() {
-        /* Return chess piece by value (cannot change attributes of original piece) */
+        /* Return chess piece by value (cannot change attributes of original piece) unless null */
+        if (this.KILLED_PIECE == null) { return null; }
         return this.KILLED_PIECE.copy();
     }
     public Space getOldLocation() {

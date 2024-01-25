@@ -2,11 +2,10 @@ package com.abdmoh123.chessgame.boards;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.Assert;
 
 import com.abdmoh123.chessgame.pieces.Piece;
 import com.abdmoh123.chessgame.utils.ChessCSVReader;
-
-import org.junit.Assert;
 
 public class BoardTest {
     Piece[][] expected_standard_board_contents;
