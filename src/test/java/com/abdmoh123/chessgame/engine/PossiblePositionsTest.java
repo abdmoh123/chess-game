@@ -22,7 +22,6 @@ public class PossiblePositionsTest {
     private int depth;
     private int expected_num_positions;
     private Board standard_board;
-    private static boolean is_depth_odd;
 
     @Before
     public void init() {
@@ -30,27 +29,17 @@ public class PossiblePositionsTest {
         standard_board.initialise();
     }
 
-    private static int countNumPositions(Board chess_board, int depth, Player[] players) {
-        if (depth == 0) {
+    private int countNumPositions(Board chess_board, int current_depth, Player[] players) {
+        if (current_depth == 0) {
             return 1;
         }
 
         Player current_player;
-        if (is_depth_odd) {
-            if (depth % 2 == 1) {
-                current_player = players[0];
-            }
-            else {
-                current_player = players[1];
-            }
+        if ((this.depth - current_depth) % 2 == 0) {
+            current_player = players[0];
         }
         else {
-            if (depth % 2 == 0) {
-                current_player = players[0];
-            }
-            else {
-                current_player = players[1];
-            }
+            current_player = players[1];
         }
 
         int num_positions = 0;
@@ -58,7 +47,7 @@ public class PossiblePositionsTest {
         for (Space space : friendly_spaces) {
             List<Move> legal_moves = current_player.getLegalMoves(space, chess_board);
             for (Move move : legal_moves) {
-                num_positions += countNumPositions(chess_board.after(move), depth - 1, players);
+                num_positions += countNumPositions(chess_board.after(move), current_depth - 1, players);
             }
         }
 
@@ -68,7 +57,6 @@ public class PossiblePositionsTest {
     public PossiblePositionsTest(int depth_in, int expected_num_positions_in) {
         this.depth = depth_in;
         this.expected_num_positions = expected_num_positions_in;
-        is_depth_odd = depth_in % 2 == 1;
     }
 
     @Parameterized.Parameters
