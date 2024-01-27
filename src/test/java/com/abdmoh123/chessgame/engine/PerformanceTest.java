@@ -36,8 +36,8 @@ public class PerformanceTest {
         parameters.add(new Object[]{1, new int[]{20, 0, 0}});
         parameters.add(new Object[]{2, new int[]{400, 0, 0}});
         parameters.add(new Object[]{3, new int[]{8902, 34, 12}}); // nodes = 8346/8902, captures = 22/34, checks = 8/12
-        parameters.add(new Object[]{4, new int[]{197742, 1576, 469}});
-        parameters.add(new Object[]{5, new int[]{4897256, 82719, 27351}});
+        parameters.add(new Object[]{4, new int[]{197281, 1576, 469}});
+        parameters.add(new Object[]{5, new int[]{4865609, 82719, 27351}});
 
         return parameters;
     }
