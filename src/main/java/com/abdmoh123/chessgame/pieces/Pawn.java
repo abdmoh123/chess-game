@@ -25,6 +25,31 @@ public class Pawn extends Piece {
         }
         return 6;
     }
+    public boolean isStartingPosition(int current_row) {
+        return (current_row == getStartingRow());
+    }
+
+    private int getForwardOffset() {
+        int forward_offset;
+        if (isWhite()) {
+            forward_offset = 1;
+        }
+        else {
+            forward_offset = -1;
+        }
+        return forward_offset;
+    }
+    private int getDoubleForwardOffset() {
+        int double_forward_offset;
+        if (isWhite()) {
+            double_forward_offset = 2;
+        }
+        else {
+            double_forward_offset = -2;
+        }
+        return double_forward_offset;
+    }
+
     public boolean isEnPassant() {
         return this.en_passant;
     }
@@ -36,21 +61,14 @@ public class Pawn extends Piece {
         /* Search for possible en passant moves. Return empty list if none are found */
 
         int x_loc = location.getX();
-        int y_loc, forward_y_loc;
-        y_loc = forward_y_loc = location.getY();
+        int y_loc = location.getY();
+
+        int forward_offset = getForwardOffset();
 
         List<Move> en_passant_moves = new ArrayList<>();
 
-        // move upwards if white
-        if (isWhite()) {
-            ++forward_y_loc;
-        }
-        // move downwards if black
-        else {
-            --forward_y_loc;
-        }
         
-        if (!chess_board.isSpaceWithinBoard(new Space(x_loc, forward_y_loc))) {
+        if (!chess_board.isSpaceWithinBoard(new Space(x_loc, y_loc + forward_offset))) {
             return en_passant_moves;
         }
 
@@ -58,7 +76,7 @@ public class Pawn extends Piece {
         // only check for en passant to left if space exists on the left
         if (x_loc > 0) {
             horizontal_space = new Space(x_loc - 1, y_loc);
-            diagonal_space = new Space(x_loc - 1, forward_y_loc);
+            diagonal_space = new Space(x_loc - 1, y_loc + forward_offset);
 
             if (chess_board.isSpaceEnemy(horizontal_space, isWhite())) {
                 if (chess_board.getPiece(horizontal_space) instanceof Pawn) {
@@ -72,7 +90,7 @@ public class Pawn extends Piece {
         // only check for en passant to right if space exists on the right
         if (x_loc < chess_board.getLength() - 1) {
             horizontal_space = new Space(x_loc + 1, y_loc);
-            diagonal_space = new Space(x_loc + 1, forward_y_loc);
+            diagonal_space = new Space(x_loc + 1, y_loc + forward_offset);
 
             if (chess_board.isSpaceEnemy(horizontal_space, isWhite())) {
                 if (chess_board.getPiece(horizontal_space) instanceof Pawn) {
@@ -91,32 +109,25 @@ public class Pawn extends Piece {
         /* Search for killing moves (diagonally). Return empty list if none are found */
 
         int x_loc = location.getX();
-        int new_y_loc = location.getY();
+        int y_loc = location.getY();
+
+        int forward_offset = getForwardOffset();
 
         List<Space> diagonal_spaces = new ArrayList<>();
-
-        // move upwards if white
-        if (isWhite()) {
-            ++new_y_loc;
-        }
-        // move downwards if black
-        else {
-            --new_y_loc;
-        }
         
-        if (!chess_board.isSpaceWithinBoard(new Space(x_loc, new_y_loc))) {
+        if (!chess_board.isSpaceWithinBoard(new Space(x_loc, y_loc + forward_offset))) {
             return diagonal_spaces;
         }
 
         Space diagonal_space;
         // only check for attack to left if space exists on the left
         if (x_loc > 0) {
-            diagonal_space = new Space(x_loc - 1, new_y_loc);
+            diagonal_space = new Space(x_loc - 1, y_loc + forward_offset);
             diagonal_spaces.add(diagonal_space);
         }
         // only check for attack to right if space exists on the right
         if (x_loc < 7) {
-            diagonal_space = new Space(x_loc + 1, new_y_loc);
+            diagonal_space = new Space(x_loc + 1, y_loc + forward_offset);
             diagonal_spaces.add(diagonal_space);
         }
 
@@ -125,17 +136,10 @@ public class Pawn extends Piece {
 
     public Move[] getForwardMove(Space location, Board chess_board) {
         int x_loc = location.getX();
-        int new_y_loc = location.getY();
+        int y_loc = location.getY();
 
-        // move upwards if white
-        if (isWhite()) {
-            ++new_y_loc;
-        }
-        // move downwards if black
-        else {
-            --new_y_loc;
-        }
-        Space new_space = new Space(x_loc, new_y_loc);
+        int forward_offset = getForwardOffset();
+        Space new_space = new Space(x_loc, y_loc + forward_offset);
 
         // cannot move forward if out of bounds or if space is not empty (cannot kill enemy piece)
         if (!chess_board.isSpaceWithinBoard(new_space) || !chess_board.isSpaceEmpty(new_space)) {
@@ -164,19 +168,15 @@ public class Pawn extends Piece {
             return null;
         }
 
+        int forward_offset = getForwardOffset();
+        int double_forward_offset = getDoubleForwardOffset();
+
         // starting position for white pawn should be on row 2 (1/7)
-        if (isWhite() && y_loc == 1) {
-            Space new_space = new Space(x_loc, y_loc + 2);
-            // cannot move forward if space is not empty (cannot kill enemy pieces)
-            if (chess_board.isSpaceEmpty(new_space)) {
-                return new DoublePawnMove(location, new_space, this);
-            }
-        }
-        // starting position for black pawn should be on row 7 (6/7)
-        else if (!isWhite() && y_loc == 6) {
-            Space new_space = new Space(x_loc, y_loc - 2);
-            // cannot move forward if space is not empty (cannot kill enemy pieces)
-            if (chess_board.isSpaceEmpty(new_space)) {
+        if (isStartingPosition(y_loc)) {
+            Space new_space = new Space(x_loc, y_loc + double_forward_offset);
+            Space space_in_front = new Space(x_loc, y_loc + forward_offset);
+            // cannot move forward if space is not empty (cannot kill enemy pieces), also cannot move if blocked by other piece
+            if (chess_board.isSpaceEmpty(new_space) && chess_board.isSpaceEmpty(space_in_front)) {
                 return new DoublePawnMove(location, new_space, this);
             }
         }
@@ -250,16 +250,8 @@ public class Pawn extends Piece {
     public boolean canMove(Space current_location_in, Space new_location_in, Board chess_board) {
         /* Overriden due to complex pawn behaviour */
 
-        int forward_offset;
-        int double_forward_offset;
-        if (isWhite()) {
-            forward_offset = 1;
-            double_forward_offset = 2;
-        }
-        else {
-            forward_offset = -1;
-            double_forward_offset = -2;
-        }
+        int forward_offset = getForwardOffset();
+        int double_forward_offset = getDoubleForwardOffset();
 
         // basic forward move
         if (
@@ -280,8 +272,8 @@ public class Pawn extends Piece {
 
         // diagonal moves
         List<Space> diagonal_spaces = getDiagonalSpaces(current_location_in, chess_board);
-        for (Space space : diagonal_spaces) {
-            if (space.equals(new_location_in)) {
+        for (Space diagonal_space : diagonal_spaces) {
+            if (diagonal_space.equals(new_location_in) && chess_board.isSpaceEnemy(diagonal_space, isWhite())) {
                 return true;
             }
         }

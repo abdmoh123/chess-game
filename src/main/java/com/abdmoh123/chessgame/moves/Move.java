@@ -81,11 +81,13 @@ public abstract class Move {
 
     public Piece getMovingPiece() {
         /* Return chess piece by value (cannot change attributes of original piece) unless null */
+        
         if (this.MOVING_PIECE == null) { return null; }
         return this.MOVING_PIECE.copy();
     }
     public Piece getKilledPiece() {
         /* Return chess piece by value (cannot change attributes of original piece) unless null */
+
         if (this.KILLED_PIECE == null) { return null; }
         return this.KILLED_PIECE.copy();
     }
