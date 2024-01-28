@@ -2,6 +2,7 @@ package com.abdmoh123.chessgame.control;
 
 import com.abdmoh123.chessgame.boards.Board;
 import com.abdmoh123.chessgame.boards.StandardBoard;
+import com.abdmoh123.chessgame.control.engine.Engine;
 
 import org.junit.Before;
 import org.junit.Test;
