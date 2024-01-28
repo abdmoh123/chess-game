@@ -142,7 +142,9 @@ public class Game {
         if (has_white_lost) {
             setState(GameState.BLACK_WIN);
         }
-        setState(GameState.WHITE_WIN);
+        else {
+            setState(GameState.WHITE_WIN);
+        }
     }
 
     public boolean isCheckMate(Player player_in) {
