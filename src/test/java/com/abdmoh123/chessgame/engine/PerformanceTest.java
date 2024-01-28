@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import com.abdmoh123.chessgame.boards.Board;
 import com.abdmoh123.chessgame.boards.Space;
 import com.abdmoh123.chessgame.boards.StandardBoard;
+import com.abdmoh123.chessgame.control.Engine;
 import com.abdmoh123.chessgame.control.Player;
 import com.abdmoh123.chessgame.control.RandomBot;
 import com.abdmoh123.chessgame.moves.Move;
@@ -20,7 +21,7 @@ import com.abdmoh123.chessgame.moves.Move;
 public class PerformanceTest {
     private int depth;
     private int[] expected_results;
-    private Board standard_board;
+    private Engine chess_engine;
     private Player[] players;
 
     public PerformanceTest(int depth_in, int[] expected_results_in) {
@@ -36,16 +37,17 @@ public class PerformanceTest {
         // parameters.add(new Object[]{1, new int[]{20, 0, 0}});
         // parameters.add(new Object[]{2, new int[]{400, 0, 0}});
         // parameters.add(new Object[]{3, new int[]{8902, 34, 12}});
-        parameters.add(new Object[]{4, new int[]{197281, 1576, 469}});
-        // parameters.add(new Object[]{5, new int[]{4865609, 82719, 27351}});
+        // parameters.add(new Object[]{4, new int[]{197281, 1576, 469}});
+        parameters.add(new Object[]{5, new int[]{4865609, 82719, 27351}});
 
         return parameters;
     }
 
     @Before
     public void init() {
-        this.standard_board = new StandardBoard();
-        this.standard_board.initialise();
+        Board chess_board = new StandardBoard();
+        chess_board.initialise();
+        this.chess_engine = new Engine(chess_board);
 
         this.players = new Player[]{new RandomBot(true), new RandomBot(false)};
     }
@@ -58,33 +60,31 @@ public class PerformanceTest {
             return new int[]{1, 0, 0};
         }
 
-        Player current_player;
+        boolean is_white_turn;
         if ((this.depth - depth_in) % 2 == 0) {
-            current_player = this.players[0];
+            is_white_turn = true;
         }
         else {
-            current_player = this.players[1];
+            is_white_turn = false;
         }
 
         int nodes = 0;
         int captures = 0;
         int checks = 0;
 
-        List<Space> friendly_spaces = this.standard_board.getFriendlySpaces(current_player.isWhite());
+        List<Space> friendly_spaces = chess_engine.getBoard().getFriendlySpaces(is_white_turn);
         for (Space space : friendly_spaces) {
-            List<Move> legal_moves = current_player.getLegalMoves(space, this.standard_board);
+            List<Move> legal_moves = chess_engine.generateLegalMoves(space, is_white_turn);
             for (Move move : legal_moves) {
                 if (move.getKillPoints() > 0) { ++captures; } // update captures count
-                if (current_player.isEnemyCheckAfterMove(move, standard_board)) { ++checks; } // update checks count
+                if (chess_engine.isCheckAfterMove(move, !is_white_turn)) { ++checks; } // update checks count
 
-                this.standard_board = this.standard_board.after(move);
-
+                chess_engine.applyMoveToBoard(move);
                 int[] results_array = runPerfTest(depth_in - 1);
                 nodes += results_array[0];
                 captures += results_array[1];
                 checks += results_array[2];
-
-                this.standard_board = this.standard_board.before(move);
+                chess_engine.undoMoveToBoard(move);
             }
         }
 
@@ -128,10 +128,10 @@ public class PerformanceTest {
             current_player = this.players[1];
         }
 
-        List<Space> friendly_spaces = this.standard_board.getFriendlySpaces(current_player.isWhite());
+        List<Space> friendly_spaces = chess_engine.getBoard().getFriendlySpaces(current_player.isWhite());
         List<Move> legal_moves = new ArrayList<>();
         for (Space space : friendly_spaces) {
-            legal_moves.addAll(current_player.getLegalMoves(space, this.standard_board));
+            legal_moves.addAll(chess_engine.generateLegalMoves(space, current_player.isWhite()));
         }
 
         // print header of test results
@@ -143,9 +143,9 @@ public class PerformanceTest {
 
         List<Integer> nodes_list = new ArrayList<>();
         for (Move move : legal_moves) {
-            this.standard_board = this.standard_board.after(move);
+            chess_engine.applyMoveToBoard(move);
             nodes_list.add(runPerfTest(depth_in - 1)[0]); // 0 index = number of possible move combinations
-            this.standard_board = this.standard_board.before(move);
+            chess_engine.undoMoveToBoard(move);
         }
         displayDivideResults(legal_moves, nodes_list);
     }
@@ -163,7 +163,8 @@ public class PerformanceTest {
             actual_results[2], expected_results[2]
         );
 
-        /* depth 4 divide errors
+        /* [Depth 4]: Nodes = 196165/197281, Captures = 1416/1576, Checks = 481/469
+         * Divide test depth 4
          * a2a3 8419/8457
          * a2a4 9287/9345
          * b1c3 9711/9755
@@ -184,6 +185,29 @@ public class PerformanceTest {
          * g2g4 9286/9328
          * h2h3 8419/8457
          * h2h4 9287/9329
+         * 
+         * [Depth 5]: Nodes = 4829627/4865609, Captures = 78669/82719, Checks = 27696/27351
+         * Divide test depth 5
+         * a2a3: 180043
+         * a2a4: 215603
+         * b1c3: 233347
+         * b1a3: 197489
+         * b2b3: 213934
+         * b2b4: 214930
+         * c2c3: 220528
+         * c2c4: 238264
+         * d2d3: 325509
+         * d2d4: 358492
+         * e2e3: 399339
+         * e2e4: 401692
+         * f2f3: 177870
+         * f2f4: 197283
+         * g1h3: 197307
+         * g1f3: 232090
+         * g2g3: 215889
+         * g2g4: 212768
+         * h2h3: 180019
+         * h2h4: 217231
          */
 
         runPerfTestDivide(depth);

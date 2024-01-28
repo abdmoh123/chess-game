@@ -12,14 +12,16 @@ import java.util.List;
 
 public class BotPlayerTest {
     List<BotPlayer> bot_list = new ArrayList<>();
-    Board chess_board = new StandardBoard();
+    Engine chess_engine;
 
     @Before
     public void init() {
         for (BotType bot_type : BotType.values()) {
             bot_list.add(BotFactory.createBot(bot_type, true));
         }
+        Board chess_board = new StandardBoard();
         chess_board.initialise();
+        chess_engine = new Engine(chess_board);
     }
 
     @Test
@@ -30,7 +32,7 @@ public class BotPlayerTest {
             }
             else if (bot.getThinkingTime() > 0) {
                 long start_time = System.currentTimeMillis();
-                bot.startMove(chess_board);
+                bot.startMove(chess_engine);
                 long end_time = System.currentTimeMillis();
                 long time_taken = end_time - start_time;
 

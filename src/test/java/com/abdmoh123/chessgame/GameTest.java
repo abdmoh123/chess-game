@@ -24,7 +24,7 @@ public class GameTest {
             Game chess_game = new Game(players, test_board);
 
             // inputted layout should be checkmate (king cannot move)
-            boolean is_check_mate = chess_game.isCheckMate(players[0], test_board);
+            boolean is_check_mate = chess_game.isCheckMate(players[0]);
             Assert.assertTrue(is_check_mate);
         }
         catch (Exception e) {
@@ -43,7 +43,7 @@ public class GameTest {
             Game chess_game = new Game(players, test_board);
 
             // inputted layout should not be checkmate (king can take queen)
-            boolean is_check_mate = chess_game.isCheckMate(players[0], test_board);
+            boolean is_check_mate = chess_game.isCheckMate(players[0]);
             Assert.assertFalse(is_check_mate);
         }
         catch (Exception e) {
@@ -62,7 +62,7 @@ public class GameTest {
             Game chess_game = new Game(players, test_board);
 
             // inputted layout should be stalemate (white king cannot move)
-            boolean is_stalemate = chess_game.isStalemate(players[0], test_board);
+            boolean is_stalemate = chess_game.isStalemate(players[0]);
             Assert.assertTrue(is_stalemate);
         }
         catch (Exception e) {
@@ -81,7 +81,7 @@ public class GameTest {
             Game chess_game = new Game(players, test_board);
 
             // inputted layout should not be stalemate (white king can move)
-            boolean is_stalemate = chess_game.isStalemate(players[0], test_board);
+            boolean is_stalemate = chess_game.isStalemate(players[0]);
             Assert.assertFalse(is_stalemate);
         }
         catch (Exception e) {

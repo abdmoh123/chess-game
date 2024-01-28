@@ -1,6 +1,5 @@
 package com.abdmoh123.chessgame.control;
 
-import com.abdmoh123.chessgame.boards.Board;
 import com.abdmoh123.chessgame.boards.Space;
 import com.abdmoh123.chessgame.moves.Move;
 
@@ -14,10 +13,10 @@ public class RandomBot extends BotPlayer {
     }
 
     @Override
-    public Move startMove(Board chess_board) {
+    public Move startMove(Engine chess_engine) {
         Random rand = new Random();
 
-        List<Space> friendly_spaces = chess_board.getFriendlySpaces(isWhite());
+        List<Space> friendly_spaces = chess_engine.getBoard().getFriendlySpaces(isWhite());
         List<Move> possible_moves = new ArrayList<>();
 
         boolean valid_input = false;
@@ -28,7 +27,7 @@ public class RandomBot extends BotPlayer {
             friendly_spaces.remove(space_choice); // prevent choosing the same piece multiple times
 
             // automatically filter out illegal moves (e.g. moving irrelevant piece when king is in check)
-            possible_moves = getLegalMoves(selected_space, chess_board);
+            possible_moves = chess_engine.generateLegalMoves(selected_space, isWhite());
             // stop searching if selected piece can move
             if (possible_moves.size() > 0) {
                 valid_input = true;
