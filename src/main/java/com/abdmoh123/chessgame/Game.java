@@ -96,7 +96,7 @@ public class Game {
     public void checkGameEnded(Player player_in) {
         /* Check if current position is a check mate or draw and set game state accordingly */
 
-        if (isCheckMate(player_in)) {
+        if (getEngine().isCheckMate(player_in.isWhite())) {
             endGame(player_in.isWhite());
         }
         if (isDraw(player_in)) {
@@ -147,56 +147,17 @@ public class Game {
         }
     }
 
-    public boolean isCheckMate(Player player_in) {
-        if (!getEngine().isCheck(player_in.isWhite())) {
-            return false;
-        }
-
-        List<Space> friendly_spaces = getBoard().getFriendlySpaces(player_in.isWhite());
-        for (Space space : friendly_spaces) {
-            List<Move> legal_moves = getEngine().generateLegalMoves(space, player_in.isWhite());
-            if (legal_moves.size() > 0) {
-                return false;
-            }
-        }
-        return true;
-    }
     public boolean isDraw(Player player_in) {
         // TODO: Add check for 3 fold repetition
         // TODO: Add check for 50 move rule (draw if 50 quiet moves happen consecutively)
         // TODO: Add check for dead position (impossible to checkmate)
 
-        if (isStalemate(player_in)) {
+        if (getEngine().isStalemate(player_in.isWhite())) {
+            System.out.println("Game has ended in stalemate!");
             return true;
         }
 
         List<Space> all_spaces_with_pieces = getBoard().getAllSpacesWithPieces();
         return all_spaces_with_pieces.size() == 2;  // returns true if only 2 kings remain.java
-    }
-    public boolean isStalemate(Player player_in) {
-        /* Check if player has any moves that don't lead getting checked */
-
-        // can't be stalemate if player is in check
-        if (getEngine().isCheck(player_in.isWhite())) {
-            return false;
-        }
-
-        List<Space> friendly_spaces = getBoard().getFriendlySpaces(player_in.isWhite());
-        for (Space friendly_space : friendly_spaces) {
-            List<Move> possible_moves = getBoard().getPiece(friendly_space).getPossibleMoves(
-                friendly_space, getBoard()
-            );
-
-            if (possible_moves.size() > 0) {
-                for (Move move : possible_moves) {
-                    if (!getEngine().isCheckAfterMove(move, player_in.isWhite())) {
-                        return false;
-                    }
-                }
-            }
-        }
-
-        System.out.println("Game has ended in stalemate!");
-        return true;
     }
 }

@@ -17,6 +17,53 @@ public class Engine {
         this.chess_board = chess_board_in;
     }
 
+    public boolean isCheckMate(boolean is_white_in) {
+        // can't be checkmate if not in check
+        if (!isCheck(is_white_in)) {
+            return false;
+        }
+
+        List<Space> friendly_spaces = getBoard().getFriendlySpaces(is_white_in);
+        for (Space space : friendly_spaces) {
+            List<Move> legal_moves = generateLegalMoves(space, is_white_in);
+            if (legal_moves.size() > 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+    public boolean isCheckMateAfterMove(Move move_in, boolean is_white_in) {
+        this.chess_board = this.chess_board.after(move_in);
+        boolean is_check_mate = isCheckMate(is_white_in);
+        this.chess_board = this.chess_board.before(move_in);
+
+        return is_check_mate;
+    }
+    public boolean isStalemate(boolean is_white_in) {
+        /* Check if player has any moves that don't lead getting checked */
+
+        // can't be stalemate if player is in check
+        if (isCheck(is_white_in)) {
+            return false;
+        }
+
+        List<Space> friendly_spaces = getBoard().getFriendlySpaces(is_white_in);
+        for (Space friendly_space : friendly_spaces) {
+            List<Move> possible_moves = getBoard().getPiece(friendly_space).getPossibleMoves(
+                friendly_space, getBoard()
+            );
+
+            if (possible_moves.size() > 0) {
+                for (Move move : possible_moves) {
+                    if (!isCheckAfterMove(move, is_white_in)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
     public boolean isCheck(boolean is_white_in) {
         List<Space> attacked_spaces = this.chess_board.getCheckedSpaces(is_white_in);
 
