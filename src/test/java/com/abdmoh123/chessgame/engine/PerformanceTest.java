@@ -154,7 +154,7 @@ public class PerformanceTest {
     public void testEngine() {
         // TODO: Make code pass this test
 
-        /* depth 3 errors:
+        /* depth 3 errors (compared to stockfish):
             b2b3 380/420
             b2b4 381/421
             d2d3 440/539
