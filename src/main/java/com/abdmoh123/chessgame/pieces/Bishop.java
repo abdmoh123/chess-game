@@ -94,6 +94,8 @@ public class Bishop extends Piece {
 
     @Override
     public Piece copy() {
-        return new Bishop(isWhite());
+        Bishop new_bishop = new Bishop(isWhite());
+        new_bishop.setVisibleSpaces(getVisibleSpaces());
+        return new_bishop;
     }
 }

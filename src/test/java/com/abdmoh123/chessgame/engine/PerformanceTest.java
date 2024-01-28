@@ -154,17 +154,6 @@ public class PerformanceTest {
     public void testEngine() {
         // TODO: Make code pass this test
 
-        /* depth 3 errors (compared to stockfish):
-            b2b3 380/420
-            b2b4 381/421
-            d2d3 440/539
-            d2d4 461/560
-            e2e3 500/599
-            e2e4 501/600
-            g2g3 380/420
-            g2g4 381/421
-        */
-
         int[] actual_results = runPerfTest(this.depth);
         System.out.printf(
             "[Depth %d]: Nodes = %d/%d, Captures = %d/%d, Checks = %d/%d\n",
@@ -174,7 +163,7 @@ public class PerformanceTest {
             actual_results[2], expected_results[2]
         );
 
-        runPerfTestDivide(depth);
+        // runPerfTestDivide(depth);
 
         Assert.assertArrayEquals(expected_results, actual_results);
     }
