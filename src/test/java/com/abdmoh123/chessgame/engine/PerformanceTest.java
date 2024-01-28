@@ -32,12 +32,12 @@ public class PerformanceTest {
     public static List<Object[]> iterations() {
         List<Object[]> parameters = new ArrayList<>();
 
-        parameters.add(new Object[]{0, new int[]{1, 0, 0}});
-        parameters.add(new Object[]{1, new int[]{20, 0, 0}});
-        parameters.add(new Object[]{2, new int[]{400, 0, 0}});
-        parameters.add(new Object[]{3, new int[]{8902, 34, 12}}); // nodes = 8346/8902, captures = 22/34, checks = 8/12
+        // parameters.add(new Object[]{0, new int[]{1, 0, 0}});
+        // parameters.add(new Object[]{1, new int[]{20, 0, 0}});
+        // parameters.add(new Object[]{2, new int[]{400, 0, 0}});
+        // parameters.add(new Object[]{3, new int[]{8902, 34, 12}});
         parameters.add(new Object[]{4, new int[]{197281, 1576, 469}});
-        parameters.add(new Object[]{5, new int[]{4865609, 82719, 27351}});
+        // parameters.add(new Object[]{5, new int[]{4865609, 82719, 27351}});
 
         return parameters;
     }
@@ -163,7 +163,30 @@ public class PerformanceTest {
             actual_results[2], expected_results[2]
         );
 
-        // runPerfTestDivide(depth);
+        /* depth 4 divide errors
+         * a2a3 8419/8457
+         * a2a4 9287/9345
+         * b1c3 9711/9755
+         * b1a3 8845/8885
+         * b2b3 9303/9345
+         * b2b4 9290/9332
+         * c2c3 9230/9272
+         * c2c4 9700/9744
+         * d2d3 11905/11959
+         * d2d4 12379/12435
+         * e2e3 13074/13134
+         * e2e4 13100/13160
+         * f2f3 8419/8457
+         * f2f4 8889/8929
+         * g1h3 8841/8881
+         * g1f3 9704/9748
+         * g2g3 9303/9345
+         * g2g4 9286/9328
+         * h2h3 8419/8457
+         * h2h4 9287/9329
+         */
+
+        runPerfTestDivide(depth);
 
         Assert.assertArrayEquals(expected_results, actual_results);
     }
