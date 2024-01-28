@@ -95,7 +95,7 @@ public class PerformanceTest {
         // if depth = 1, output all the moves with node results = 0
         if (perft_results == null) {
             for (Move move : moves) {
-                String move_name = move.getNotation(false, true);
+                String move_name = move.toString();
                 System.out.printf("%s: 0\n", move_name);
             }
             return;
@@ -107,7 +107,7 @@ public class PerformanceTest {
 
         // output format example: aa3: 20
         for (int i = 0; i < moves.size(); ++i) {
-            String move_name = moves.get(i).getNotation(false, true);
+            String move_name = moves.get(i).toString();
             int num_nodes = perft_results.get(i);
             System.out.printf("%s: %d\n", move_name, num_nodes);
         }
@@ -153,6 +153,17 @@ public class PerformanceTest {
     @Test
     public void testEngine() {
         // TODO: Make code pass this test
+
+        /* depth 3 errors:
+            b2b3 380/420
+            b2b4 381/421
+            d2d3 440/539
+            d2d4 461/560
+            e2e3 500/599
+            e2e4 501/600
+            g2g3 380/420
+            g2g4 381/421
+        */
 
         int[] actual_results = runPerfTest(this.depth);
         System.out.printf(

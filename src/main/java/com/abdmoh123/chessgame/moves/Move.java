@@ -135,6 +135,11 @@ public abstract class Move {
         return move_string;
     }
 
+    @Override
+    public String toString() {
+        return getOldLocation().toString() + getNewLocation().toString();
+    }
+
     public abstract void apply(Board chess_board);
     public abstract void undo(Board chess_board);
 }
