@@ -1,15 +1,16 @@
-package com.abdmoh123.chessgame;
+package com.abdmoh123.chessgame.control.engine;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.Assert;
 
+import com.abdmoh123.chessgame.Game;
 import com.abdmoh123.chessgame.boards.Board;
 import com.abdmoh123.chessgame.boards.StandardBoard;
 import com.abdmoh123.chessgame.control.Human;
 import com.abdmoh123.chessgame.control.Player;
 
-public class GameTest {
+public class EngineTest {
     @Before
     public void init() {
     }

@@ -138,6 +138,24 @@ public class Engine {
         return this.chess_board.getPiece(space_in).getPossibleMoves(space_in, this.chess_board);
     }
 
+    private int countMaterialValues(boolean is_white_in) {
+        int total_points = 0;
+
+        List<Space> friendly_spaces = getBoard().getFriendlySpaces(is_white_in);
+        for (Space space : friendly_spaces) {
+            total_points += getBoard().getPiece(space).getValue();
+        }
+        return total_points;
+    }
+    public int evaluate(boolean is_white_playing) {
+        int white_points = countMaterialValues(true);
+        int black_points = countMaterialValues(false);
+
+        int evaluation = white_points - black_points;
+        if (!is_white_playing) { evaluation *= -1; }
+        return evaluation;
+    }
+
     public void applyMoveToBoard(Move move) {
         this.chess_board = this.chess_board.after(move);
     }
