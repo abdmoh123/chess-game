@@ -13,6 +13,10 @@ public class Bishop extends Piece {
         super(is_white_in, 3);
     }
 
+    public boolean isDark(Space location) {
+        return (location.getX() - location.getY()) % 2 == 0;
+    }
+
     private boolean searchBishopSpaces(
         Space location,
         Space next_space,
