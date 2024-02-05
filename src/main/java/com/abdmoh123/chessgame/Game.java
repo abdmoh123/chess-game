@@ -1,7 +1,6 @@
 package com.abdmoh123.chessgame;
 
 import com.abdmoh123.chessgame.boards.Board;
-import com.abdmoh123.chessgame.boards.Space;
 import com.abdmoh123.chessgame.control.Player;
 import com.abdmoh123.chessgame.control.engine.Engine;
 import com.abdmoh123.chessgame.moves.Move;
@@ -17,10 +16,16 @@ public class Game {
     private Engine chess_engine;
     private GameState game_state;
 
+    int quiet_move_count;
+    int three_fold_repetition_count;
+
     public Game(Player[] players_in, Board chess_board_in) {
         this.players = players_in;
         this.p1_turn = getPlayer(1).isWhite();
         this.move_history = new ArrayList<>();
+
+        this.quiet_move_count = 0;
+        this.three_fold_repetition_count = 0;
         
         this.chess_engine = new Engine(chess_board_in);
         this.game_state = GameState.ACTIVE;
@@ -59,6 +64,22 @@ public class Game {
         displayPlayerMessage(current_player);
 
         Move generated_move = current_player.startMove(getEngine());
+
+        // quiet move count (for 50 move rule)
+        if (generated_move.getKillPoints() == 0) {
+            ++this.quiet_move_count;
+        }
+        else {
+            this.quiet_move_count = 0;
+        }
+        // three-fold repetition count
+        if (move_history.size() > 4 && generated_move.equals(move_history.get(move_history.size() - 4))) {
+            ++this.three_fold_repetition_count;
+        }
+        else {
+            this.three_fold_repetition_count = 0;
+        }
+
         getBoard().refreshEnPassant();
         // apply after refreshing en passant so double pawn moves work correctly
         generated_move.apply(getBoard());
@@ -148,16 +169,24 @@ public class Game {
     }
 
     public boolean isDraw(Player player_in) {
-        // TODO: Add check for 3 fold repetition
-        // TODO: Add check for 50 move rule (draw if 50 quiet moves happen consecutively)
-        // TODO: Add check for dead position (impossible to checkmate)
+        /* Check for stalemate, 50 quiet move rule, 3-fold repetition and dead positions */
 
         if (getEngine().isStalemate(player_in.isWhite())) {
             System.out.println("Game has ended in stalemate!");
             return true;
         }
 
-        List<Space> all_spaces_with_pieces = getBoard().getAllSpacesWithPieces();
-        return all_spaces_with_pieces.size() == 2;  // returns true if only 2 kings remain.java
+        // 50 quiet move rule check
+        if (this.quiet_move_count >= 50) {
+            return true;
+        }
+        // 3-fold repetition check
+        if (this.three_fold_repetition_count >= 6) {
+            return true;
+        }
+
+        // only check for dead position if only few pieces remain
+        if (getBoard().getAllSpacesWithPieces().size() < 5) { return getEngine().isDeadPosition(); }
+        return false;
     }
 }

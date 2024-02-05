@@ -140,6 +140,20 @@ public abstract class Move {
         return getOldLocation().toString() + getNewLocation().toString();
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) { return true; }
+        if (!(obj instanceof Move)) { return false; }
+
+        Move move_in = (Move) obj;
+        if (!getMovingPiece().equals(move_in.getMovingPiece())) { return false; }
+        if (!getOldLocation().equals(move_in.getOldLocation())) { return false; }
+        if (!getNewLocation().equals(move_in.getNewLocation())) { return false; }
+        if (getKillPoints() != move_in.getKillPoints()) { return false; }
+
+        return true;
+    }
+
     public abstract void apply(Board chess_board);
     public abstract void undo(Board chess_board);
 }

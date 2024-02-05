@@ -8,7 +8,9 @@ import com.abdmoh123.chessgame.boards.Space;
 import com.abdmoh123.chessgame.moves.CastlingMove;
 import com.abdmoh123.chessgame.moves.Move;
 import com.abdmoh123.chessgame.moves.StandardMove;
+import com.abdmoh123.chessgame.pieces.Bishop;
 import com.abdmoh123.chessgame.pieces.King;
+import com.abdmoh123.chessgame.pieces.Piece;
 
 public class Engine {
     private Board chess_board;
@@ -62,6 +64,72 @@ public class Engine {
             }
         }
         return true;
+    }
+
+    private boolean hasOnlyBishopOrKnight(List<Space> spaces) {
+        if (spaces.size() == 2) {
+            for (Space space : spaces) {
+                // if only other piece is bishop or knight, then player cannot checkmate
+                if (this.chess_board.getPiece(space).getValue() == 3) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    private List<Space> removeKingFromList(List<Space> spaces) {
+        List<Space> new_list = new ArrayList<>();
+        for (Space space : spaces) {
+            if (!(this.chess_board.getPiece(space) instanceof King)) {
+                new_list.add(space);
+            }
+        }
+        return new_list;
+    }
+    private boolean areBishopsSameColour(List<Space> white_spaces, List<Space> black_spaces) {
+        /* If King + Bishop vs King + Bishop, bishops need to be on the same coloured tiles to be dead position */
+
+        List<Space> white_spaces_without_king = removeKingFromList(white_spaces);
+        List<Space> black_spaces_without_king = removeKingFromList(black_spaces);
+
+        Space white_piece_space = white_spaces_without_king.get(0);
+        Space black_piece_space = black_spaces_without_king.get(0);
+        Piece white_piece = this.chess_board.getPiece(white_piece_space);
+        Piece black_piece = this.chess_board.getPiece(black_piece_space);
+        
+        if (white_piece instanceof Bishop && black_piece instanceof Bishop) {
+            if (((Bishop) white_piece).isDark(white_piece_space) == ((Bishop) black_piece).isDark(black_piece_space)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public boolean isDeadPosition() {
+        List<Space> white_spaces = this.chess_board.getFriendlySpaces(true);
+        List<Space> black_spaces = this.chess_board.getFriendlySpaces(false);
+
+        // only 2 kings remain
+        if (white_spaces.size() + black_spaces.size() == 2) { return true; }
+
+        // check white king vs black king + bishop/knight
+        if (white_spaces.size() == 1) {
+            if (hasOnlyBishopOrKnight(black_spaces)) {
+                return true;
+            }
+        }
+        // check white king + bishop/knight vs black king
+        if (black_spaces.size() == 1) {
+            if (hasOnlyBishopOrKnight(white_spaces)) {
+                return true;
+            }
+        }
+        
+        // check white king + bishop vs black king + bishop (same colour tile)
+        if (white_spaces.size() == 2 && black_spaces.size() == 2) {
+            return areBishopsSameColour(white_spaces, black_spaces);
+        }
+
+        return false;
     }
 
     public boolean isCheck(boolean is_white_in) {
