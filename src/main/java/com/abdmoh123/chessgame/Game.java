@@ -232,6 +232,24 @@ public class Game {
         }
         return new_list;
     }
+    private boolean areBishopsSameColour(List<Space> white_spaces, List<Space> black_spaces, Board chess_board) {
+        /* If King + Bishop vs King + Bishop, bishops need to be on the same coloured tiles to be dead position */
+
+        List<Space> white_spaces_without_king = removeKingFromList(white_spaces, chess_board);
+        List<Space> black_spaces_without_king = removeKingFromList(black_spaces, chess_board);
+
+        Space white_piece_space = white_spaces_without_king.get(0);
+        Space black_piece_space = black_spaces_without_king.get(0);
+        Piece white_piece = chess_board.getPiece(white_piece_space);
+        Piece black_piece = chess_board.getPiece(black_piece_space);
+        
+        if (white_piece instanceof Bishop && black_piece instanceof Bishop) {
+            if (((Bishop) white_piece).isDark(white_piece_space) == ((Bishop) black_piece).isDark(black_piece_space)) {
+                return true;
+            }
+        }
+        return false;
+    }
     public boolean isDeadPosition(Board chess_board) {
         List<Space> white_spaces = chess_board.getFriendlySpaces(true);
         List<Space> black_spaces = chess_board.getFriendlySpaces(false);
@@ -252,21 +270,9 @@ public class Game {
             }
         }
         
-        List<Space> white_spaces_without_king = removeKingFromList(white_spaces, chess_board);
-        List<Space> black_spaces_without_king = removeKingFromList(black_spaces, chess_board);
-
-        // check if bishops are same colour
+        // check white king + bishop vs black king + bishop (same colour tile)
         if (white_spaces.size() == 2 && black_spaces.size() == 2) {
-            Space white_other_space = white_spaces_without_king.get(0);
-            Space black_other_space = black_spaces_without_king.get(0);
-            Piece white_other_piece = chess_board.getPiece(white_other_space);
-            Piece black_other_piece = chess_board.getPiece(black_other_space);
-            
-            if (white_other_piece instanceof Bishop && black_other_piece instanceof Bishop) {
-                if (((Bishop) white_other_piece).isDark(white_other_space) == ((Bishop) black_other_piece).isDark(black_other_space)) {
-                    return true;
-                }
-            }
+            return areBishopsSameColour(white_spaces, black_spaces, chess_board);
         }
 
         return false;
