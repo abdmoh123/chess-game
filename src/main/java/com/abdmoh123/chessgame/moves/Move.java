@@ -101,5 +101,19 @@ public abstract class Move {
         return move_string;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) { return true; }
+        if (!(obj instanceof Move)) { return false; }
+
+        Move move_in = (Move) obj;
+        if (!getChessPiece().equals(move_in.getChessPiece())) { return false; }
+        if (!getOldLocation().equals(move_in.getOldLocation())) { return false; }
+        if (!getNewLocation().equals(move_in.getNewLocation())) { return false; }
+        if (getKillPoints() != move_in.getKillPoints()) { return false; }
+
+        return true;
+    }
+
     public abstract void apply(Board chess_board);
 }

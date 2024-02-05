@@ -89,4 +89,42 @@ public class GameTest {
             Assert.assertTrue(false); // fail the test
         }
     }
+
+    @Test
+    public void isDeadPositionTrueTest() {
+        try {
+            Board test_board = new StandardBoard();
+            test_board.initialise("board_layouts/game_test/dead_position_true.csv");
+
+            Player[] players = {new Human(true), new Human(false)};
+            Game chess_game = new Game(players, test_board);
+
+            // inputted layout should be a dead position (King + bishop vs king + bishop same colour tile)
+            boolean is_dead_position = chess_game.isDeadPosition(test_board);
+            Assert.assertTrue(is_dead_position);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            Assert.assertTrue(false); // fail the test
+        }
+    }
+
+    @Test
+    public void isDeadPositionFalseTest() {
+        try {
+            Board test_board = new StandardBoard();
+            test_board.initialise("board_layouts/game_test/dead_position_false.csv");
+
+            Player[] players = {new Human(true), new Human(false)};
+            Game chess_game = new Game(players, test_board);
+
+            // inputted layout should not be a dead position (2 knights can result in a checkmate)
+            boolean is_dead_position = chess_game.isDeadPosition(test_board);
+            Assert.assertFalse(is_dead_position);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            Assert.assertTrue(false); // fail the test
+        }
+    }
 }
