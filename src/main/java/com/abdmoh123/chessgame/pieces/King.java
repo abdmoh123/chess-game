@@ -27,7 +27,7 @@ public class King extends Piece {
         this.cannot_castle = false;
     }
 
-    private boolean isStartingPosition(Space location) {
+    public boolean isStartingPosition(Space location) {
         if (!hasCastled()) {
             if (location.getX() != 4) {
                 return false;
@@ -113,37 +113,37 @@ public class King extends Piece {
     public List<Move> getPossibleMoves(Space location, Board chess_board) {
         List<Move> possible_moves = new ArrayList<>();
 
+        if (!isStartingPosition(location)) {
+            disableCastling();
+        }
+        else {
+            // add castling moves if possible and available
+            if (checkKingside(location, chess_board)) {
+                Move kingside = new CastlingMove(
+                    location,
+                    new Space(6, location.getY()),
+                    this,
+                    new Space(7, location.getY()),
+                    new Space(5, location.getY())
+                );
+                possible_moves.add(kingside);
+            }
+            if (checkQueenside(location, chess_board)) {
+                Move queenside = new CastlingMove(
+                    location,
+                    new Space(2, location.getY()),
+                    this,
+                    new Space(0, location.getY()),
+                    new Space(3, location.getY())
+                );
+                possible_moves.add(queenside);
+            }
+        }
+
         computeVision(location, chess_board);
 
         for (Space visible_space : getVisibleSpaces()) {
             possible_moves.add(new StandardMove(location, visible_space, this, chess_board.getPiece(visible_space)));
-        }
-
-        // no need to check for castling if condition below is true
-        if (!isStartingPosition(location)) {
-            return possible_moves;
-        }
-        
-        // add castling moves if possible and available
-        if (checkKingside(location, chess_board)) {
-            Move kingside = new CastlingMove(
-                location,
-                new Space(6, location.getY()),
-                this,
-                new Space(7, location.getY()),
-                new Space(5, location.getY())
-            );
-            possible_moves.add(kingside);
-        }
-        if (checkQueenside(location, chess_board)) {
-            Move queenside = new CastlingMove(
-                location,
-                new Space(2, location.getY()),
-                this,
-                new Space(0, location.getY()),
-                new Space(3, location.getY())
-            );
-            possible_moves.add(queenside);
         }
 
         return possible_moves;
