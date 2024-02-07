@@ -5,6 +5,8 @@ import java.net.URISyntaxException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.opencsv.exceptions.CsvValidationException;
 
@@ -108,7 +110,7 @@ public abstract class Board {
 
         return checked_spaces;
     }
-    public List<Space> getAllSpacesByPieceName(String piece_name) {
+    public List<Space> getAllSpacesBySymbol(char piece_symbol_in) {
         /* Search through board and return all spaces that hold a given piece type */
 
         List<Space> selected_pieces = new ArrayList<>();
@@ -117,7 +119,8 @@ public abstract class Board {
             for (int j = 0; j < getLength(); ++j) {
                 Space space = new Space(i, j);
                 if (!isSpaceEmpty(space)) {
-                    if (getPiece(space).getName().equals(piece_name)) {
+                    // force both symbols to be same case (ignore team)
+                    if (Character.toUpperCase(getPiece(space).getSymbol()) == Character.toUpperCase(piece_symbol_in)) {
                         selected_pieces.add(space);
                     }
                 }
@@ -126,7 +129,7 @@ public abstract class Board {
 
         return selected_pieces;
     }
-    public List<Space> getFriendlySpacesByPieceName(String piece_name, boolean is_white) {
+    public List<Space> getFriendlySpacesBySymbol(char piece_symbol_in) {
         /* Search through board and return all friendly spaces that hold a given piece type */
 
         List<Space> selected_pieces = new ArrayList<>();
@@ -134,8 +137,8 @@ public abstract class Board {
         for (int i = 0; i < getLength(); ++i) {
             for (int j = 0; j < getLength(); ++j) {
                 Space space = new Space(i, j);
-                if (isSpaceFriendly(space, is_white)) {
-                    if (getPiece(space).getName().equals(piece_name)) {
+                if (!isSpaceEmpty(space)) {
+                    if (getPiece(space).getSymbol() == piece_symbol_in) {
                         selected_pieces.add(space);
                     }
                 }
@@ -190,15 +193,13 @@ public abstract class Board {
     public boolean isPieceUniqueOnRow(Space space_in) {
         Piece[] row = getRow(space_in.getY());
         
-        String piece_name = getPiece(space_in).getName();
-
         int count = 0;
         for (Piece piece : row) {
             if (count > 1) {
                 break;
             }
             if (piece != null) {
-                if (piece.getName().equals(piece_name) && piece.isWhite() == getPiece(space_in).isWhite()) {
+                if (piece.getSymbol() == getPiece(space_in).getSymbol()) {
                     ++count;
                 }
             }
@@ -223,14 +224,7 @@ public abstract class Board {
                     System.out.print("o ");
                 }
                 else {
-                    char piece_symbol = ' ';
-                    if (getPiece(space) instanceof Knight) {
-                        piece_symbol = 'N';
-                    }
-                    else {
-                        piece_symbol = getPiece(space).getName().charAt(0);
-                    }
-                    System.out.print(piece_symbol + " ");
+                    System.out.print(getPiece(space).getSymbol() + " ");
                 }
             }
             System.out.print("\n");
@@ -279,5 +273,52 @@ public abstract class Board {
         Piece[][] spaces_in = ChessCSVReader.readBoardCSV(file_name_in);
         
         initialise(spaces_in);
+    }
+    private boolean isFieldValid(String regex, String field) {
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(field);
+        if (matcher.find()) { return false; }
+        return true;
+    }
+    public void initialiseFEN(String fen_string_in)  {
+        /* Fill board with pieces based FEN input
+         * Standard starting position: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0"
+         */
+
+        String field_one_regex = "[^1-9KkQqBbNnRrPp/]";
+        String[] split_fen = fen_string_in.split(" ");
+
+        // full fen format has 6 fields, but a simpler one can only have 1 (for piece layout)
+        if (split_fen.length != 1 && split_fen.length != 6) {
+            throw new RuntimeException("Invalid FEN Format: Incorrect number of fields!");
+        }
+
+        // validate first field
+        if (!isFieldValid(field_one_regex, split_fen[0])) {
+            throw new RuntimeException("Invalid FEN Format: First field format error!");
+        }
+
+        int x_index = 0;
+        int y_index = 7; // start at 8th rank and move down
+        for (char letter : split_fen[0].toCharArray()) {
+            if (Character.isDigit(letter)) {
+                x_index += letter - '0'; // convert char to int
+                // x index cannot go over length of the board
+                if (x_index > getLength()) {
+                    throw new RuntimeException("Invalid FEN Format: Number of empty spaces greater than length of board!");
+                }
+            }
+            else if (letter == '/') {
+                if (x_index < getLength()) {
+                    throw new RuntimeException("Invalid FEN Format: Not enough empty spaces specified!");
+                }
+                x_index = 0;
+                --y_index;
+            }
+            else {
+                updateSpace(new Space(x_index, y_index), PieceFactory.createPiece(letter));
+                ++x_index;
+            }
+        }
     }
 }

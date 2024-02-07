@@ -25,4 +25,12 @@ public class BoardTest {
 
         Assert.assertArrayEquals(expected_standard_board_contents, standard_board.getAllSpaces());
     }
+
+    @Test
+    public void initialiseFENTest() {
+        Board fen_board = new StandardBoard();
+        fen_board.initialiseFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
+
+        Assert.assertArrayEquals(expected_standard_board_contents, fen_board.getAllSpaces());
+    }
 }

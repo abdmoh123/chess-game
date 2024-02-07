@@ -47,8 +47,8 @@ public class Human extends Player {
 
         List<String> move_string_list = new ArrayList<>();
         for (Move move : move_list) {
-            List<Space> similar_friendly_spaces = chess_board.getFriendlySpacesByPieceName(
-                move.getChessPiece().getName(), isWhite()
+            List<Space> similar_friendly_spaces = chess_board.getFriendlySpacesBySymbol(
+                move.getChessPiece().getSymbol()
             );
 
             boolean be_precise = false;

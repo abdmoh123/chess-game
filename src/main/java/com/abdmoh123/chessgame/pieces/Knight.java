@@ -55,8 +55,9 @@ public class Knight extends Piece {
     }
 
     @Override
-    public String getName() {
-        return "Knight";
+    public char getSymbol() {
+        if (isWhite()) { return 'N'; }
+        return 'n';
     }
     
     @Override

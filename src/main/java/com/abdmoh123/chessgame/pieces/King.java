@@ -147,8 +147,9 @@ public class King extends Piece {
     }
 
     @Override
-    public String getName() {
-        return "King";
+    public char getSymbol() {
+        if (isWhite()) { return 'K'; }
+        return 'k';
     }
 
     @Override
