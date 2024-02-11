@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.management.RuntimeErrorException;
+
 import com.opencsv.exceptions.CsvValidationException;
 
 import com.abdmoh123.chessgame.moves.*;
@@ -274,18 +276,11 @@ public abstract class Board {
         
         initialise(spaces_in);
     }
-    private boolean isFieldValid(String regex, String field) {
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(field);
-        if (matcher.find()) { return false; }
-        return true;
-    }
     public void initialiseFEN(String fen_string_in)  {
         /* Fill board with pieces based FEN input
          * Standard starting position: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0"
          */
-
-        String field_one_regex = "[^1-9KkQqBbNnRrPp/]";
+        
         String[] split_fen = fen_string_in.split(" ");
 
         // full fen format has 6 fields, but a simpler one can only have 1 (for piece layout)
@@ -293,7 +288,9 @@ public abstract class Board {
             throw new RuntimeException("Invalid FEN Format: Incorrect number of fields!");
         }
 
+        /* Place pieces in board */
         // validate first field
+        String field_one_regex = "[^1-9KkQqBbNnRrPp/]";
         if (!isFieldValid(field_one_regex, split_fen[0])) {
             throw new RuntimeException("Invalid FEN Format: First field format error!");
         }
@@ -320,5 +317,121 @@ public abstract class Board {
                 ++x_index;
             }
         }
+
+        // end method if only board layout is given (first field only)
+        if (split_fen.length == 1) { return; }
+
+        /* Setup castling rights based on FEN input */
+        // validate third field
+        String field_three_regex = "[-KQkq]";
+        if (!isFieldValid(field_three_regex, split_fen[2])) {
+            throw new RuntimeException("Invalid FEN Format: Third field format error!");
+        }
+
+        Space white_king_space = getFriendlySpacesBySymbol('K').get(0);
+        Space black_king_space = getFriendlySpacesBySymbol('k').get(0);
+        boolean found_K, found_Q, found_k, found_q;
+        found_K = found_Q = found_k = found_q = false;
+        for (char letter : split_fen[2].toCharArray()) {
+            // ensure king cannot castle
+            if (letter == '-') {
+                King new_king = (King) getPiece(white_king_space).copy();
+                new_king.disableCastling();
+                updateSpace(white_king_space, new_king);
+
+                new_king = (King) getPiece(black_king_space).copy();
+                new_king.disableCastling();
+                updateSpace(black_king_space, new_king);
+                break;
+            }
+
+            if (letter == 'K') {
+                if (!(getPiece(new Space(0, 0)) instanceof Rook)) {
+                    throw new RuntimeException("Invalid castling rights!");
+                }
+                found_K = true;
+            }
+            else if (letter == 'Q') {
+                if (!(getPiece(new Space(7, 0)) instanceof Rook)) {
+                    throw new RuntimeException("Invalid castling rights!");
+                }
+                found_Q = true;
+            }
+            else if (letter == 'k') {
+                if (!(getPiece(new Space(0, 7)) instanceof Rook)) {
+                    throw new RuntimeException("Invalid castling rights!");
+                }
+                found_k = true;
+            }
+            else if (letter == 'q') {
+                if (!(getPiece(new Space(7, 7)) instanceof Rook)) {
+                    throw new RuntimeException("Invalid castling rights!");
+                }
+                found_q = true;
+            }
+        }
+        // only activate relevant rooks to disable relevant castling right
+        if (!found_K) {
+            Rook new_rook = new Rook(true);
+            new_rook.activate();
+            updateSpace(new Space(0, 0), new_rook);
+        }
+        if (!found_Q) {
+            Rook new_rook = new Rook(true);
+            new_rook.activate();
+            updateSpace(new Space(7, 0), new_rook);
+        }
+        if (!found_k) {
+            Rook new_rook = new Rook(false);
+            new_rook.activate();
+            updateSpace(new Space(0, 7), new_rook);
+        }
+        if (!found_q) {
+            Rook new_rook = new Rook(false);
+            new_rook.activate();
+            updateSpace(new Space(7, 7), new_rook);
+        }
+
+        // skip final step if no pawns are en-passant-able
+        if (split_fen[3].equals("-")) { return; }
+
+        /* Setup en passant targets */
+        // validate fourth field
+        String field_four_regex = "[a-hA-H][1-8]";
+        if (!isFieldValid(field_four_regex, split_fen[3]) && split_fen[3].length() != 2) {
+            throw new RuntimeException("Invalid FEN Format: Fourth field format error!");
+        }
+
+        // determine which player's turn it is (+ second field validation)
+        boolean is_white_turn = false;
+        if (split_fen[1].equalsIgnoreCase("w")) {
+            is_white_turn = true;
+        }
+        else if (!split_fen[1].equalsIgnoreCase("b")) {
+            throw new RuntimeException("Invalid FEN Format: Second field format error!");
+        }
+
+        // convert en passant string to space
+        Space en_passant_space = new Space(split_fen[3]);
+        // get location of pawn
+        int en_passant_offset;
+        if (is_white_turn) { en_passant_offset = 1; }
+        else { en_passant_offset = -1; }
+        Space pawn_space = new Space(en_passant_space.getX(), en_passant_space.getY() + en_passant_offset);
+
+        // check if pawn exists in correct location
+        if (isSpaceEmpty(pawn_space) || !(getPiece(pawn_space) instanceof Pawn)) {
+            throw new RuntimeException("En passant info does not match with board layout!");
+        }
+
+        Pawn pawn = (Pawn) getPiece(pawn_space);
+        pawn.setEnPassant(true);
+        updateSpace(pawn_space, pawn);
+    }
+    private boolean isFieldValid(String regex, String field) {
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(field);
+        if (matcher.find()) { return false; }
+        return true;
     }
 }

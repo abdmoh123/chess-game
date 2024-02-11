@@ -25,16 +25,13 @@ public class King extends Piece {
     }
 
     private boolean isStartingPosition(Space location) {
-        if (!hasCastled()) {
-            if (location.getX() != 4) {
-                return false;
-            }
-            if (isWhite()) {
-                return location.getY() == 0;
-            }
-            return location.getY() == 7;
+        if (location.getX() != 4) {
+            return false;
         }
-        return false;
+        if (isWhite()) {
+            return location.getY() == 0;
+        }
+        return location.getY() == 7;
     }
 
     private boolean checkKingside(Space location, Board chess_board) {
@@ -117,7 +114,7 @@ public class King extends Piece {
         }
 
         // no need to check for castling if condition below is true
-        if (!isStartingPosition(location)) {
+        if (hasCastled() || !isStartingPosition(location)) {
             return possible_moves;
         }
         
