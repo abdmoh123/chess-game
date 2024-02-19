@@ -288,7 +288,7 @@ public abstract class Board {
 
         /* Place pieces in board */
         // validate first field
-        String field_one_regex = "[^1-9KkQqBbNnRrPp/]";
+        String field_one_regex = "[1-9KkQqBbNnRrPp/]";
         if (!isFieldValid(field_one_regex, split_fen[0])) {
             throw new RuntimeException("Invalid FEN Format: First field format error!");
         }
@@ -344,25 +344,25 @@ public abstract class Board {
             }
 
             if (letter == 'K') {
-                if (!(getPiece(new Space(0, 0)) instanceof Rook)) {
+                if (!(getPiece(new Space(0, 0)) instanceof Rook) || !white_king_space.equals(new Space(4, 0))) {
                     throw new RuntimeException("Invalid castling rights!");
                 }
                 found_K = true;
             }
             else if (letter == 'Q') {
-                if (!(getPiece(new Space(7, 0)) instanceof Rook)) {
+                if (!(getPiece(new Space(7, 0)) instanceof Rook) || !white_king_space.equals(new Space(4, 0))) {
                     throw new RuntimeException("Invalid castling rights!");
                 }
                 found_Q = true;
             }
             else if (letter == 'k') {
-                if (!(getPiece(new Space(0, 7)) instanceof Rook)) {
+                if (!(getPiece(new Space(0, 7)) instanceof Rook) || !black_king_space.equals(new Space(4, 7))) {
                     throw new RuntimeException("Invalid castling rights!");
                 }
                 found_k = true;
             }
             else if (letter == 'q') {
-                if (!(getPiece(new Space(7, 7)) instanceof Rook)) {
+                if (!(getPiece(new Space(7, 7)) instanceof Rook) || !black_king_space.equals(new Space(4, 7))) {
                     throw new RuntimeException("Invalid castling rights!");
                 }
                 found_q = true;
@@ -413,7 +413,8 @@ public abstract class Board {
         Space en_passant_space = new Space(split_fen[3]);
         // get location of pawn
         int en_passant_offset;
-        if (is_white_turn) { en_passant_offset = 1; }
+        // if white just moved, it would be black's turn
+        if (!is_white_turn) { en_passant_offset = 1; }
         else { en_passant_offset = -1; }
         Space pawn_space = new Space(en_passant_space.getX(), en_passant_space.getY() + en_passant_offset);
 
@@ -429,7 +430,7 @@ public abstract class Board {
     private boolean isFieldValid(String regex, String field) {
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(field);
-        if (matcher.find()) { return false; }
+        if (!matcher.find()) { return false; }
         return true;
     }
 }
