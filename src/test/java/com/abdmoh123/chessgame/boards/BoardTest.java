@@ -8,8 +8,6 @@ import com.abdmoh123.chessgame.pieces.Pawn;
 import com.abdmoh123.chessgame.pieces.Piece;
 import com.abdmoh123.chessgame.utils.ChessCSVReader;
 
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Assert;
 
 public class BoardTest {
