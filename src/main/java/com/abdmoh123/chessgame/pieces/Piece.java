@@ -47,7 +47,7 @@ public abstract class Piece {
     /* Generate a list holding all possible moves the piece can take */
     public abstract List<Move> getPossibleMoves(Space location, Board chess_board);
 
-    public abstract String getName();
+    public abstract char getSymbol();
     public abstract Piece copy();
 
     @Override

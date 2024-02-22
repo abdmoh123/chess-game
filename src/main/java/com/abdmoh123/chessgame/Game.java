@@ -82,7 +82,7 @@ public class Game {
         Move generated_move = player.startMove(getBoard());
 
         // disable en passant for all pawns after player made a move
-        List<Space> pawn_spaces = getBoard().getAllSpacesByPieceName("Pawn");
+        List<Space> pawn_spaces = getBoard().getAllSpacesBySymbol('p');
         for (Space pawn_space : pawn_spaces) {
             Pawn pawn_piece = (Pawn) getBoard().getPiece(pawn_space);
             pawn_piece.setEnPassant(false);

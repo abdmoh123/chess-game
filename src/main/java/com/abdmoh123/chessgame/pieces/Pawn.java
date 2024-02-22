@@ -224,8 +224,9 @@ public class Pawn extends Piece {
     }
 
     @Override
-    public String getName() {
-        return "Pawn";
+    public char getSymbol() {
+        if (isWhite()) { return 'P'; }
+        return 'p';
     }
 
     @Override

@@ -2,7 +2,6 @@ package com.abdmoh123.chessgame.moves;
 
 import com.abdmoh123.chessgame.boards.Board;
 import com.abdmoh123.chessgame.boards.Space;
-import com.abdmoh123.chessgame.pieces.Knight;
 import com.abdmoh123.chessgame.pieces.Pawn;
 import com.abdmoh123.chessgame.pieces.Piece;
 
@@ -89,13 +88,10 @@ public abstract class Move {
             move_string = old_location_x_axis + move_string;
         }
 
-        // knight piece has different symbol to differentiate it from king
-        if (getChessPiece() instanceof Knight) {
-            move_string = "N" + move_string;
-        }
-        // only pawn doesn't have a symbol
-        else if (!(getChessPiece() instanceof Pawn)) {
-            move_string = getChessPiece().getName().charAt(0) + move_string;
+        // pawn does not have a symbol in algebraic notation for moves
+        if (!(getChessPiece() instanceof Pawn)) {
+            // in algebraic notation for moves, piece symbol is always upper case
+            move_string = Character.toUpperCase(getChessPiece().getSymbol()) + move_string;
         }
 
         return move_string;
