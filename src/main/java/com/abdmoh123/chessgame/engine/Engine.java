@@ -1,4 +1,4 @@
-package com.abdmoh123.chessgame.control.engine;
+package com.abdmoh123.chessgame.engine;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.abdmoh123.chessgame.control.engine;
+package com.abdmoh123.chessgame.engine;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -12,9 +12,9 @@ import java.util.ArrayList;
 import com.abdmoh123.chessgame.boards.Board;
 import com.abdmoh123.chessgame.boards.Space;
 import com.abdmoh123.chessgame.boards.StandardBoard;
-import com.abdmoh123.chessgame.control.Player;
-import com.abdmoh123.chessgame.control.RandomBot;
 import com.abdmoh123.chessgame.moves.Move;
+import com.abdmoh123.chessgame.players.Player;
+import com.abdmoh123.chessgame.players.bots.RandomBot;
 
 @RunWith(Parameterized.class)
 public class PerformanceTest {

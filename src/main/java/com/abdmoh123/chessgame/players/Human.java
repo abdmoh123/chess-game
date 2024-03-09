@@ -1,8 +1,8 @@
-package com.abdmoh123.chessgame.control;
+package com.abdmoh123.chessgame.players;
 
 import com.abdmoh123.chessgame.boards.Board;
 import com.abdmoh123.chessgame.boards.Space;
-import com.abdmoh123.chessgame.control.engine.Engine;
+import com.abdmoh123.chessgame.engine.Engine;
 import com.abdmoh123.chessgame.moves.Move;
 import com.abdmoh123.chessgame.pieces.Pawn;
 import com.abdmoh123.chessgame.pieces.Piece;

@@ -1,4 +1,4 @@
-package com.abdmoh123.chessgame.control;
+package com.abdmoh123.chessgame.players.bots;
 
 public class BotFactory {
     public static BotPlayer createBot(BotType bot_type_in, boolean is_white_in) {

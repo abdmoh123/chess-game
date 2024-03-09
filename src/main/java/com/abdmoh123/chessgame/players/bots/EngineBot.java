@@ -1,6 +1,6 @@
-package com.abdmoh123.chessgame.control;
+package com.abdmoh123.chessgame.players.bots;
 
-import com.abdmoh123.chessgame.control.engine.Engine;
+import com.abdmoh123.chessgame.engine.Engine;
 import com.abdmoh123.chessgame.moves.Move;
 
 public class EngineBot extends BotPlayer {

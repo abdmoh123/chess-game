@@ -1,9 +1,9 @@
 package com.abdmoh123.chessgame;
 
 import com.abdmoh123.chessgame.boards.Board;
-import com.abdmoh123.chessgame.control.Player;
-import com.abdmoh123.chessgame.control.engine.Engine;
+import com.abdmoh123.chessgame.engine.Engine;
 import com.abdmoh123.chessgame.moves.Move;
+import com.abdmoh123.chessgame.players.Player;
 
 import java.util.ArrayList;
 import java.util.List;

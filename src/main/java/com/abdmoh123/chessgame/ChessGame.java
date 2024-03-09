@@ -5,11 +5,11 @@ import java.util.Scanner;
 import com.abdmoh123.chessgame.boards.Board;
 import com.abdmoh123.chessgame.boards.Space;
 import com.abdmoh123.chessgame.boards.StandardBoard;
-import com.abdmoh123.chessgame.control.RandomBot;
 import com.abdmoh123.chessgame.pieces.Pawn;
-import com.abdmoh123.chessgame.control.EngineBot;
-import com.abdmoh123.chessgame.control.Human;
-import com.abdmoh123.chessgame.control.Player;
+import com.abdmoh123.chessgame.players.Human;
+import com.abdmoh123.chessgame.players.Player;
+import com.abdmoh123.chessgame.players.bots.EngineBot;
+import com.abdmoh123.chessgame.players.bots.RandomBot;
 
 public class ChessGame {
     public static final Scanner SCANNER = new Scanner(System.in);

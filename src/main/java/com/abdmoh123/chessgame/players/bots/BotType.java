@@ -1,4 +1,4 @@
-package com.abdmoh123.chessgame.control;
+package com.abdmoh123.chessgame.players.bots;
 
 public enum BotType {
     RANDOM_BOT,
