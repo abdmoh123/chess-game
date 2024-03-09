@@ -1,5 +1,6 @@
 package com.abdmoh123.chessgame.control;
 
 public enum BotType {
-    RANDOM_BOT
+    RANDOM_BOT,
+    ENGINE_BOT
 }

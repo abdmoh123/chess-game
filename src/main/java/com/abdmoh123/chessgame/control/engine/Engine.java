@@ -15,6 +15,21 @@ import com.abdmoh123.chessgame.pieces.Piece;
 public class Engine {
     private Board chess_board;
 
+    private class MoveWithEval {
+        /* Class grouping evaluation values with given moves (used for finding best moves) */
+
+        private Move move;
+        private int eval_value;
+
+        public MoveWithEval(Move move_in, int eval_in) {
+            this.move = move_in;
+            this.eval_value = eval_in;
+        }
+
+        public Move getMove() { return this.move; }
+        public int getEvalValue() { return this.eval_value; }
+    }
+    
     public Engine(Board chess_board_in) {
         this.chess_board = chess_board_in;
     }
@@ -216,12 +231,66 @@ public class Engine {
         return total_points;
     }
     public int evaluate(boolean is_white_playing) {
+        // checkmate moves are priority
+        if (isCheckMate(!is_white_playing)) return 999;
+        if (isCheckMate(is_white_playing)) return -999;
+
+        // difference in points is general way of evaluating position (encourages captures)
         int white_points = countMaterialValues(true);
         int black_points = countMaterialValues(false);
-
         int evaluation = white_points - black_points;
         if (!is_white_playing) { evaluation *= -1; }
+        
+        if (isCheck(!is_white_playing)) { ++evaluation; } // encourage check moves
+        else if (isCheck(is_white_playing)) { --evaluation; } // discourage getting checked
+
         return evaluation;
+    }
+    private int evaluateAfterMove(boolean is_white_playing, Move move_in) {
+        applyMoveToBoard(move_in);
+        int eval = -evaluate(!is_white_playing);
+        undoMoveToBoard(move_in);
+        return eval;
+    }
+
+    public Move getBestMove(boolean is_white_playing, int depth) {
+        return generateBestMove(is_white_playing, depth).getMove();
+    }
+    public MoveWithEval generateBestMove(boolean is_white_playing, int depth) {
+        List<Space> friendly_spaces = getBoard().getFriendlySpaces(is_white_playing);
+
+        List<Move> all_legal_moves = new ArrayList<>();
+        for (Space space : friendly_spaces) {
+            all_legal_moves.addAll(generateLegalMoves(space, is_white_playing));
+        }
+
+        int best_eval = -999;
+        Move best_move = null;
+
+        if (depth == 0) {
+            for (Move legal_move : all_legal_moves) {
+                int current_eval = evaluateAfterMove(is_white_playing, legal_move);
+                if (current_eval > best_eval) {
+                    best_move = legal_move;
+                    best_eval = current_eval;
+                }
+            }
+            return new MoveWithEval(best_move, best_eval);
+        }
+        
+        for (Move legal_move : all_legal_moves) {
+            applyMoveToBoard(legal_move);
+
+            MoveWithEval wrapped_enemy_best_move = generateBestMove(!is_white_playing, depth - 1);
+
+            if (-wrapped_enemy_best_move.getEvalValue() > best_eval) {
+                best_move = legal_move;
+                best_eval = -wrapped_enemy_best_move.getEvalValue();
+            }
+
+            undoMoveToBoard(legal_move);
+        }
+        return new MoveWithEval(best_move, best_eval);
     }
 
     public void applyMoveToBoard(Move move) {

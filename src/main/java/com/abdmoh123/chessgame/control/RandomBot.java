@@ -10,7 +10,7 @@ import java.util.Random;
 
 public class RandomBot extends BotPlayer {
     public RandomBot(boolean is_white_in) {
-        super(is_white_in, 0);
+        super(is_white_in);
     }
 
     @Override
