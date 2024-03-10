@@ -3,9 +3,7 @@ package com.abdmoh123.chessgame;
 import java.util.Scanner;
 
 import com.abdmoh123.chessgame.boards.Board;
-import com.abdmoh123.chessgame.boards.Space;
 import com.abdmoh123.chessgame.boards.StandardBoard;
-import com.abdmoh123.chessgame.pieces.Pawn;
 import com.abdmoh123.chessgame.players.Human;
 import com.abdmoh123.chessgame.players.Player;
 import com.abdmoh123.chessgame.players.bots.EngineBot;
@@ -65,8 +63,6 @@ public class ChessGame {
         
         Board chess_board = new StandardBoard();
         chess_board.initialise();
-        chess_board.updateSpace(new Space(4, 6), null);
-        chess_board.updateSpace(new Space(4, 5), new Pawn(false));
 
         Game chess_game = new Game(players, chess_board);
         chess_game.runGame();
