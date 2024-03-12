@@ -217,18 +217,28 @@ public abstract class Board {
         /* Display board layout on terminal */
 
         for (int j = getLength() - 1; j >= 0; --j) {
+            // print top border for each row
+            for (int i = 0; i < getLength(); ++i) {
+                System.out.print("+---");
+            }
+            System.out.println("+");
+
+            // print each space with its piece (if not empty)
             for (int i = 0; i < getLength(); ++i) {
                 Space space = new Space(i, j);
 
-                if (isSpaceEmpty(space)) {
-                    System.out.print("o ");
-                }
-                else {
-                    System.out.print(getPiece(space).getSymbol() + " ");
-                }
+                char piece_symbol = ' ';
+                if (!isSpaceEmpty(space)) { piece_symbol = getPiece(space).getSymbol(); }
+                System.out.printf("| %s ", piece_symbol);
             }
-            System.out.print("\n");
+            System.out.print("|\n");
         }
+
+        // print bottom border of the board
+        for (int i = 0; i < getLength(); ++i) {
+            System.out.print("+---");
+        }
+        System.out.println("+");
     }
 
     public Board after(Move move_in) {
