@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<GridPane fx:controller="com.abdmoh123.chessgame.controller.MainController"  xmlns:fx="http://javafx.com/fxml" alignment="top_center" hgap="10" vgap="10">
+    <padding><Insets topRightBottomLeft="15" /></padding>
+
+    <Text text="New game" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="3" />
+ 
+    <Button text="Standard Chess" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+    <Button text="Chess 960" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+    <Button text="Custom Game" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+    
+    <Label text="Enter FEN String:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+    <TextField GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.columnSpan="2" />
+ 
+    <Button text="Start Game!" GridPane.columnIndex="1" GridPane.rowIndex="3" onAction="#handleSubmitButtonAction" />
+
+    <Text fx:id="output_text" GridPane.columnIndex="0" GridPane.rowIndex="4" GridPane.columnSpan="2" />
+</GridPane>
