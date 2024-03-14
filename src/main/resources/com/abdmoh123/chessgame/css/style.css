@@ -1,0 +1,53 @@
+@font-face {
+    font-family: "Red Hat Mono Medium";
+    src: url("fonts/RedHatMono/static/RedHatMono-Medium.ttf");
+}
+
+@font-face {
+    font-family: "Red Hat Mono Regular";
+    src: url("fonts/RedHatMono/static/RedHatMono-Regular.ttf");
+}
+
+.root {
+    -fx-background-color: #fbf1c7;
+    -fx-text-fill: #3c3836;
+    -fx-font-family: "Red Hat Mono Regular";
+    -fx-font-size: 16px;
+}
+
+#menu-title {
+    -fx-text-fill: #3c3836;
+    -fx-font-family: "Red Hat Mono Medium";
+    -fx-font-size: 20px;
+}
+
+.button {
+    -fx-background-color: #98971a;
+    -fx-text-fill: #3c3836;
+    -fx-border-radius: 0px;
+    -fx-background-radius: 0px;
+    -fx-effect: dropshadow(one-pass-box, #79740e, 0, 0, 0, 3px);
+    -fx-padding: 10px 15px;
+    -fx-font-family: "Red Hat Mono Medium";
+    -fx-font-size: 16px;
+}
+
+.button:focused {
+    -fx-background-color: #79740e;
+    -fx-text-fill: #ebdbb2;
+}
+
+.label {
+    -fx-text-fill: #3c3836;
+    -fx-font-family: "Red Hat Mono Regular";
+    -fx-font-size: 16px;
+}
+
+.text-field {
+    -fx-background-color: #fbf1c7;
+    -fx-padding: 15px;
+    -fx-background-radius: 0px;
+    -fx-border-width: 3px;
+    -fx-border-color: #ebdbb2;
+    -fx-effect: dropshadow(one-pass-box, #d5c4a1, 0, 0, 0, 3px);
+}

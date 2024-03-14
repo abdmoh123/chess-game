@@ -12,8 +12,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
@@ -32,7 +30,7 @@ public class ChessGame extends Application {
         grid.setPadding(new Insets(15));
 
         Text form_title = new Text("New game");
-        form_title.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
+        form_title.setId("menu-title");
         grid.add(form_title, 0, 0, 3, 1);
 
         Button standard_chess_button = new Button();
@@ -65,7 +63,10 @@ public class ChessGame extends Application {
             }
         });
 
-        primary_stage.setScene(new Scene(grid, 500, 400));
+        Scene main_scene = new Scene(grid, 500, 400);
+        primary_stage.setScene(main_scene);
+        main_scene.getStylesheets().add(getClass().getResource("css/style.css").toExternalForm());
+
         primary_stage.show();
     }
 
