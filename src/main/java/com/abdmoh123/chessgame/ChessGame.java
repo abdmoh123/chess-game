@@ -13,10 +13,10 @@ public class ChessGame extends Application {
 
     @Override
     public void start(Stage primary_stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("fxml/new_game_form.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("fxml/main_menu.fxml"));
         primary_stage.setTitle("Chess");
 
-        Scene main_scene = new Scene(root, 500, 400);
+        Scene main_scene = new Scene(root);
         primary_stage.setScene(main_scene);
         main_scene.getStylesheets().add(getClass().getResource("css/style.css").toExternalForm());
 

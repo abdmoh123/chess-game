@@ -1,3 +1,4 @@
+
 @font-face {
     font-family: "Red Hat Mono Medium";
     src: url("fonts/RedHatMono/static/RedHatMono-Medium.ttf");
@@ -15,12 +16,6 @@
     -fx-font-size: 16px;
 }
 
-#menu-title {
-    -fx-text-fill: #3c3836;
-    -fx-font-family: "Red Hat Mono Medium";
-    -fx-font-size: 20px;
-}
-
 .button {
     -fx-background-color: #98971a;
     -fx-text-fill: #3c3836;
@@ -31,10 +26,25 @@
     -fx-font-family: "Red Hat Mono Medium";
     -fx-font-size: 16px;
 }
-
 .button:focused {
     -fx-background-color: #79740e;
     -fx-text-fill: #ebdbb2;
+}
+
+.red-button {
+    -fx-background-color: #cc241d;
+    -fx-effect: dropshadow(one-pass-box, #9d0006, 0, 0, 0, 3px);
+}
+.red-button:focused {
+    -fx-background-color: #9d0006;
+}
+
+.orange-button {
+    -fx-background-color: #d65d0e;
+    -fx-effect: dropshadow(one-pass-box, #af3a03, 0, 0, 0, 3px);
+}
+.orange-button:focused {
+    -fx-background-color: #af3a03;
 }
 
 .label {
@@ -50,4 +60,37 @@
     -fx-border-width: 3px;
     -fx-border-color: #ebdbb2;
     -fx-effect: dropshadow(one-pass-box, #d5c4a1, 0, 0, 0, 3px);
+}
+
+#left-container {
+    -fx-padding: 10px;
+    -fx-alignment: center;
+    -fx-spacing: 10px;
+}
+
+#right-container {
+    -fx-padding: 10px;
+    -fx-spacing: 10px;
+}
+
+#center-container {
+    -fx-padding: 10px 0px;
+    -fx-alignment: center;
+}
+
+#menu-title {
+    -fx-text-fill: #3c3836;
+    -fx-font-family: "Red Hat Mono Medium";
+    -fx-font-size: 20px;
+}
+
+#chess-board {
+    /* -fx-min-width: 100px; */
+    -fx-background-color: #ebdbb2;
+    -fx-effect: dropshadow(one-pass-box, #d5c4a1, 0, 0, 0, 3px);
+    -fx-padding: 10px 10px 0px 0px;
+}
+
+#right-buttons {
+    -fx-spacing: 10px;
 }

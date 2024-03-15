@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<?import com.abdmoh123.chessgame.ui.components.* ?>
+
+<BorderPane fx:controller="com.abdmoh123.chessgame.ui.controllers.MainController"  xmlns:fx="http://javafx.com/fxml">
+
+    <left>
+        <VBox id="left-container">
+            <Button text="Start game" onAction="#startGame" />
+        </VBox>
+    </left>
+    
+    <center>
+        <HBox id="center-container">
+            <BoardPane id="chess-board" fx:id="chess_board" />
+        </HBox>
+    </center>
+
+    <right>
+        <VBox id="right-container">
+            <HBox id="right-buttons">
+                <HBox>
+                    <Button text="Undo" styleClass="orange-button" />
+                    <Button text="Redo" styleClass="orange-button" />
+                </HBox>
+                <Button text="End game" styleClass="red-button" onAction="#endGame" />
+            </HBox>
+        </VBox>
+    </right>
+    
+</BorderPane>
