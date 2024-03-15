@@ -17,9 +17,9 @@
     </left>
     
     <center>
-        <HBox id="center-container">
+        <GridPane id="center-container">
             <BoardPane id="chess-board" fx:id="chess_board" />
-        </HBox>
+        </GridPane>
     </center>
 
     <right>
