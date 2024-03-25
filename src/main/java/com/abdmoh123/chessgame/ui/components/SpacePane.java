@@ -57,8 +57,9 @@ public class SpacePane extends VBox {
             case 'r': 
                 file_path += "rook.png";
                 break;
-            
-            default: return;
+            default:
+                this.piece_image.setImage(null);
+                return;
         }
 
         try {

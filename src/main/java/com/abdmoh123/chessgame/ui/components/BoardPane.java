@@ -1,5 +1,8 @@
 package com.abdmoh123.chessgame.ui.components;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.abdmoh123.chessgame.boards.Board;
 import com.abdmoh123.chessgame.boards.Space;
 import com.abdmoh123.chessgame.boards.StandardBoard;
@@ -9,30 +12,44 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 
 public class BoardPane extends GridPane {
-    public int size;
-    GridPane board_spaces;
+    private int size;
 
     // starts screwing up at 42
     private final int SPACE_SIZE = 50;
 
     public BoardPane(@NamedArg("size") int size) {
         this.size = size;
-        this.board_spaces = new GridPane();
 
         // add axes labels
-        add(getXAxis(), 1, 1);
-        add(getYAxis(), 0, 0);
-        // add actual chess board
-        add(board_spaces, 1, 0);
+        List<String> x_label_list = generateXAxis();
+        for (int i = 0; i < x_label_list.size(); ++i) {
+            Label x_label = new Label(x_label_list.get(i));
 
-        for (int i = 0; i < size; ++i) {
+            x_label.setMinWidth(SPACE_SIZE);
+            x_label.setAlignment(Pos.CENTER);
+            // x_label.setBackground(new Background(new BackgroundFill(Paint.valueOf("#ffffff"), null, null)));
+            // x_label.setPadding(new Insets(1));
+
+            add(x_label, i + 1, size);
+        }
+        for (int i : generateYAxis()) {
+            Label y_label = new Label(Integer.toString(i));
+
+            y_label.setMinHeight(SPACE_SIZE);
+            y_label.setAlignment(Pos.CENTER);
+            // y_label.setBackground(new Background(new BackgroundFill(Paint.valueOf("#ffffff"), null, null)));
+            y_label.setPadding(new Insets(7));
+
+            add(y_label, 0, size - i);
+        }
+
+        // add actual chess board
+        for (int i = 1; i < size + 1; ++i) {
             for (int j = 0; j < size; ++j) {
                 // automatically determine whether or not the square should be light or dark
-                this.board_spaces.add(new SpacePane((i - j) % 2 == 0, SPACE_SIZE), i, j);
+                add(new SpacePane((i - j) % 2 == 0, SPACE_SIZE), i, j);
             }
         }
     }
@@ -44,20 +61,20 @@ public class BoardPane extends GridPane {
         Board chess_board = new StandardBoard();
         chess_board.initialiseFEN(fen_string_in);
 
-        fillBoard(chess_board);
+        initialise(chess_board);
     }
     public void initialiseStandard() {
         Board chess_board = new StandardBoard();
         chess_board.initialise();
         
-        fillBoard(chess_board);
+        initialise(chess_board);
     }
-    private void fillBoard(Board chess_board_in) {
-        // iterate through rows
-        for (int j = 0; j < chess_board_in.getLength(); ++j) {
-            // iterate through columns
-            for (int i = 0; i < chess_board_in.getLength(); ++i) {
-                Space board_space = new Space(i, j);
+    public void initialise(Board chess_board_in) {
+        // iterate through columns
+        for (int i = 1; i < chess_board_in.getLength() + 1; ++i) {
+            // iterate through rows
+            for (int j = 0; j < chess_board_in.getLength(); ++j) {
+                Space board_space = new Space(i - 1, j);
                 SpacePane space_pane = getCell(i, j);
 
                 if (!chess_board_in.isSpaceEmpty(board_space)) {
@@ -67,44 +84,35 @@ public class BoardPane extends GridPane {
         }
     }
 
-    public SpacePane getCell(int column, int row) {
-        /* Return cell based on inputted columns and rows (similar to Space class/Board.getPiece method) */
-
-        // gridpane stores cells in format (row, column) instead of (column, row) like the Space class
-        SpacePane space_pane = (SpacePane) board_spaces.getChildren().get((size - row - 1) + size * column);
-        return space_pane;
-    }
-
-    public GridPane getBoardGrid() {
-        return this.board_spaces;
-    }
-
-    private HBox getXAxis() {
-        HBox x_labels = new HBox();
+    private List<String> generateXAxis() {
+        List<String> x_labels = new ArrayList<>();
 
         char letter = 'a';
         for (int i = 0; i < this.size; ++i) {
-            Label x_label = new Label(Character.toString(letter));
-            x_label.setMinWidth(SPACE_SIZE);
-            x_label.setAlignment(Pos.CENTER);
-            x_label.setPadding(new Insets(5));
-
-            x_labels.getChildren().add(x_label);
+            x_labels.add(Character.toString(letter));
             ++letter;
         }
         return x_labels;
     }
-    private VBox getYAxis() {
-        VBox y_labels = new VBox();
-        for (int i = 1; i < this.size + 1; ++i) {
-            Label y_label = new Label(Integer.toString(i));
-            y_label.setMinHeight(SPACE_SIZE);
-            y_label.setAlignment(Pos.CENTER);
-            // need more padding to have similar look to x axis labels
-            y_label.setPadding(new Insets(10));
+    private List<Integer> generateYAxis() {
+        List<Integer> y_labels = new ArrayList<>();
 
-            y_labels.getChildren().add(y_label);
-        }
+        for (int i = 1; i < this.size + 1; ++i) y_labels.add(i);
         return y_labels;
     }
+
+    public SpacePane getCell(int column, int row) {
+        /* Return cell based on inputted columns and rows (similar to Space class/Board.getPiece method) */
+
+        // gridpane stores cells in format (row, column) instead of (column, row) like the Space class
+        SpacePane space_pane = (SpacePane) getChildren().get((size - row - 1) + size * (column + 1));
+        return space_pane;
+    }
+
+    public void updateCell(Space coordinate, char piece_symbol) {
+        SpacePane space_pane = getCell(coordinate.getX(), coordinate.getY());
+        space_pane.setPieceImage(piece_symbol);
+    }
+
+    public int getSize() { return this.size; }
 }

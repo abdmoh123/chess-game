@@ -35,6 +35,12 @@
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
             <version>23-ea+3</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>javafx-controls</artifactId>
+                    <groupId>org.openjfx</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
