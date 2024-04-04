@@ -18,7 +18,7 @@
     
     <center>
         <GridPane id="center-container">
-            <BoardPane id="chess-board" fx:id="chess_board_pane" onMouseClicked="#selectPiece" />
+            <BoardPane id="chess-board" fx:id="chess_board_pane" onMouseClicked="#handleSpaceSelection" />
         </GridPane>
     </center>
 

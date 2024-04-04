@@ -10,15 +10,16 @@ import javafx.scene.paint.Paint;
 public class SpacePane extends VBox {
     private ImageView piece_image;
     private final int IMAGE_SIZE;
+    private final boolean IS_LIGHT;
 
-    public SpacePane(boolean is_white_in, int square_size_in) {
+    public SpacePane(boolean is_light_in, int square_size_in) {
         super();
 
         this.IMAGE_SIZE = square_size_in; // size of spaces
+        this.IS_LIGHT = is_light_in;
 
-        if (is_white_in) setBackground(new Background(new BackgroundFill(Paint.valueOf("#ebdbb2"), null, null)));
-        else setBackground(new Background(new BackgroundFill(Paint.valueOf("#504945"), null, null)));
-        
+        resetBackground();
+
         piece_image = new ImageView();
         piece_image.setPreserveRatio(true);
         piece_image.setSmooth(false);
@@ -28,7 +29,6 @@ public class SpacePane extends VBox {
 
         getChildren().add(piece_image);
     }
-
     public ImageView getPieceImage() {
         return this.piece_image;
     }
@@ -70,5 +70,17 @@ public class SpacePane extends VBox {
             System.out.println("Failed to find texture!");
             e.printStackTrace();
         }
+    }
+
+    public void highlight(String light_colour, String dark_colour) {
+        if (IS_LIGHT) setBackground(new Background(new BackgroundFill(Paint.valueOf(light_colour), null, null)));
+        else setBackground(new Background(new BackgroundFill(Paint.valueOf(dark_colour), null, null)));
+    }
+    public void highlight(String colour) {
+        setBackground(new Background(new BackgroundFill(Paint.valueOf(colour), null, null)));
+    }
+    public void resetBackground() {
+        if (IS_LIGHT) setBackground(new Background(new BackgroundFill(Paint.valueOf("#ebdbb2"), null, null)));
+        else setBackground(new Background(new BackgroundFill(Paint.valueOf("#504945"), null, null)));
     }
 }

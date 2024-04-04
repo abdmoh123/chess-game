@@ -29,8 +29,6 @@ public class BoardPane extends GridPane {
 
             x_label.setMinWidth(SPACE_SIZE);
             x_label.setAlignment(Pos.CENTER);
-            // x_label.setBackground(new Background(new BackgroundFill(Paint.valueOf("#ffffff"), null, null)));
-            // x_label.setPadding(new Insets(1));
 
             add(x_label, i + 1, size);
         }
@@ -39,7 +37,6 @@ public class BoardPane extends GridPane {
 
             y_label.setMinHeight(SPACE_SIZE);
             y_label.setAlignment(Pos.CENTER);
-            // y_label.setBackground(new Background(new BackgroundFill(Paint.valueOf("#ffffff"), null, null)));
             y_label.setPadding(new Insets(7));
 
             add(y_label, 0, size - i);
@@ -71,10 +68,10 @@ public class BoardPane extends GridPane {
     }
     public void initialise(Board chess_board_in) {
         // iterate through columns
-        for (int i = 1; i < chess_board_in.getLength() + 1; ++i) {
+        for (int i = 0; i < chess_board_in.getLength(); ++i) {
             // iterate through rows
             for (int j = 0; j < chess_board_in.getLength(); ++j) {
-                Space board_space = new Space(i - 1, j);
+                Space board_space = new Space(i, j);
                 SpacePane space_pane = getCell(i, j);
 
                 if (!chess_board_in.isSpaceEmpty(board_space)) {
@@ -101,16 +98,28 @@ public class BoardPane extends GridPane {
         return y_labels;
     }
 
+    public SpacePane getCell(Space space) {
+        return getCell(space.getX(), space.getY());
+    }
     public SpacePane getCell(int column, int row) {
         /* Return cell based on inputted columns and rows (similar to Space class/Board.getPiece method) */
 
         // gridpane stores cells in format (row, column) instead of (column, row) like the Space class
-        SpacePane space_pane = (SpacePane) getChildren().get((size - row - 1) + size * (column + 1));
+        SpacePane space_pane = (SpacePane) getChildren().get((size - row - 1) + size * (column + 2));
         return space_pane;
+    }
+    public List<SpacePane> getCells() {
+        List<SpacePane> panes = new ArrayList<>();
+        for (int i = 0; i < getSize(); ++i) {
+            for (int j = 0; j < getSize(); ++j) {
+                panes.add(getCell(i, j));
+            }
+        }
+        return panes;
     }
 
     public void updateCell(Space coordinate, char piece_symbol) {
-        SpacePane space_pane = getCell(coordinate.getX(), coordinate.getY());
+        SpacePane space_pane = getCell(coordinate);
         space_pane.setPieceImage(piece_symbol);
     }
 

@@ -10,6 +10,15 @@
 }
 
 .root {
+    -d_blue: #076678;
+    -n_blue: #458588;
+    -d_red: #9d0006;
+    -n_red: #cc241d;
+    -d_orange: #af3a03;
+    -n_orange: #d65d0e;
+    -d_green: #79740e;
+    -n_green: #98971a;
+    
     -fx-background-color: #fbf1c7;
     -fx-text-fill: #3c3836;
     -fx-font-family: "Red Hat Mono Regular";
@@ -17,34 +26,34 @@
 }
 
 .button {
-    -fx-background-color: #98971a;
+    -fx-background-color: -n_green;
     -fx-text-fill: #3c3836;
     -fx-border-radius: 0px;
     -fx-background-radius: 0px;
-    -fx-effect: dropshadow(one-pass-box, #79740e, 0, 0, 0, 3px);
+    -fx-effect: dropshadow(one-pass-box, -d_green, 0, 0, 0, 3px);
     -fx-padding: 10px 15px;
     -fx-font-family: "Red Hat Mono Medium";
     -fx-font-size: 16px;
 }
 .button:focused {
-    -fx-background-color: #79740e;
+    -fx-background-color: -d_green;
     -fx-text-fill: #ebdbb2;
 }
 
 .red-button {
-    -fx-background-color: #cc241d;
-    -fx-effect: dropshadow(one-pass-box, #9d0006, 0, 0, 0, 3px);
+    -fx-background-color: -n_red;
+    -fx-effect: dropshadow(one-pass-box, -d_red, 0, 0, 0, 3px);
 }
 .red-button:focused {
-    -fx-background-color: #9d0006;
+    -fx-background-color: -d_red;
 }
 
 .orange-button {
-    -fx-background-color: #d65d0e;
-    -fx-effect: dropshadow(one-pass-box, #af3a03, 0, 0, 0, 3px);
+    -fx-background-color: -n_orange;
+    -fx-effect: dropshadow(one-pass-box, -d_orange, 0, 0, 0, 3px);
 }
 .orange-button:focused {
-    -fx-background-color: #af3a03;
+    -fx-background-color: -d_orange;
 }
 
 .label {
