@@ -6,6 +6,7 @@ import java.util.List;
 import com.abdmoh123.chessgame.boards.Board;
 import com.abdmoh123.chessgame.boards.Space;
 import com.abdmoh123.chessgame.boards.StandardBoard;
+import com.abdmoh123.chessgame.moves.Move;
 
 import javafx.beans.NamedArg;
 import javafx.geometry.Insets;
@@ -81,6 +82,17 @@ public class BoardPane extends GridPane {
         }
     }
 
+    public void reset() {
+        /* Resets the chess board (makes it empty) */
+        
+        for (int i = 0; i < getSize(); ++i) {
+            for (int j = 0; j < getSize(); ++j) {
+                // set space image to null (empty)
+                updateCell(new Space(i, j), ' ');
+            }
+        }
+    }
+
     private List<String> generateXAxis() {
         List<String> x_labels = new ArrayList<>();
 
@@ -121,6 +133,14 @@ public class BoardPane extends GridPane {
     public void updateCell(Space coordinate, char piece_symbol) {
         SpacePane space_pane = getCell(coordinate);
         space_pane.setPieceImage(piece_symbol);
+    }
+
+    public void applyMove(Move move_in) {
+        SpacePane old_cell = getCell(move_in.getOldLocation());
+        SpacePane new_cell = getCell(move_in.getNewLocation());
+
+        old_cell.setPieceImage(' ');
+        new_cell.setPieceImage(move_in.getChessPiece().getSymbol());
     }
 
     public int getSize() { return this.size; }

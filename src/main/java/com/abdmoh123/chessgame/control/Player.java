@@ -20,9 +20,7 @@ public abstract class Player {
 
     public List<Move> getMoves(Space space_in, Board chess_board) {
         // list of moves is empty if space is not controllable
-        if (!chess_board.isSpaceFriendly(space_in, isWhite())) {
-            return new ArrayList<>();
-        }
+        if (!chess_board.isSpaceFriendly(space_in, isWhite())) return new ArrayList<>();
         List<Move> possible_moves = chess_board.getPiece(space_in).getPossibleMoves(space_in, chess_board);
 
         // remove moves that cause check (for the current player) and ensure castling is legal
@@ -86,6 +84,8 @@ public abstract class Player {
     }
 
     public boolean canPieceMove(Space space_in, Board chess_board) {
+        if (!chess_board.isSpaceFriendly(space_in, isWhite())) return false;
+
         List<Move> possible_moves = chess_board.getPiece(space_in).getPossibleMoves(space_in, chess_board);
 
         for (Move move : possible_moves) {

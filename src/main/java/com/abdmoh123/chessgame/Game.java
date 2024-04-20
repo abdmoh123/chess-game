@@ -55,54 +55,32 @@ public class Game {
     }
 
     private void start_turn() {
-        Player player;
-        if (isP1Turn()) {
-            System.out.println("Player 1's turn:");
-            player = getPlayer(1);
-        }
-        else {
-            System.out.println("Player 2's turn:");
-            player = getPlayer(2);
-        }
+        Player player = getCurrentPlayer();
+        if (isP1Turn()) System.out.println("Player 1's turn:");
+        else System.out.println("Player 2's turn:");
 
         getBoard().display();
 
-        if (isCheckMate(player, getBoard())) {
-            endGame(player.isWhite());
-            return;
-        }
-        if (isDraw(player, getBoard())) {
-            setState(GameState.DRAW);
-            return;
-        }
+        // check for checkmates and draws
+        updateGameState();
+        if (hasEnded()) return;
         if (player.isCheck(getBoard())) {
             System.out.println("Your king is in check!");
         }
 
         Move generated_move = player.startMove(getBoard());
 
-        // disable en passant for all pawns after player made a move
-        List<Space> pawn_spaces = getBoard().getAllSpacesBySymbol('p');
-        for (Space pawn_space : pawn_spaces) {
-            Pawn pawn_piece = (Pawn) getBoard().getPiece(pawn_space);
-            pawn_piece.setEnPassant(false);
-            getBoard().updateSpace(pawn_space, pawn_piece);
-        }
+        refreshEnPassant();
 
-        // quiet move count (for 50 move rule)
-        if (generated_move.getKillPoints() == 0) {
-            ++this.quiet_move_count;
-        }
-        else {
-            this.quiet_move_count = 0;
-        }
-        // three-fold repetition count
+        // count quiet moves (for 50 move rule)
+        if (generated_move.getKillPoints() == 0) ++this.quiet_move_count;
+        else this.quiet_move_count = 0;
+
+        // count three-fold repetition
         if (move_history.size() > 4 && generated_move.equals(move_history.get(move_history.size() - 4))) {
             ++this.three_fold_repetition_count;
         }
-        else {
-            this.three_fold_repetition_count = 0;
-        }
+        else this.three_fold_repetition_count = 0;
 
         generated_move.apply(getBoard());
 
@@ -110,6 +88,25 @@ public class Game {
         recordMove(generated_move);
 
         switchTurn();
+    }
+
+    public void updateGameState() {
+        Player current_player = getCurrentPlayer();
+        if (isCheckMate(current_player, getBoard())) {
+            endGame(current_player.isWhite());
+        }
+        else if (isDraw(current_player, getBoard())) {
+            setState(GameState.DRAW);
+        }
+    }
+    public void refreshEnPassant() {
+        // disable en passant for all pawns after player made a move
+        List<Space> pawn_spaces = getBoard().getAllSpacesBySymbol('p');
+        for (Space pawn_space : pawn_spaces) {
+            Pawn pawn_piece = (Pawn) getBoard().getPiece(pawn_space);
+            pawn_piece.setEnPassant(false);
+            getBoard().updateSpace(pawn_space, pawn_piece);
+        }
     }
 
     public boolean isP1Turn() {
@@ -126,6 +123,10 @@ public class Game {
         this.move_history.add(move_in);
     }
 
+    public Player getCurrentPlayer() {
+        if (isP1Turn()) return getPlayer(1);
+        return getPlayer(2);
+    }
     public Player getPlayer(int choice) {
         if (choice > this.players.length) {
             throw new RuntimeException("Invalid input");

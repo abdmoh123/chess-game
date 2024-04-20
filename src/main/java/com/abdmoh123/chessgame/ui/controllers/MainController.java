@@ -8,6 +8,7 @@ import com.abdmoh123.chessgame.GameState;
 import com.abdmoh123.chessgame.boards.Board;
 import com.abdmoh123.chessgame.boards.Space;
 import com.abdmoh123.chessgame.boards.StandardBoard;
+import com.abdmoh123.chessgame.control.Computer;
 import com.abdmoh123.chessgame.control.Human;
 import com.abdmoh123.chessgame.control.Player;
 import com.abdmoh123.chessgame.moves.Move;
@@ -28,10 +29,10 @@ public class MainController {
     private Game chess_game;
 
     private Space selected_space;
-    List<Space> spaces_to_move_to;
+    private List<Move> selected_possible_moves;
 
     public void initialize() {
-        spaces_to_move_to = new ArrayList<>();
+        selected_possible_moves = new ArrayList<>();
     }
     
     @FXML protected void handleSubmitButtonAction(ActionEvent event) {
@@ -46,6 +47,7 @@ public class MainController {
         chess_board.initialise();
         chess_game = new Game(new Player[]{new Human(true), new Human(false)}, chess_board);
 
+        chess_board_pane.reset();
         chess_board_pane.initialise(chess_board);
         System.out.println("Game started!");
     }
@@ -64,27 +66,54 @@ public class MainController {
         if (chess_game.getState() != GameState.ACTIVE) return;
 
         // reset highlighting every time the player clicks a space
-        List<SpacePane> pane_list = chess_board_pane.getCells();
-        for (SpacePane pane : pane_list) {
-            pane.resetBackground();
-        }
+        resetHighlighting();
+        Player current_player = chess_game.getCurrentPlayer();
+        // don't let player select pieces if a bot is playing
+        if (current_player instanceof Computer) return;
 
         // get square/grid cell that the user clicked
         Node clicked_node = event.getPickResult().getIntersectedNode();
         // do nothing if clicked node is not a chess board space
         if (!(clicked_node instanceof SpacePane)) return;
 
-        Space temp_space = getSpacePaneLocation((SpacePane) clicked_node);
-        if (chess_game.getBoard().isSpaceFriendly(temp_space, chess_game.isP1Turn())) {
-            this.selected_space = temp_space;
+        this.selected_space = getSpacePaneLocation((SpacePane) clicked_node);
+        // apply move if player selected the correct spaces
+        Move selected_move = getMoveFromSelection(this.selected_space);
+        if (selected_move != null) {
+            selected_move.apply(chess_game.getBoard());
+
+            current_player.addPoints(selected_move.getKillPoints());
+            chess_game.recordMove(selected_move);
+
+            resetHighlighting();
+            chess_board_pane.applyMove(selected_move);
+
+            this.selected_space = null;
+            this.selected_possible_moves.clear();
+
+            this.chess_game.switchTurn();
+
+            return;
+        }
+
+        if (current_player.canPieceMove(selected_space, chess_game.getBoard())) {
             char piece_symbol = chess_game.getBoard().getPiece(selected_space).getSymbol();
             System.out.printf("Found %s at cell: (%d, %d)\n", piece_symbol, selected_space.getX(), selected_space.getY());
+
             // highlight space in orange
             ((SpacePane) clicked_node).highlight("#d65d0e");
         }
-        highlightMovablePanes(temp_space);
+        
+        updatePossibleMoves();
+        highlightMovablePanes();
     }
 
+    private Move getMoveFromSelection(Space space_in) {
+        for (Move move : this.selected_possible_moves) {
+            if (space_in.equals(move.getNewLocation())) return move;
+        }
+        return null;
+    }
     private Space getSpacePaneLocation(SpacePane pane) {
         Integer column_index = BoardPane.getColumnIndex(pane);
         Integer row_index = BoardPane.getRowIndex(pane);
@@ -96,19 +125,29 @@ public class MainController {
         return new Space(column_index, row_index);
     }
     
-    private void highlightMovablePanes(Space space_in) {
+    private void updatePossibleMoves() {
         Board chess_board = chess_game.getBoard();
         // do nothing if piece cannot be moved
-        if (!chess_board.isSpaceFriendly(space_in, chess_game.isP1Turn())) return;
+        if (!chess_board.isSpaceFriendly(selected_space, chess_game.isP1Turn())) return;
 
-        Piece selected_piece = chess_board.getPiece(selected_space);
-        List<Move> possible_moves = selected_piece.getPossibleMoves(selected_space, chess_game.getBoard());
-        
-        for (Move move : possible_moves) {
-            Space new_location = move.getNewLocation();
-            SpacePane pane = chess_board_pane.getCell(new_location.getX(), new_location.getY());
+        this.selected_possible_moves = chess_game.getCurrentPlayer().getMoves(selected_space, chess_board);
+    }
+    private void highlightMovablePanes() {
+        Board chess_board = chess_game.getBoard();
+        // do nothing if piece cannot be moved
+        if (!chess_board.isSpaceFriendly(selected_space, chess_game.isP1Turn())) return;
+
+        for (Move move : selected_possible_moves) {
+            Space space = move.getNewLocation();
+            SpacePane pane = chess_board_pane.getCell(space.getX(), space.getY());
             // highlight the spaces in blue
             pane.highlight("#458588", "#076678");
+        }
+    }
+    private void resetHighlighting() {
+        List<SpacePane> pane_list = chess_board_pane.getCells();
+        for (SpacePane pane : pane_list) {
+            pane.resetBackground();
         }
     }
 }
