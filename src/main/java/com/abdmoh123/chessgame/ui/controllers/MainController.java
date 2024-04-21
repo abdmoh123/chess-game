@@ -126,10 +126,13 @@ public class MainController {
     
     private void updatePossibleMoves() {
         Board chess_board = chess_game.getBoard();
-        // do nothing if piece cannot be moved
-        if (!chess_board.isSpaceFriendly(selected_space, chess_game.isP1Turn())) return;
-
-        this.selected_possible_moves = chess_game.getCurrentPlayer().getMoves(selected_space, chess_board);
+        // clear memory if piece cannot be moved
+        if (!chess_board.isSpaceFriendly(selected_space, chess_game.isP1Turn())) {
+            this.selected_possible_moves.clear();
+        }
+        else {
+            this.selected_possible_moves = chess_game.getCurrentPlayer().getMoves(selected_space, chess_board);
+        }
     }
     private void highlightMovablePanes() {
         Board chess_board = chess_game.getBoard();
