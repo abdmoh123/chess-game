@@ -24,6 +24,22 @@
 
     <right>
         <VBox id="right-container">
+            <VBox id="move-history-container" VBox.vgrow="always">
+                <Label id="move-history-title">Move History</Label>
+                <ScrollPane fitToWidth="true" VBox.vgrow="always">
+                    <GridPane id="move-history-content" VBox.vgrow="always">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="33" />
+                            <ColumnConstraints percentWidth="33" />
+                            <ColumnConstraints percentWidth="33" />
+                        </columnConstraints>
+    
+                        <VBox fx:id="move_history_index" GridPane.columnIndex="0" VBox.vgrow="always" />
+                        <VBox fx:id="white_move_history" GridPane.columnIndex="1" VBox.vgrow="always" />
+                        <VBox fx:id="black_move_history" GridPane.columnIndex="2" VBox.vgrow="always" />
+                    </GridPane>
+                </ScrollPane>
+            </VBox>
             <HBox id="right-buttons">
                 <HBox>
                     <Button text="Undo" styleClass="orange-button" />

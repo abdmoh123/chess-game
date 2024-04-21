@@ -17,13 +17,20 @@ import com.abdmoh123.chessgame.ui.components.SpacePane;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 public class MainController {
     @FXML private Text output_text;
     @FXML public BoardPane chess_board_pane;
+
+    @FXML public VBox move_history_index;
+    @FXML public VBox white_move_history;
+    @FXML public VBox black_move_history;
 
     private Game chess_game;
 
@@ -45,6 +52,10 @@ public class MainController {
         Board chess_board = new StandardBoard();
         chess_board.initialise();
         chess_game = new Game(new Player[]{new Human(true), new Human(false)}, chess_board);
+
+        move_history_index.getChildren().clear();
+        white_move_history.getChildren().clear();
+        black_move_history.getChildren().clear();
 
         chess_board_pane.reset();
         chess_board_pane.setBoard(chess_board);
@@ -89,6 +100,19 @@ public class MainController {
 
             this.selected_space = null;
             this.selected_possible_moves.clear();
+
+            /* Add move to move history list */
+            List<String> move_history = chess_game.getMoveHistory();
+            // left column = white moves, right column = black moves, with move index at far left
+            Label move_entry = new Label(move_history.get(move_history.size() - 1));
+            move_entry.setAlignment(Pos.CENTER);
+            
+            if (chess_game.isP1Turn()) {
+                Label index_label = new Label(Integer.toString((move_history.size() + 1) / 2));
+                move_history_index.getChildren().add(index_label);
+                white_move_history.getChildren().add(move_entry);
+            }
+            else black_move_history.getChildren().add(move_entry);
 
             this.chess_game.switchTurn();
 

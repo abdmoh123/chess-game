@@ -18,16 +18,22 @@
     -n_orange: #d65d0e;
     -d_green: #79740e;
     -n_green: #98971a;
+
+    -bg0: #fbf1c7;
+    -bg1: #ebdbb2;
+    -bg2: #d5c4a1;
+
+    -fg: #3c3836;
     
-    -fx-background-color: #fbf1c7;
-    -fx-text-fill: #3c3836;
+    -fx-background-color: -bg0;
+    -fx-text-fill: -fg;
     -fx-font-family: "Red Hat Mono Regular";
     -fx-font-size: 16px;
 }
 
 .button {
     -fx-background-color: -n_green;
-    -fx-text-fill: #3c3836;
+    -fx-text-fill: -fg;
     -fx-border-radius: 0px;
     -fx-background-radius: 0px;
     -fx-effect: dropshadow(one-pass-box, -d_green, 0, 0, 0, 3px);
@@ -37,7 +43,7 @@
 }
 .button:focused {
     -fx-background-color: -d_green;
-    -fx-text-fill: #ebdbb2;
+    -fx-text-fill: -bg1;
 }
 
 .red-button {
@@ -57,18 +63,18 @@
 }
 
 .label {
-    -fx-text-fill: #3c3836;
+    -fx-text-fill: -fg;
     -fx-font-family: "Red Hat Mono Regular";
     -fx-font-size: 16px;
 }
 
 .text-field {
-    -fx-background-color: #fbf1c7;
+    -fx-background-color: -bg0;
     -fx-padding: 15px;
     -fx-background-radius: 0px;
     -fx-border-width: 3px;
-    -fx-border-color: #ebdbb2;
-    -fx-effect: dropshadow(one-pass-box, #d5c4a1, 0, 0, 0, 3px);
+    -fx-border-color: -bg1;
+    -fx-effect: dropshadow(one-pass-box, -bg2, 0, 0, 0, 3px);
 }
 
 #left-container {
@@ -88,18 +94,50 @@
 }
 
 #menu-title {
-    -fx-text-fill: #3c3836;
+    -fx-text-fill: -fg;
     -fx-font-family: "Red Hat Mono Medium";
     -fx-font-size: 20px;
 }
 
 #chess-board {
     /* -fx-min-width: 100px; */
-    -fx-background-color: #ebdbb2;
-    -fx-effect: dropshadow(one-pass-box, #d5c4a1, 0, 0, 0, 3px);
+    -fx-background-color: -bg1;
+    -fx-effect: dropshadow(one-pass-box, -bg2, 0, 0, 0, 3px);
     -fx-padding: 10px 10px 0px 0px;
 }
 
 #right-buttons {
     -fx-spacing: 10px;
+}
+
+#move-history-container {
+    -fx-background-color: -bg1;
+    -fx-effect: dropshadow(one-pass-box, -bg2, 0, 0, 0, 3px);
+    -fx-padding: 3px;
+    -fx-height: 100%;
+    -fx-alignment: center;
+}
+
+#move-history-title {
+    -fx-text-alignment: center;
+    -fx-padding: 5px;
+}
+
+#move-history-content {
+    -fx-background-color: -bg0;
+    -fx-preferred-width: 100%;
+    -fx-preferred-height: 100%;
+    -fx-alignment: top_center;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+.scroll-pane:focused {
+    -fx-background-insets: 0;
+    -fx-background-radius: 0px;
+}
+
+.scroll-pane {
+    -fx-background-color: -bg0;
 }

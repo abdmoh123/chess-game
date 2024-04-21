@@ -17,7 +17,7 @@ public class Game {
     private Player[] players;
     private boolean p1_turn;
     private Board chess_board;
-    private List<Move> move_history;
+    private List<String> move_history;
 
     int quiet_move_count;
     int three_fold_repetition_count;
@@ -116,11 +116,34 @@ public class Game {
         this.p1_turn = !isP1Turn();
     }
 
-    public List<Move> getMoveHistory() {
+    public List<String> getMoveHistory() {
         return this.move_history;
     }
     public void recordMove(Move move_in) {
-        this.move_history.add(move_in);
+        List<Space> friendly_spaces_with_same_piece_type = chess_board.getFriendlySpacesBySymbol(
+            move_in.getChessPiece().getSymbol()
+        );
+
+        boolean be_precise = false;
+        // if condition below is true, skip checking if move notation should be precise or not
+        if (move_in.getChessPiece() instanceof Pawn && move_in.getKillPoints() == 0) {
+            be_precise = false;
+        }
+        // check if more than 1 piece of the same type can move to the same destination
+        else if (friendly_spaces_with_same_piece_type.size() > 1) {
+            be_precise = getCurrentPlayer().canMultiplePiecesMoveToSameSpace(
+                move_in.getOldLocation(),
+                move_in.getNewLocation(),
+                friendly_spaces_with_same_piece_type,
+                chess_board
+            );
+        }
+        
+        String move_name = move_in.getNotation(
+            getCurrentPlayer().isEnemyCheck(chess_board), be_precise
+        );
+        
+        this.move_history.add(move_name);
     }
 
     public Player getCurrentPlayer() {

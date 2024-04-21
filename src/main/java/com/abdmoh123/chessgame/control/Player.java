@@ -6,6 +6,7 @@ import com.abdmoh123.chessgame.moves.CastlingMove;
 import com.abdmoh123.chessgame.moves.Move;
 import com.abdmoh123.chessgame.moves.StandardMove;
 import com.abdmoh123.chessgame.pieces.King;
+import com.abdmoh123.chessgame.pieces.Piece;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,6 +102,31 @@ public abstract class Player {
     }
     public void addPoints(int points_in) {
         this.points += points_in;
+    }
+
+    public boolean canMultiplePiecesMoveToSameSpace(
+        Space chosen_space,
+        Space destination_space,
+        List<Space> similar_friendly_spaces,
+        Board chess_board
+    ) {
+        /* Check if no other pieces (of same type) can move to the same destination space */
+
+        for (Space space : similar_friendly_spaces) {
+            // only check pieces excluding chosen piece
+            if (!chosen_space.equals(space)) {
+                Piece other_piece = chess_board.getPiece(space);
+                List<Move> other_piece_possible_moves = other_piece.getPossibleMoves(
+                    space, chess_board
+                );
+                for (Move other_move : other_piece_possible_moves) {
+                    if (other_move.getNewLocation().equals(destination_space)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     public abstract Move startMove(Board chess_board);

@@ -5,7 +5,6 @@ import com.abdmoh123.chessgame.boards.Space;
 import com.abdmoh123.chessgame.moves.Move;
 import com.abdmoh123.chessgame.moves.PromotePawnMove;
 import com.abdmoh123.chessgame.pieces.Pawn;
-import com.abdmoh123.chessgame.pieces.Piece;
 
 import static com.abdmoh123.chessgame.ChessGame.SCANNER;
 
@@ -15,31 +14,6 @@ import java.util.List;
 public class Human extends Player {
     public Human(boolean is_white_in) {
         super(is_white_in);
-    }
-
-    private boolean canMultiplePiecesMoveToSameSpace(
-        Space chosen_space,
-        Space destination_space,
-        List<Space> similar_friendly_spaces,
-        Board chess_board
-    ) {
-        /* Check if no other pieces (of same type) can move to the same destination space */
-
-        for (Space space : similar_friendly_spaces) {
-            // only check pieces excluding chosen piece
-            if (!chosen_space.equals(space)) {
-                Piece other_piece = chess_board.getPiece(space);
-                List<Move> other_piece_possible_moves = other_piece.getPossibleMoves(
-                    space, chess_board
-                );
-                for (Move other_move : other_piece_possible_moves) {
-                    if (other_move.getNewLocation().equals(destination_space)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
 
     private List<String> convertMoveListToStringList(List<Move> move_list, Board chess_board) {
