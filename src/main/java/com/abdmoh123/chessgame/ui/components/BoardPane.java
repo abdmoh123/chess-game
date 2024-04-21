@@ -56,19 +56,6 @@ public class BoardPane extends GridPane {
         this(8);
     }
 
-    public void initialiseFEN(String fen_string_in) {
-        Board chess_board = new StandardBoard();
-        chess_board.initialiseFEN(fen_string_in);
-
-        setBoard(chess_board);
-    }
-    public void initialiseStandard() {
-        Board chess_board = new StandardBoard();
-        chess_board.initialise();
-        
-        setBoard(chess_board);
-    }
-
     public void reset() {
         /* Resets the chess board (makes it empty) */
         
