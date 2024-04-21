@@ -1,4 +1,12 @@
+# Code editor/IDE dotfiles
 /.idea
-/out
 /.vscode
+/.settings
+
+# Other dotfiles (e.g. for lsp)
+.project
+.classpath
+
+# Build directories
+/out
 /target
