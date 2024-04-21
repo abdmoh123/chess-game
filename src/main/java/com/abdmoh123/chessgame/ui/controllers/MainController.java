@@ -12,7 +12,6 @@ import com.abdmoh123.chessgame.control.Computer;
 import com.abdmoh123.chessgame.control.Human;
 import com.abdmoh123.chessgame.control.Player;
 import com.abdmoh123.chessgame.moves.Move;
-import com.abdmoh123.chessgame.pieces.Piece;
 import com.abdmoh123.chessgame.ui.components.BoardPane;
 import com.abdmoh123.chessgame.ui.components.SpacePane;
 
@@ -48,7 +47,7 @@ public class MainController {
         chess_game = new Game(new Player[]{new Human(true), new Human(false)}, chess_board);
 
         chess_board_pane.reset();
-        chess_board_pane.initialise(chess_board);
+        chess_board_pane.setBoard(chess_board);
         System.out.println("Game started!");
     }
     
@@ -86,7 +85,7 @@ public class MainController {
             chess_game.recordMove(selected_move);
 
             resetHighlighting();
-            chess_board_pane.applyMove(selected_move);
+            chess_board_pane.setBoard(chess_game.getBoard());
 
             this.selected_space = null;
             this.selected_possible_moves.clear();

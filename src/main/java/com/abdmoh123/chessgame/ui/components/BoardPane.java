@@ -7,6 +7,7 @@ import com.abdmoh123.chessgame.boards.Board;
 import com.abdmoh123.chessgame.boards.Space;
 import com.abdmoh123.chessgame.boards.StandardBoard;
 import com.abdmoh123.chessgame.moves.Move;
+import com.abdmoh123.chessgame.pieces.Piece;
 
 import javafx.beans.NamedArg;
 import javafx.geometry.Insets;
@@ -59,27 +60,13 @@ public class BoardPane extends GridPane {
         Board chess_board = new StandardBoard();
         chess_board.initialiseFEN(fen_string_in);
 
-        initialise(chess_board);
+        setBoard(chess_board);
     }
     public void initialiseStandard() {
         Board chess_board = new StandardBoard();
         chess_board.initialise();
         
-        initialise(chess_board);
-    }
-    public void initialise(Board chess_board_in) {
-        // iterate through columns
-        for (int i = 0; i < chess_board_in.getLength(); ++i) {
-            // iterate through rows
-            for (int j = 0; j < chess_board_in.getLength(); ++j) {
-                Space board_space = new Space(i, j);
-                SpacePane space_pane = getCell(i, j);
-
-                if (!chess_board_in.isSpaceEmpty(board_space)) {
-                    space_pane.setPieceImage(chess_board_in.getPiece(board_space).getSymbol());
-                }
-            }
-        }
+        setBoard(chess_board);
     }
 
     public void reset() {
@@ -88,7 +75,7 @@ public class BoardPane extends GridPane {
         for (int i = 0; i < getSize(); ++i) {
             for (int j = 0; j < getSize(); ++j) {
                 // set space image to null (empty)
-                updateCell(new Space(i, j), ' ');
+                updateCell(new Space(i, j), null);
             }
         }
     }
@@ -130,9 +117,23 @@ public class BoardPane extends GridPane {
         return panes;
     }
 
-    public void updateCell(Space coordinate, char piece_symbol) {
+    public void updateCell(Space coordinate, Piece piece_in) {
+        char piece_symbol;
+        if (piece_in == null) piece_symbol = ' ';
+        else piece_symbol = piece_in.getSymbol();
+
         SpacePane space_pane = getCell(coordinate);
         space_pane.setPieceImage(piece_symbol);
+    }
+    public void setBoard(Board chess_board_in) {
+        // iterate through columns
+        for (int i = 0; i < getSize(); ++i) {
+            // iterate through rows
+            for (int j = 0; j < getSize(); ++j) {
+                Space space = new Space(i, j);
+                updateCell(space, chess_board_in.getPiece(space));
+            }
+        }
     }
 
     public void applyMove(Move move_in) {
