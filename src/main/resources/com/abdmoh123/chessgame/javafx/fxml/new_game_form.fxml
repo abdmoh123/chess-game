@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<GridPane fx:controller="com.abdmoh123.chessgame.ui.controllers.MainController"  xmlns:fx="http://javafx.com/fxml" alignment="top_center" hgap="10" vgap="10">
+<GridPane fx:controller="com.abdmoh123.chessgame.javafx.controllers.MainController"  xmlns:fx="http://javafx.com/fxml" alignment="top_center" hgap="10" vgap="10">
     <padding><Insets topRightBottomLeft="15" /></padding>
 
     <Text id="menu-title" text="New game" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="3" />

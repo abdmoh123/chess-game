@@ -6,9 +6,9 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<?import com.abdmoh123.chessgame.ui.components.* ?>
+<?import com.abdmoh123.chessgame.javafx.components.* ?>
 
-<BorderPane fx:controller="com.abdmoh123.chessgame.ui.controllers.MainController"  xmlns:fx="http://javafx.com/fxml">
+<BorderPane fx:controller="com.abdmoh123.chessgame.javafx.controllers.MainController"  xmlns:fx="http://javafx.com/fxml">
 
     <left>
         <VBox id="left-container">
