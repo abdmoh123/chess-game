@@ -11,7 +11,7 @@ import java.util.List;
 public class Game {
     private Player[] players;
     private boolean p1_turn;
-    private List<String> move_history;
+    private List<Move> move_history;
 
     private Engine chess_engine;
     private GameState game_state;
@@ -83,7 +83,7 @@ public class Game {
         generated_move.apply(getBoard());
 
         current_player.addPoints(generated_move.getKillPoints());
-        recordMoveNotation(generated_move);
+        recordMove(generated_move);
 
         switchTurn();
     }
@@ -127,21 +127,16 @@ public class Game {
         return this.p1_turn;
     }
 
-    public List<String> getMoveHistory() {
+    public List<Move> getMoveHistory() {
         return this.move_history;
     }
 
-    public void recordMoveNotation(Move move_in) {
+    public void recordMove(Move move_in) {
         /*
-         * Record the notation of the move to memory (used for displaying the move
-         * history)
+         * Record the move to memory (used for displaying the move history)
          */
 
-        String move_name = move_in.getNotation(
-                getEngine().isCheck(!getCurrentPlayer().isWhite()),
-                getEngine().canMultiplePiecesMoveToSameSpace(move_in.getOldLocation(), move_in.getNewLocation()));
-
-        this.move_history.add(move_name);
+        this.move_history.add(move_in);
     }
 
     public Player getCurrentPlayer() {

@@ -54,12 +54,12 @@ public class MainController {
     @FXML
     protected void startGame(ActionEvent event) {
         // do nothing if game is already active
-        if (chess_game != null && chess_game.getState() == GameState.ACTIVE)
+        if (this.chess_game != null && this.chess_game.getState() == GameState.ACTIVE)
             return;
 
         Board chess_board = new StandardBoard();
         chess_board.initialise();
-        chess_game = new Game(new Player[] { new Human(true), new Human(false) }, chess_board);
+        this.chess_game = new Game(new Player[] { new Human(true), new Human(false) }, chess_board);
 
         move_history_index.getChildren().clear();
         white_move_history.getChildren().clear();
@@ -73,24 +73,24 @@ public class MainController {
     @FXML
     protected void endGame(ActionEvent event) {
         // do nothing if it has already ended or if game hasn't started
-        if (chess_game == null || chess_game.hasEnded())
+        if (this.chess_game == null || this.chess_game.hasEnded())
             return;
 
-        chess_game.endGame(chess_game.isP1Turn());
+        this.chess_game.endGame(this.chess_game.isP1Turn());
         System.out.println("Game ended!");
     }
 
     @FXML
     protected void handleSpaceSelection(MouseEvent event) {
         // don't do anything if game hasn't started or if it has ended
-        if (chess_game == null)
+        if (this.chess_game == null)
             return;
-        if (chess_game.getState() != GameState.ACTIVE)
+        if (this.chess_game.getState() != GameState.ACTIVE)
             return;
 
         // reset highlighting every time the player clicks a space
         resetHighlighting();
-        Player current_player = chess_game.getCurrentPlayer();
+        Player current_player = this.chess_game.getCurrentPlayer();
         // don't let player select pieces if a bot is playing
         if (current_player instanceof BotPlayer)
             return;
@@ -106,25 +106,27 @@ public class MainController {
         Move selected_move = getMoveFromSelection(this.selected_space);
         if (selected_move != null) {
             // move is recorded before applied to prevent null pointer exception
-            chess_game.recordMoveNotation(selected_move);
+            this.chess_game.recordMove(selected_move);
             current_player.addPoints(selected_move.getKillPoints());
 
-            selected_move.apply(chess_game.getBoard());
+            selected_move.apply(this.chess_game.getBoard());
 
             resetHighlighting();
-            chess_board_pane.setBoard(chess_game.getBoard());
+            chess_board_pane.setBoard(this.chess_game.getBoard());
 
             this.selected_space = null;
             this.selected_possible_moves.clear();
 
             /* Add move to move history list */
-            List<String> move_history = chess_game.getMoveHistory();
-            // left column = white moves, right column = black moves, with move index at far
-            // left
-            Label move_entry = new Label(move_history.get(move_history.size() - 1));
+            List<Move> move_history = this.chess_game.getMoveHistory();
+            String move_notation = this.chess_game.getEngine()
+                    .convertMoveToNotation(move_history.get(move_history.size() - 1));
+
+            // left column = white moves, right = black moves, with move index at far left
+            Label move_entry = new Label(move_notation);
             move_entry.setAlignment(Pos.CENTER);
 
-            if (chess_game.isP1Turn()) {
+            if (this.chess_game.isP1Turn()) {
                 Label index_label = new Label(Integer.toString((move_history.size() + 1) / 2));
                 move_history_index.getChildren().add(index_label);
                 white_move_history.getChildren().add(move_entry);
@@ -136,8 +138,8 @@ public class MainController {
             return;
         }
 
-        if (chess_game.getBoard().isSpaceFriendly(this.selected_space, current_player.isWhite())) {
-            char piece_symbol = chess_game.getBoard().getPiece(selected_space).getSymbol();
+        if (this.chess_game.getBoard().isSpaceFriendly(this.selected_space, current_player.isWhite())) {
+            char piece_symbol = this.chess_game.getBoard().getPiece(selected_space).getSymbol();
             System.out.printf("Found %s at cell: (%d, %d)\n", piece_symbol, selected_space.getX(),
                     selected_space.getY());
 
@@ -169,9 +171,9 @@ public class MainController {
     }
 
     private void updatePossibleMoves() {
-        Board chess_board = chess_game.getBoard();
+        Board chess_board = this.chess_game.getBoard();
         // clear memory if piece cannot be moved
-        if (!chess_board.isSpaceFriendly(selected_space, chess_game.isP1Turn())) {
+        if (!chess_board.isSpaceFriendly(selected_space, this.chess_game.isP1Turn())) {
             this.selected_possible_moves.clear();
         } else {
             this.selected_possible_moves = this.chess_game.getEngine().generateLegalMoves(
@@ -181,9 +183,9 @@ public class MainController {
     }
 
     private void highlightMovablePanes() {
-        Board chess_board = chess_game.getBoard();
+        Board chess_board = this.chess_game.getBoard();
         // do nothing if piece cannot be moved
-        if (!chess_board.isSpaceFriendly(selected_space, chess_game.isP1Turn()))
+        if (!chess_board.isSpaceFriendly(selected_space, this.chess_game.isP1Turn()))
             return;
 
         for (Move move : selected_possible_moves) {

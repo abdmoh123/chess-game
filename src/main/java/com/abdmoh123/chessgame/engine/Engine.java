@@ -339,23 +339,29 @@ public class Engine {
         return this.chess_board;
     }
 
-    public boolean canMultiplePiecesMoveToSameSpace(Space chosen_space, Space destination_space) {
+    public String convertMoveToNotation(Move move_in) {
         /*
          * Check if no other pieces (of same type) can move to the same destination
          * space
          */
 
+        Space chosen_space = move_in.getOldLocation();
+        Space destination_space = move_in.getNewLocation();
+        Piece moving_piece = move_in.getMovingPiece();
+        String precise_notation = move_in.getNotation(isCheck(!moving_piece.isWhite()), true);
+        String simple_notation = move_in.getNotation(isCheck(!moving_piece.isWhite()), false);
+
         // if pawns are not killing, then no other pawn piece can move to the same space
         if (getBoard().getPiece(chosen_space) instanceof Pawn && chosen_space.getX() == destination_space.getX()) {
-            return false;
+            return simple_notation;
         }
 
-        List<Space> friendly_spaces_with_same_piece_type = getBoard().getFriendlySpacesBySymbol(
-                getBoard().getPiece(chosen_space).getSymbol());
+        List<Space> friendly_spaces_with_same_piece_type = getBoard()
+                .getFriendlySpacesBySymbol(moving_piece.getSymbol());
         // if player only has 1 bishop, then no other friendly bishops can move to the
         // same square
         if (friendly_spaces_with_same_piece_type.size() <= 1) {
-            return false;
+            return simple_notation;
         }
 
         for (Space space : friendly_spaces_with_same_piece_type) {
@@ -364,13 +370,14 @@ public class Engine {
                 Piece other_piece = this.chess_board.getPiece(space);
                 List<Move> other_piece_possible_moves = other_piece.getPossibleMoves(
                         space, this.chess_board);
+
                 for (Move other_move : other_piece_possible_moves) {
                     if (other_move.getNewLocation().equals(destination_space)) {
-                        return true;
+                        return precise_notation;
                     }
                 }
             }
         }
-        return false;
+        return simple_notation;
     }
 }

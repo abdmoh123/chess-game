@@ -23,10 +23,7 @@ public class Human extends Player {
 
         List<String> move_string_list = new ArrayList<>();
         for (Move move : move_list) {
-            String move_name = move.getNotation(
-                    // inverting isWhite() allows searching if enemy is checked
-                    chess_engine.isCheckAfterMove(move, !isWhite()),
-                    chess_engine.canMultiplePiecesMoveToSameSpace(move.getOldLocation(), move.getNewLocation()));
+            String move_name = chess_engine.convertMoveToNotation(move);
             move_string_list.add(move_name);
         }
         return move_string_list;
