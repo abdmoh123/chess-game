@@ -1,4 +1,16 @@
+# Code editor/IDE dotfiles
 /.idea
-/out
 /.vscode
+/.settings
+
+# Other dotfiles (e.g. for lsp)
+.project
+.classpath
+
+# maven shade specific
+dependency-reduced-pom.xml
+
+# Build directories
+/out
 /target
+
