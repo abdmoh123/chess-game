@@ -1,23 +1,20 @@
 package com.abdmoh123.chessgame;
 
 import com.abdmoh123.chessgame.boards.Board;
-import com.abdmoh123.chessgame.boards.Space;
-import com.abdmoh123.chessgame.control.Player;
+import com.abdmoh123.chessgame.engine.Engine;
 import com.abdmoh123.chessgame.moves.Move;
-import com.abdmoh123.chessgame.pieces.Bishop;
-import com.abdmoh123.chessgame.pieces.King;
-import com.abdmoh123.chessgame.pieces.Pawn;
-import com.abdmoh123.chessgame.pieces.Piece;
+import com.abdmoh123.chessgame.players.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Game {
-    private GameState game_state;
     private Player[] players;
     private boolean p1_turn;
-    private Board chess_board;
     private List<Move> move_history;
+
+    private Engine chess_engine;
+    private GameState game_state;
 
     int quiet_move_count;
     int three_fold_repetition_count;
@@ -29,14 +26,14 @@ public class Game {
 
         this.quiet_move_count = 0;
         this.three_fold_repetition_count = 0;
-        
-        this.chess_board = chess_board_in;
+
+        this.chess_engine = new Engine(chess_board_in);
         this.game_state = GameState.ACTIVE;
     }
 
     public void runGame() {
         while (!hasEnded()) {
-            start_turn();
+            startTurn();
         }
 
         switch (game_state) {
@@ -54,74 +51,87 @@ public class Game {
         }
     }
 
-    private void start_turn() {
-        Player player;
-        if (isP1Turn()) {
-            System.out.println("Player 1's turn:");
-            player = getPlayer(1);
-        }
-        else {
-            System.out.println("Player 2's turn:");
-            player = getPlayer(2);
-        }
-
+    private void startTurn() {
         getBoard().display();
 
-        if (isCheckMate(player, getBoard())) {
-            endGame(player.isWhite());
+        Player current_player = selectPlayer();
+
+        checkGameEnded(current_player);
+        if (hasEnded()) {
             return;
         }
-        if (isDraw(player, getBoard())) {
-            setState(GameState.DRAW);
-            return;
-        }
-        if (player.isCheck(getBoard())) {
-            System.out.println("Your king is in check!");
-        }
 
-        Move generated_move = player.startMove(getBoard());
+        displayPlayerMessage(current_player);
 
-        // disable en passant for all pawns after player made a move
-        List<Space> pawn_spaces = getBoard().getAllSpacesBySymbol('p');
-        for (Space pawn_space : pawn_spaces) {
-            Pawn pawn_piece = (Pawn) getBoard().getPiece(pawn_space);
-            pawn_piece.setEnPassant(false);
-            getBoard().updateSpace(pawn_space, pawn_piece);
-        }
+        Move generated_move = current_player.startMove(getEngine());
 
         // quiet move count (for 50 move rule)
         if (generated_move.getKillPoints() == 0) {
             ++this.quiet_move_count;
-        }
-        else {
+        } else {
             this.quiet_move_count = 0;
         }
         // three-fold repetition count
         if (move_history.size() > 4 && generated_move.equals(move_history.get(move_history.size() - 4))) {
             ++this.three_fold_repetition_count;
-        }
-        else {
+        } else {
             this.three_fold_repetition_count = 0;
         }
 
+        getBoard().refreshEnPassant();
+        // apply after refreshing en passant so double pawn moves work correctly
         generated_move.apply(getBoard());
 
-        player.addPoints(generated_move.getKillPoints());
+        current_player.addPoints(generated_move.getKillPoints());
         recordMove(generated_move);
+    }
 
-        switchTurn();
+    private void displayPlayerMessage(Player player) {
+        if (!isP1Turn()) {
+            System.out.println("Player 1's turn:");
+        } else {
+            System.out.println("Player 2's turn:");
+        }
+
+        if (getEngine().isCheck(player.isWhite())) {
+            System.out.println("Your king is in check!");
+        }
+    }
+
+    public Player selectPlayer() {
+        /* Automatically select the correct player for the turn */
+
+        if (isP1Turn()) {
+            this.p1_turn = !isP1Turn(); // switch turn for next time
+            return getPlayer(1);
+        } else {
+            this.p1_turn = !isP1Turn(); // switch turn for next time
+            return getPlayer(2);
+        }
+    }
+
+    public void checkGameEnded(Player player_in) {
+        /*
+         * Check if current position is a check mate or draw and set game state
+         * accordingly
+         */
+
+        if (getEngine().isCheckMate(player_in.isWhite())) {
+            endGame(player_in.isWhite());
+        }
+        if (isDraw(player_in)) {
+            setState(GameState.DRAW);
+        }
     }
 
     public boolean isP1Turn() {
         return this.p1_turn;
     }
-    public void switchTurn() {
-        this.p1_turn = !isP1Turn();
-    }
 
     public List<Move> getMoveHistory() {
         return this.move_history;
     }
+
     public void recordMove(Move move_in) {
         this.move_history.add(move_in);
     }
@@ -132,13 +142,19 @@ public class Game {
         }
         return this.players[choice - 1]; // getPlayer(1) = player[0]
     }
+
     public Board getBoard() {
-        return this.chess_board;
+        return getEngine().getBoard();
+    }
+
+    public Engine getEngine() {
+        return this.chess_engine;
     }
 
     public GameState getState() {
         return this.game_state;
     }
+
     public void setState(GameState new_state) {
         this.game_state = new_state;
     }
@@ -146,30 +162,22 @@ public class Game {
     public boolean hasEnded() {
         return getState() != GameState.ACTIVE;
     }
+
     public void endGame(boolean has_white_lost) {
         if (has_white_lost) {
             setState(GameState.BLACK_WIN);
+        } else {
+            setState(GameState.WHITE_WIN);
         }
-        setState(GameState.WHITE_WIN);
     }
 
-    public boolean isCheckMate(Player player_in, Board chess_board) {
-        if (!player_in.isCheck(chess_board)) {
-            return false;
-        }
+    public boolean isDraw(Player player_in) {
+        /*
+         * Check for stalemate, 50 quiet move rule, 3-fold repetition and dead positions
+         */
 
-        List<Space> friendly_spaces = chess_board.getFriendlySpaces(player_in.isWhite());
-        for (Space friendly_space : friendly_spaces) {
-            if (player_in.canPieceMove(friendly_space, chess_board)) {
-                return false;
-            }
-        }
-        return true;
-    }
-    public boolean isDraw(Player player_in, Board chess_board) {
-        /* Check for stalemate, 50 quiet move rule, 3-fold repetition and dead positions */
-
-        if (isStalemate(player_in, chess_board)) {
+        if (getEngine().isStalemate(player_in.isWhite())) {
+            System.out.println("Game has ended in stalemate!");
             return true;
         }
 
@@ -183,98 +191,9 @@ public class Game {
         }
 
         // only check for dead position if only few pieces remain
-        if (chess_board.getAllSpacesWithPieces().size() < 5) { return isDeadPosition(chess_board); }
-        return false;
-    }
-    public boolean isStalemate(Player player_in, Board chess_board) {
-        /* Check if player has any moves that don't lead getting checked */
-
-        // can't be stalemate if player is in check
-        if (player_in.isCheck(chess_board)) {
-            return false;
+        if (getBoard().getAllSpacesWithPieces().size() < 5) {
+            return getEngine().isDeadPosition();
         }
-
-        List<Space> friendly_spaces = chess_board.getFriendlySpaces(player_in.isWhite());
-        for (Space friendly_space : friendly_spaces) {
-            List<Move> possible_moves = chess_board.getPiece(friendly_space).getPossibleMoves(
-                friendly_space, chess_board
-            );
-
-            if (possible_moves.size() > 0) {
-                for (Move move : possible_moves) {
-                    if (!player_in.doesMoveCauseCheck(move, chess_board)) {
-                        return false;
-                    }
-                }
-            }
-        }
-
-        System.out.println("Game has ended in stalemate!");
-        return true;
-    }
-    private boolean hasOnlyBishopOrKnight(List<Space> spaces) {
-        if (spaces.size() == 2) {
-            for (Space space : spaces) {
-                // if only other piece is bishop or knight, then player cannot checkmate
-                if (chess_board.getPiece(space).getValue() == 3) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    private List<Space> removeKingFromList(List<Space> spaces, Board chess_board) {
-        List<Space> new_list = new ArrayList<>();
-        for (Space space : spaces) {
-            if (!(chess_board.getPiece(space) instanceof King)) {
-                new_list.add(space);
-            }
-        }
-        return new_list;
-    }
-    private boolean areBishopsSameColour(List<Space> white_spaces, List<Space> black_spaces, Board chess_board) {
-        /* If King + Bishop vs King + Bishop, bishops need to be on the same coloured tiles to be dead position */
-
-        List<Space> white_spaces_without_king = removeKingFromList(white_spaces, chess_board);
-        List<Space> black_spaces_without_king = removeKingFromList(black_spaces, chess_board);
-
-        Space white_piece_space = white_spaces_without_king.get(0);
-        Space black_piece_space = black_spaces_without_king.get(0);
-        Piece white_piece = chess_board.getPiece(white_piece_space);
-        Piece black_piece = chess_board.getPiece(black_piece_space);
-        
-        if (white_piece instanceof Bishop && black_piece instanceof Bishop) {
-            if (((Bishop) white_piece).isDark(white_piece_space) == ((Bishop) black_piece).isDark(black_piece_space)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    public boolean isDeadPosition(Board chess_board) {
-        List<Space> white_spaces = chess_board.getFriendlySpaces(true);
-        List<Space> black_spaces = chess_board.getFriendlySpaces(false);
-
-        // only 2 kings remain
-        if (white_spaces.size() + black_spaces.size() == 2) { return true; }
-
-        // check white king vs black king + bishop/knight
-        if (white_spaces.size() == 1) {
-            if (hasOnlyBishopOrKnight(black_spaces)) {
-                return true;
-            }
-        }
-        // check white king + bishop/knight vs black king
-        if (black_spaces.size() == 1) {
-            if (hasOnlyBishopOrKnight(white_spaces)) {
-                return true;
-            }
-        }
-        
-        // check white king + bishop vs black king + bishop (same colour tile)
-        if (white_spaces.size() == 2 && black_spaces.size() == 2) {
-            return areBishopsSameColour(white_spaces, black_spaces, chess_board);
-        }
-
         return false;
     }
 }

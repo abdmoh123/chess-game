@@ -12,7 +12,7 @@ import java.util.List;
 
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
-
+import com.abdmoh123.chessgame.boards.Space;
 import com.abdmoh123.chessgame.pieces.*;
 
 public class ChessCSVReader {
@@ -68,7 +68,13 @@ public class ChessCSVReader {
             for (int j = 0; j < layout.size(); ++j) {
                 String symbol = layout.get(i).get(j);
                 // reverse order so bottom left = (0, 0)
-                board_contents[layout.size() - i - 1][j] = convertSymbolToPiece(symbol);
+                int y_coordinate = layout.size() - i - 1;
+
+                Piece piece = convertSymbolToPiece(symbol);
+                if (piece instanceof King && !((King) piece).isStartingPosition(new Space(j, y_coordinate))) {
+                    ((King) piece).disableCastling();
+                }
+                board_contents[y_coordinate][j] = piece;
             }
         }
 
