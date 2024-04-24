@@ -92,8 +92,9 @@ public class Bishop extends Piece {
     }
 
     @Override
-    public String getName() {
-        return "Bishop";
+    public char getSymbol() {
+        if (isWhite()) { return 'B'; }
+        return 'b';
     }
 
     @Override

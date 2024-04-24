@@ -26,7 +26,7 @@ public class Game {
 
         this.quiet_move_count = 0;
         this.three_fold_repetition_count = 0;
-        
+
         this.chess_engine = new Engine(chess_board_in);
         this.game_state = GameState.ACTIVE;
     }
@@ -68,15 +68,13 @@ public class Game {
         // quiet move count (for 50 move rule)
         if (generated_move.getKillPoints() == 0) {
             ++this.quiet_move_count;
-        }
-        else {
+        } else {
             this.quiet_move_count = 0;
         }
         // three-fold repetition count
         if (move_history.size() > 4 && generated_move.equals(move_history.get(move_history.size() - 4))) {
             ++this.three_fold_repetition_count;
-        }
-        else {
+        } else {
             this.three_fold_repetition_count = 0;
         }
 
@@ -91,8 +89,7 @@ public class Game {
     private void displayPlayerMessage(Player player) {
         if (!isP1Turn()) {
             System.out.println("Player 1's turn:");
-        }
-        else {
+        } else {
             System.out.println("Player 2's turn:");
         }
 
@@ -107,15 +104,17 @@ public class Game {
         if (isP1Turn()) {
             this.p1_turn = !isP1Turn(); // switch turn for next time
             return getPlayer(1);
-        }
-        else {
+        } else {
             this.p1_turn = !isP1Turn(); // switch turn for next time
             return getPlayer(2);
         }
     }
 
     public void checkGameEnded(Player player_in) {
-        /* Check if current position is a check mate or draw and set game state accordingly */
+        /*
+         * Check if current position is a check mate or draw and set game state
+         * accordingly
+         */
 
         if (getEngine().isCheckMate(player_in.isWhite())) {
             endGame(player_in.isWhite());
@@ -132,6 +131,7 @@ public class Game {
     public List<Move> getMoveHistory() {
         return this.move_history;
     }
+
     public void recordMove(Move move_in) {
         this.move_history.add(move_in);
     }
@@ -142,9 +142,11 @@ public class Game {
         }
         return this.players[choice - 1]; // getPlayer(1) = player[0]
     }
+
     public Board getBoard() {
         return getEngine().getBoard();
     }
+
     public Engine getEngine() {
         return this.chess_engine;
     }
@@ -152,6 +154,7 @@ public class Game {
     public GameState getState() {
         return this.game_state;
     }
+
     public void setState(GameState new_state) {
         this.game_state = new_state;
     }
@@ -159,17 +162,19 @@ public class Game {
     public boolean hasEnded() {
         return getState() != GameState.ACTIVE;
     }
+
     public void endGame(boolean has_white_lost) {
         if (has_white_lost) {
             setState(GameState.BLACK_WIN);
-        }
-        else {
+        } else {
             setState(GameState.WHITE_WIN);
         }
     }
 
     public boolean isDraw(Player player_in) {
-        /* Check for stalemate, 50 quiet move rule, 3-fold repetition and dead positions */
+        /*
+         * Check for stalemate, 50 quiet move rule, 3-fold repetition and dead positions
+         */
 
         if (getEngine().isStalemate(player_in.isWhite())) {
             System.out.println("Game has ended in stalemate!");
@@ -186,7 +191,9 @@ public class Game {
         }
 
         // only check for dead position if only few pieces remain
-        if (getBoard().getAllSpacesWithPieces().size() < 5) { return getEngine().isDeadPosition(); }
+        if (getBoard().getAllSpacesWithPieces().size() < 5) {
+            return getEngine().isDeadPosition();
+        }
         return false;
     }
 }

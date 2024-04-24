@@ -16,9 +16,10 @@ public class PromotePawnMove extends Move {
         super(old_location_in, new_location_in, moving_piece_in);
         setNewPiece(promotion_choice, moving_piece_in.isWhite());
     }
+
     public PromotePawnMove(
-        Space old_location_in, Space new_location_in, Pawn moving_piece_in, int promotion_choice, Piece piece_killed
-    ) {
+            Space old_location_in, Space new_location_in, Pawn moving_piece_in, int promotion_choice,
+            Piece piece_killed) {
         super(old_location_in, new_location_in, moving_piece_in, piece_killed);
         setNewPiece(promotion_choice, moving_piece_in.isWhite());
     }
@@ -26,6 +27,7 @@ public class PromotePawnMove extends Move {
     public Piece getNewPiece() {
         return this.new_piece;
     }
+
     private void setNewPiece(int choice, boolean is_white_in) {
         /* Set the piece that the pawn promotes to */
 
@@ -58,7 +60,8 @@ public class PromotePawnMove extends Move {
             move_string = "x" + move_string;
         }
 
-        // if multiple pieces of same type exist on the same row, column of moving piece is added to the string
+        // if multiple pieces of same type exist on the same row, column of moving piece
+        // is added to the string
         if (be_precise) {
             String old_location_x_axis = String.valueOf(getOldLocation().toString().charAt(0));
             move_string = old_location_x_axis + move_string;
@@ -68,9 +71,8 @@ public class PromotePawnMove extends Move {
         char symbol;
         if (getNewPiece() instanceof Knight) {
             symbol = 'N';
-        }
-        else {
-            symbol = getNewPiece().getName().charAt(0);
+        } else {
+            symbol = getNewPiece().getSymbol();
         }
         move_string += "=" + symbol;
 

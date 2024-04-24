@@ -18,20 +18,21 @@ public class Human extends Player {
     }
 
     private boolean canMultiplePiecesMoveToSameSpace(
-        Space chosen_space,
-        Space destination_space,
-        List<Space> similar_friendly_spaces,
-        Board chess_board
-    ) {
-        /* Check if no other pieces (of same type) can move to the same destination space */
+            Space chosen_space,
+            Space destination_space,
+            List<Space> similar_friendly_spaces,
+            Board chess_board) {
+        /*
+         * Check if no other pieces (of same type) can move to the same destination
+         * space
+         */
 
         for (Space space : similar_friendly_spaces) {
             // only check pieces excluding chosen piece
             if (!chosen_space.equals(space)) {
                 Piece other_piece = chess_board.getPiece(space);
                 List<Move> other_piece_possible_moves = other_piece.getPossibleMoves(
-                    space, chess_board
-                );
+                        space, chess_board);
                 for (Move other_move : other_piece_possible_moves) {
                     if (other_move.getNewLocation().equals(destination_space)) {
                         return true;
@@ -43,32 +44,32 @@ public class Human extends Player {
     }
 
     private List<String> convertMoveListToStringList(List<Move> move_list, Engine chess_engine) {
-        /* Convert a list of moves into a list of strings representing moves based on algebraic chess notation */
+        /*
+         * Convert a list of moves into a list of strings representing moves based on
+         * algebraic chess notation
+         */
 
         List<String> move_string_list = new ArrayList<>();
         for (Move move : move_list) {
-            List<Space> similar_friendly_spaces = chess_engine.getBoard().getFriendlySpacesByPieceName(
-                move.getMovingPiece().getName(), isWhite()
-            );
+            List<Space> similar_friendly_spaces = chess_engine.getBoard().getFriendlySpacesBySymbol(
+                    move.getMovingPiece().getSymbol());
 
             boolean be_precise = false;
-            // if condition below is true, skip checking if move notation should be precise or not
+            // if condition below is true, skip checking if move notation should be precise
+            // or not
             if (move.getMovingPiece() instanceof Pawn && move.getKillPoints() == 0) {
                 be_precise = false;
-            }
-            else if (similar_friendly_spaces.size() > 1) {
+            } else if (similar_friendly_spaces.size() > 1) {
                 be_precise = canMultiplePiecesMoveToSameSpace(
-                    move.getOldLocation(),
-                    move.getNewLocation(),
-                    similar_friendly_spaces,
-                    chess_engine.getBoard()
-                );
+                        move.getOldLocation(),
+                        move.getNewLocation(),
+                        similar_friendly_spaces,
+                        chess_engine.getBoard());
             }
-            
+
             String move_name = move.getNotation(
-                // inverting isWhite() allows searching if enemy is checked
-                chess_engine.isCheckAfterMove(move, !isWhite()), be_precise
-            );
+                    // inverting isWhite() allows searching if enemy is checked
+                    chess_engine.isCheckAfterMove(move, !isWhite()), be_precise);
             move_string_list.add(move_name);
         }
         return move_string_list;
@@ -82,22 +83,21 @@ public class Human extends Player {
 
             List<Move> possible_moves = new ArrayList<>();
 
-            while (!chess_engine.getBoard().isSpaceFriendly(first_space_input, isWhite()) || possible_moves.size() == 0) {
+            while (!chess_engine.getBoard().isSpaceFriendly(first_space_input, isWhite())
+                    || possible_moves.size() == 0) {
                 System.out.println("Please select space from the board (e.g. d2):");
                 String first_space_input_string = SCANNER.nextLine();
 
                 try {
                     first_space_input = chess_engine.getBoard().getSpaceByString(first_space_input_string);
-                }
-                catch (RuntimeException e) {
-                    System.out.println(e);
+                } catch (RuntimeException e) {
+                    System.out.println(e.getMessage());
                 }
 
                 possible_moves = chess_engine.generateLegalMoves(first_space_input, isWhite());
                 if (!chess_engine.getBoard().isSpaceFriendly(first_space_input, isWhite())) {
                     System.out.println("Space does not contain a piece in your team!");
-                }
-                else if (possible_moves.size() == 0) {
+                } else if (possible_moves.size() == 0) {
                     System.out.println("Piece cannot move!");
                 }
             }

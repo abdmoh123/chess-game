@@ -25,6 +25,7 @@ public class Pawn extends Piece {
         }
         return 6;
     }
+
     public boolean isStartingPosition(int current_row) {
         return (current_row == getStartingRow());
     }
@@ -33,18 +34,17 @@ public class Pawn extends Piece {
         int forward_offset;
         if (isWhite()) {
             forward_offset = 1;
-        }
-        else {
+        } else {
             forward_offset = -1;
         }
         return forward_offset;
     }
+
     private int getDoubleForwardOffset() {
         int double_forward_offset;
         if (isWhite()) {
             double_forward_offset = 2;
-        }
-        else {
+        } else {
             double_forward_offset = -2;
         }
         return double_forward_offset;
@@ -53,6 +53,7 @@ public class Pawn extends Piece {
     public boolean isEnPassant() {
         return this.en_passant;
     }
+
     public void setEnPassant(boolean is_en_passant_in) {
         this.en_passant = is_en_passant_in;
     }
@@ -67,7 +68,6 @@ public class Pawn extends Piece {
 
         List<Move> en_passant_moves = new ArrayList<>();
 
-        
         if (!chess_board.isSpaceWithinBoard(new Space(x_loc, y_loc + forward_offset))) {
             return en_passant_moves;
         }
@@ -82,7 +82,8 @@ public class Pawn extends Piece {
                 if (chess_board.getPiece(horizontal_space) instanceof Pawn) {
                     Pawn adjacent_piece = (Pawn) chess_board.getPiece(horizontal_space);
                     if (adjacent_piece.isEnPassant()) {
-                        en_passant_moves.add(new EnPassantMove(location, diagonal_space, horizontal_space, this, adjacent_piece));
+                        en_passant_moves.add(
+                                new EnPassantMove(location, diagonal_space, horizontal_space, this, adjacent_piece));
                     }
                 }
             }
@@ -96,7 +97,8 @@ public class Pawn extends Piece {
                 if (chess_board.getPiece(horizontal_space) instanceof Pawn) {
                     Pawn adjacent_piece = (Pawn) chess_board.getPiece(horizontal_space);
                     if (adjacent_piece.isEnPassant()) {
-                        en_passant_moves.add(new EnPassantMove(location, diagonal_space, horizontal_space, this, adjacent_piece));
+                        en_passant_moves.add(
+                                new EnPassantMove(location, diagonal_space, horizontal_space, this, adjacent_piece));
                     }
                 }
             }
@@ -114,7 +116,7 @@ public class Pawn extends Piece {
         int forward_offset = getForwardOffset();
 
         List<Space> diagonal_spaces = new ArrayList<>();
-        
+
         if (!chess_board.isSpaceWithinBoard(new Space(x_loc, y_loc + forward_offset))) {
             return diagonal_spaces;
         }
@@ -141,7 +143,8 @@ public class Pawn extends Piece {
         int forward_offset = getForwardOffset();
         Space new_space = new Space(x_loc, y_loc + forward_offset);
 
-        // cannot move forward if out of bounds or if space is not empty (cannot kill enemy piece)
+        // cannot move forward if out of bounds or if space is not empty (cannot kill
+        // enemy piece)
         if (!chess_board.isSpaceWithinBoard(new_space) || !chess_board.isSpaceEmpty(new_space)) {
             return null;
         }
@@ -150,13 +153,13 @@ public class Pawn extends Piece {
         if (new_space.getY() == chess_board.getLength() - 1 || new_space.getY() == 0) {
             // 4 pieces to promote to
             return new Move[] {
-                new PromotePawnMove(location, new_space, this, 1),
-                new PromotePawnMove(location, new_space, this, 2),
-                new PromotePawnMove(location, new_space, this, 3),
-                new PromotePawnMove(location, new_space, this, 4)
+                    new PromotePawnMove(location, new_space, this, 1),
+                    new PromotePawnMove(location, new_space, this, 2),
+                    new PromotePawnMove(location, new_space, this, 3),
+                    new PromotePawnMove(location, new_space, this, 4)
             };
         }
-        return new Move[]{new StandardMove(location, new_space, this, chess_board.getPiece(new_space))};
+        return new Move[] { new StandardMove(location, new_space, this, chess_board.getPiece(new_space)) };
     }
 
     public DoublePawnMove getDoubleMove(Space location, Board chess_board) {
@@ -175,7 +178,8 @@ public class Pawn extends Piece {
         if (isStartingPosition(y_loc)) {
             Space new_space = new Space(x_loc, y_loc + double_forward_offset);
             Space space_in_front = new Space(x_loc, y_loc + forward_offset);
-            // cannot move forward if space is not empty (cannot kill enemy pieces), also cannot move if blocked by other piece
+            // cannot move forward if space is not empty (cannot kill enemy pieces), also
+            // cannot move if blocked by other piece
             if (chess_board.isSpaceEmpty(new_space) && chess_board.isSpaceEmpty(space_in_front)) {
                 return new DoublePawnMove(location, new_space, this);
             }
@@ -228,17 +232,17 @@ public class Pawn extends Piece {
                 if (visible_space.getY() == chess_board.getLength() - 1 || visible_space.getY() == 0) {
                     // 4 pieces to promote to
                     Move[] promotion_moves = {
-                        new PromotePawnMove(location, visible_space, this, 1, chess_board.getPiece(visible_space)),
-                        new PromotePawnMove(location, visible_space, this, 2, chess_board.getPiece(visible_space)),
-                        new PromotePawnMove(location, visible_space, this, 3, chess_board.getPiece(visible_space)),
-                        new PromotePawnMove(location, visible_space, this, 4, chess_board.getPiece(visible_space))
+                            new PromotePawnMove(location, visible_space, this, 1, chess_board.getPiece(visible_space)),
+                            new PromotePawnMove(location, visible_space, this, 2, chess_board.getPiece(visible_space)),
+                            new PromotePawnMove(location, visible_space, this, 3, chess_board.getPiece(visible_space)),
+                            new PromotePawnMove(location, visible_space, this, 4, chess_board.getPiece(visible_space))
                     };
                     for (Move move : promotion_moves) {
                         possible_moves.add(move);
                     }
-                }
-                else {
-                    possible_moves.add(new StandardMove(location, visible_space, this, chess_board.getPiece(visible_space)));
+                } else {
+                    possible_moves
+                            .add(new StandardMove(location, visible_space, this, chess_board.getPiece(visible_space)));
                 }
             }
         }
@@ -254,19 +258,15 @@ public class Pawn extends Piece {
         int double_forward_offset = getDoubleForwardOffset();
 
         // basic forward move
-        if (
-            new_location_in.getY() == current_location_in.getY() + forward_offset &&
-            new_location_in.getX() == current_location_in.getX()
-        ) {
+        if (new_location_in.getY() == current_location_in.getY() + forward_offset &&
+                new_location_in.getX() == current_location_in.getX()) {
             return chess_board.isSpaceEmpty(new_location_in);
         }
 
         // double forward move
         int starting_row = getStartingRow();
-        if (
-            new_location_in.getY() == current_location_in.getY() + double_forward_offset &&
-            new_location_in.getX() == current_location_in.getX()
-        ) {
+        if (new_location_in.getY() == current_location_in.getY() + double_forward_offset &&
+                new_location_in.getX() == current_location_in.getX()) {
             return current_location_in.getY() == starting_row && chess_board.isSpaceEmpty(new_location_in);
         }
 
@@ -289,9 +289,11 @@ public class Pawn extends Piece {
         return false;
     }
 
-    @Override
-    public String getName() {
-        return "Pawn";
+    public char getSymbol() {
+        if (isWhite()) {
+            return 'P';
+        }
+        return 'p';
     }
 
     @Override
@@ -305,7 +307,7 @@ public class Pawn extends Piece {
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Pawn) {
-            if (isEnPassant() != ((Pawn)obj).isEnPassant()) {
+            if (isEnPassant() != ((Pawn) obj).isEnPassant()) {
                 return false;
             }
         }

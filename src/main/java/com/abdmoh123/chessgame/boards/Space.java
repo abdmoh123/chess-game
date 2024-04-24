@@ -8,6 +8,44 @@ public class Space {
         this.X = x_in;
         this.Y = y_in;
     }
+    public Space(String space_in) {
+        /* Create a Space object using standard chess notation (e.g. a2 = Space(0, 1)) */
+
+        if (space_in.length() != 2) {
+            throw new RuntimeException("Invalid space is outside board limits!");
+        }
+
+        char x_char = Character.toLowerCase(space_in.charAt(0));
+        switch (x_char) {
+            case 'a':
+                this.X = 0;
+                break;
+            case 'b':
+                this.X = 1;
+                break;
+            case 'c':
+                this.X = 2;
+                break;
+            case 'd':
+                this.X = 3;
+                break;
+            case 'e':
+                this.X = 4;
+                break;
+            case 'f':
+                this.X = 5;
+                break;
+            case 'g':
+                this.X = 6;
+                break;
+            case 'h':
+                this.X = 7;
+                break;
+            default:
+                throw new RuntimeException("Invalid space is outside board limits!");
+        }
+        this.Y = space_in.charAt(1) - '0' - 1;
+    }
 
     @Override
     public String toString() {

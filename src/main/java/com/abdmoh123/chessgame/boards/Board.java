@@ -5,6 +5,8 @@ import java.net.URISyntaxException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.opencsv.exceptions.CsvValidationException;
 
@@ -24,6 +26,7 @@ public abstract class Board {
     public Piece[][] getContents() {
         return spaces;
     }
+
     public List<Space> getAllSpacesWithPieces() {
         List<Space> spaces_with_pieces = new ArrayList<>();
 
@@ -37,6 +40,7 @@ public abstract class Board {
         }
         return spaces_with_pieces;
     }
+
     public List<Space> getFriendlySpaces(boolean is_white) {
         List<Space> friendly_spaces = new ArrayList<>();
 
@@ -50,6 +54,7 @@ public abstract class Board {
         }
         return friendly_spaces;
     }
+
     public List<Space> getEnemySpaces(boolean is_white) {
         List<Space> enemy_spaces = new ArrayList<>();
 
@@ -63,21 +68,28 @@ public abstract class Board {
         }
         return enemy_spaces;
     }
+
     public int getLength() {
         return LENGTH;
     }
 
     public Piece getPiece(Space space_in) {
-        /* Return piece by reference (changes made to a piece affect the piece on the board) */
+        /*
+         * Return piece by reference (changes made to a piece affect the piece on the
+         * board)
+         */
 
         if (!isSpaceValid(space_in)) {
-            throw new ArrayIndexOutOfBoundsException("Invalid coordinate! (" + space_in.getX() + ", " + space_in.getY() + ")");
+            throw new ArrayIndexOutOfBoundsException(
+                    "Invalid coordinate! (" + space_in.getX() + ", " + space_in.getY() + ")");
         }
         return spaces[space_in.getY()][space_in.getX()];
     }
+
     public Piece[] getRow(int y) {
         return this.spaces[y];
     }
+
     public Piece[] getColumn(int x) {
         Piece[] column = new Piece[8];
 
@@ -87,6 +99,7 @@ public abstract class Board {
         }
         return column;
     }
+
     public List<Space> getCheckedSpaces(boolean is_white_turn) {
         /* Find all spaces attacked by the enemy */
 
@@ -108,7 +121,8 @@ public abstract class Board {
 
         return checked_spaces;
     }
-    public List<Space> getAllSpacesByPieceName(String piece_name) {
+
+    public List<Space> getAllSpacesBySymbol(char piece_symbol_in) {
         /* Search through board and return all spaces that hold a given piece type */
 
         List<Space> selected_pieces = new ArrayList<>();
@@ -117,7 +131,8 @@ public abstract class Board {
             for (int j = 0; j < getLength(); ++j) {
                 Space space = new Space(i, j);
                 if (!isSpaceEmpty(space)) {
-                    if (getPiece(space).getName().equals(piece_name)) {
+                    // force both symbols to be same case (ignore team)
+                    if (Character.toUpperCase(getPiece(space).getSymbol()) == Character.toUpperCase(piece_symbol_in)) {
                         selected_pieces.add(space);
                     }
                 }
@@ -126,16 +141,20 @@ public abstract class Board {
 
         return selected_pieces;
     }
-    public List<Space> getFriendlySpacesByPieceName(String piece_name, boolean is_white) {
-        /* Search through board and return all friendly spaces that hold a given piece type */
+
+    public List<Space> getFriendlySpacesBySymbol(char piece_symbol_in) {
+        /*
+         * Search through board and return all friendly spaces that hold a given piece
+         * type
+         */
 
         List<Space> selected_pieces = new ArrayList<>();
 
         for (int i = 0; i < getLength(); ++i) {
             for (int j = 0; j < getLength(); ++j) {
                 Space space = new Space(i, j);
-                if (isSpaceFriendly(space, is_white)) {
-                    if (getPiece(space).getName().equals(piece_name)) {
+                if (!isSpaceEmpty(space)) {
+                    if (getPiece(space).getSymbol() == piece_symbol_in) {
                         selected_pieces.add(space);
                     }
                 }
@@ -151,6 +170,7 @@ public abstract class Board {
         }
         return false;
     }
+
     public boolean isSpaceWithinBoard(Space space_in) {
         if (space_in.getX() > getLength() - 1 || space_in.getX() < 0) {
             return false;
@@ -160,6 +180,7 @@ public abstract class Board {
         }
         return true;
     }
+
     public boolean isSpaceValid(Space space_in) {
         if (space_in == null) {
             return false;
@@ -169,6 +190,7 @@ public abstract class Board {
         }
         return true;
     }
+
     public boolean isSpaceFriendly(Space space_in, boolean player_is_white) {
         if (!isSpaceValid(space_in)) {
             return false;
@@ -178,6 +200,7 @@ public abstract class Board {
         }
         return getPiece(space_in).isWhite() == player_is_white;
     }
+
     public boolean isSpaceEnemy(Space space_in, boolean player_is_white) {
         if (!isSpaceValid(space_in)) {
             return false;
@@ -187,10 +210,9 @@ public abstract class Board {
         }
         return getPiece(space_in).isWhite() != player_is_white;
     }
+
     public boolean isPieceUniqueOnRow(Space space_in) {
         Piece[] row = getRow(space_in.getY());
-        
-        String piece_name = getPiece(space_in).getName();
 
         int count = 0;
         for (Piece piece : row) {
@@ -198,7 +220,7 @@ public abstract class Board {
                 break;
             }
             if (piece != null) {
-                if (piece.getName().equals(piece_name) && piece.isWhite() == getPiece(space_in).isWhite()) {
+                if (piece.getSymbol() == getPiece(space_in).getSymbol()) {
                     ++count;
                 }
             }
@@ -211,10 +233,11 @@ public abstract class Board {
             spaces[space_in.getY()][space_in.getX()] = piece_in;
         }
     }
+
     public void refreshEnPassant() {
         /* Disable en passant for all pawns after player made a move */
 
-        List<Space> pawn_spaces = getAllSpacesByPieceName("Pawn");
+        List<Space> pawn_spaces = getAllSpacesBySymbol('p');
         for (Space pawn_space : pawn_spaces) {
             Pawn pawn_piece = (Pawn) getPiece(pawn_space);
             pawn_piece.setEnPassant(false);
@@ -232,20 +255,8 @@ public abstract class Board {
 
                 if (isSpaceEmpty(space)) {
                     System.out.print(". ");
-                }
-                else {
-                    char piece_symbol = ' ';
-                    if (getPiece(space) instanceof Knight) {
-                        piece_symbol = 'N';
-                    }
-                    else {
-                        piece_symbol = getPiece(space).getName().charAt(0);
-                    }
-                    // white is upper case, black is lower case
-                    if (!getPiece(space).isWhite()) {
-                        piece_symbol = Character.toLowerCase(piece_symbol);
-                    }
-                    System.out.print(piece_symbol + " ");
+                } else {
+                    System.out.print(getPiece(space).getSymbol() + " ");
                 }
             }
             System.out.print("\n");
@@ -254,13 +265,17 @@ public abstract class Board {
     }
 
     public Board after(Move move_in) {
-        /* Create a temporary board with the move applied. Useful for handling checks and pinned pieces. */
+        /*
+         * Create a temporary board with the move applied. Useful for handling checks
+         * and pinned pieces.
+         */
 
         Board new_board = copy();
         new_board.refreshEnPassant();
         move_in.apply(new_board);
         return new_board;
     }
+
     public Board before(Move move_in) {
         /* Undo a move on a board. Useful for bots. */
 
@@ -271,9 +286,14 @@ public abstract class Board {
 
     /* Fill the board with pieces */
     public abstract void initialise();
+
     /* Return a Space object based on inputted string (e.g. a1 = Space(0, 0)) */
     public abstract Space getSpaceByString(String input_string);
-    /* Create a deep copy/clone of a given board (any changes won't affect the original) */
+
+    /*
+     * Create a deep copy/clone of a given board (any changes won't affect the
+     * original)
+     */
     public abstract Board copy();
 
     public void initialise(Piece[][] spaces_in) {
@@ -281,27 +301,194 @@ public abstract class Board {
 
         // ensure given array matches axes length of board
         if (spaces_in.length != getLength()) {
-            String message = "Given array is incorrect size! Expected: {0}, Actual: {1}" ;
+            String message = "Given array is incorrect size! Expected: {0}, Actual: {1}";
             throw new ExceptionInInitializerError(
-                MessageFormat.format(message, new Object[] {getLength(), spaces_in.length})
-            );
+                    MessageFormat.format(message, new Object[] { getLength(), spaces_in.length }));
         }
         for (Piece[] row : spaces_in) {
             if (row.length != getLength()) {
-                String message = "Given array is incorrect size! Expected: {0}, Actual: {1}" ;
+                String message = "Given array is incorrect size! Expected: {0}, Actual: {1}";
                 throw new ExceptionInInitializerError(
-                    MessageFormat.format(message, new Object[] {getLength(), row.length})
-                );
+                        MessageFormat.format(message, new Object[] { getLength(), row.length }));
             }
         }
 
         this.spaces = spaces_in;
     }
+
     public void initialise(String file_name_in) throws CsvValidationException, URISyntaxException, IOException {
         /* Fill board with pieces based on a CSV file */
 
         Piece[][] spaces_in = ChessCSVReader.readBoardCSV(file_name_in);
-        
+
         initialise(spaces_in);
+    }
+
+    public void initialiseFEN(String fen_string_in) {
+        /*
+         * Fill board with pieces based FEN input
+         * Standard starting position:
+         * "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0"
+         */
+
+        String[] split_fen = fen_string_in.split(" ");
+
+        // full fen format has 6 fields, but a simpler one can only have 1 (for piece
+        // layout)
+        if (split_fen.length != 1 && split_fen.length != 6) {
+            throw new RuntimeException("Invalid FEN Format: Incorrect number of fields!");
+        }
+
+        /* Place pieces in board */
+        // validate first field
+        String field_one_regex = "[1-9KkQqBbNnRrPp/]";
+        if (!isFieldValid(field_one_regex, split_fen[0])) {
+            throw new RuntimeException("Invalid FEN Format: First field format error!");
+        }
+
+        int x_index = 0;
+        int y_index = 7; // start at 8th rank and move down
+        for (char letter : split_fen[0].toCharArray()) {
+            if (Character.isDigit(letter)) {
+                x_index += letter - '0'; // convert char to int
+                // x index cannot go over length of the board
+                if (x_index > getLength()) {
+                    throw new RuntimeException(
+                            "Invalid FEN Format: Number of empty spaces greater than length of board!");
+                }
+            } else if (letter == '/') {
+                if (x_index < getLength()) {
+                    throw new RuntimeException("Invalid FEN Format: Not enough empty spaces specified!");
+                }
+                x_index = 0;
+                --y_index;
+            } else {
+                updateSpace(new Space(x_index, y_index), PieceFactory.createPiece(letter));
+                ++x_index;
+            }
+        }
+
+        // end method if only board layout is given (first field only)
+        if (split_fen.length == 1) {
+            return;
+        }
+
+        /* Setup castling rights based on FEN input */
+        // validate third field
+        String field_three_regex = "[-KQkq]";
+        if (!isFieldValid(field_three_regex, split_fen[2])) {
+            throw new RuntimeException("Invalid FEN Format: Third field format error!");
+        }
+
+        Space white_king_space = getFriendlySpacesBySymbol('K').get(0);
+        Space black_king_space = getFriendlySpacesBySymbol('k').get(0);
+        boolean found_K, found_Q, found_k, found_q;
+        found_K = found_Q = found_k = found_q = false;
+        for (char letter : split_fen[2].toCharArray()) {
+            // ensure king cannot castle
+            if (letter == '-') {
+                King new_king = (King) getPiece(white_king_space).copy();
+                new_king.disableCastling();
+                updateSpace(white_king_space, new_king);
+
+                new_king = (King) getPiece(black_king_space).copy();
+                new_king.disableCastling();
+                updateSpace(black_king_space, new_king);
+                break;
+            }
+
+            if (letter == 'K') {
+                if (!(getPiece(new Space(0, 0)) instanceof Rook) || !white_king_space.equals(new Space(4, 0))) {
+                    throw new RuntimeException("Invalid castling rights!");
+                }
+                found_K = true;
+            } else if (letter == 'Q') {
+                if (!(getPiece(new Space(7, 0)) instanceof Rook) || !white_king_space.equals(new Space(4, 0))) {
+                    throw new RuntimeException("Invalid castling rights!");
+                }
+                found_Q = true;
+            } else if (letter == 'k') {
+                if (!(getPiece(new Space(0, 7)) instanceof Rook) || !black_king_space.equals(new Space(4, 7))) {
+                    throw new RuntimeException("Invalid castling rights!");
+                }
+                found_k = true;
+            } else if (letter == 'q') {
+                if (!(getPiece(new Space(7, 7)) instanceof Rook) || !black_king_space.equals(new Space(4, 7))) {
+                    throw new RuntimeException("Invalid castling rights!");
+                }
+                found_q = true;
+            }
+        }
+        // only activate relevant rooks to disable relevant castling right
+        if (!found_K) {
+            Rook new_rook = new Rook(true);
+            new_rook.activate();
+            updateSpace(new Space(0, 0), new_rook);
+        }
+        if (!found_Q) {
+            Rook new_rook = new Rook(true);
+            new_rook.activate();
+            updateSpace(new Space(7, 0), new_rook);
+        }
+        if (!found_k) {
+            Rook new_rook = new Rook(false);
+            new_rook.activate();
+            updateSpace(new Space(0, 7), new_rook);
+        }
+        if (!found_q) {
+            Rook new_rook = new Rook(false);
+            new_rook.activate();
+            updateSpace(new Space(7, 7), new_rook);
+        }
+
+        // skip final step if no pawns are en-passant-able
+        if (split_fen[3].equals("-")) {
+            return;
+        }
+
+        /* Setup en passant targets */
+        // validate fourth field
+        String field_four_regex = "[a-hA-H][1-8]";
+        if (!isFieldValid(field_four_regex, split_fen[3]) && split_fen[3].length() != 2) {
+            throw new RuntimeException("Invalid FEN Format: Fourth field format error!");
+        }
+
+        // determine which player's turn it is (+ second field validation)
+        boolean is_white_turn = false;
+        if (split_fen[1].equalsIgnoreCase("w")) {
+            is_white_turn = true;
+        } else if (!split_fen[1].equalsIgnoreCase("b")) {
+            throw new RuntimeException("Invalid FEN Format: Second field format error!");
+        }
+
+        // convert en passant string to space
+        Space en_passant_space = new Space(split_fen[3]);
+        // get location of pawn
+        int en_passant_offset;
+        // if white just moved, it would be black's turn
+        if (!is_white_turn) {
+            en_passant_offset = 1;
+        } else {
+            en_passant_offset = -1;
+        }
+        Space pawn_space = new Space(en_passant_space.getX(), en_passant_space.getY() + en_passant_offset);
+
+        // check if pawn exists in correct location
+        if (isSpaceEmpty(pawn_space) || !(getPiece(pawn_space) instanceof Pawn)) {
+            throw new RuntimeException("En passant info does not match with board layout!");
+        }
+
+        Pawn pawn = (Pawn) getPiece(pawn_space);
+        pawn.setEnPassant(true);
+        updateSpace(pawn_space, pawn);
+    }
+
+    private boolean isFieldValid(String regex, String field) {
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(field);
+        if (!matcher.find()) {
+            return false;
+        }
+        return true;
     }
 }

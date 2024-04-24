@@ -2,7 +2,6 @@ package com.abdmoh123.chessgame.moves;
 
 import com.abdmoh123.chessgame.boards.Board;
 import com.abdmoh123.chessgame.boards.Space;
-import com.abdmoh123.chessgame.pieces.Knight;
 import com.abdmoh123.chessgame.pieces.Pawn;
 import com.abdmoh123.chessgame.pieces.Piece;
 
@@ -21,6 +20,7 @@ public abstract class Move {
         this.KILLED_PIECE = null;
         this.kill_points = 0;
     }
+
     public Move(Space old_location_in, Space new_location_in, Piece moving_piece_in, Piece killed_piece_in) {
         // Useful when capturing material (piece killed)
         this.OLD_LOCATION = old_location_in;
@@ -29,8 +29,7 @@ public abstract class Move {
         if (killed_piece_in != null) {
             this.KILLED_PIECE = killed_piece_in;
             this.kill_points = killed_piece_in.getValue();
-        }
-        else {
+        } else {
             this.KILLED_PIECE = null;
             this.kill_points = 0;
         }
@@ -38,7 +37,7 @@ public abstract class Move {
 
     public boolean isPseudoLegal(Board chess_board) {
         /* More thorough check for legality of move (excludes checks) */
-        
+
         if (!isValid(chess_board, OLD_LOCATION, NEW_LOCATION)) {
             return false;
         }
@@ -46,16 +45,15 @@ public abstract class Move {
         if (!getMovingPiece().equals(chess_board.getPiece(getOldLocation()))) {
             return false;
         }
-        if (
-            getKilledPiece() != null &&
-            !(this instanceof EnPassantMove) &&
-            !getKilledPiece().equals(chess_board.getPiece(getNewLocation()))
-        ) {
+        if (getKilledPiece() != null &&
+                !(this instanceof EnPassantMove) &&
+                !getKilledPiece().equals(chess_board.getPiece(getNewLocation()))) {
             return false;
         }
 
         return getMovingPiece().canMove(getOldLocation(), getNewLocation(), chess_board);
     }
+
     public static boolean isValid(Board chess_board, Space old_location_in, Space new_location_in) {
         /* Quick and simple validity check without creating a move */
 
@@ -80,30 +78,45 @@ public abstract class Move {
     }
 
     public Piece getMovingPiece() {
-        /* Return chess piece by value (cannot change attributes of original piece) unless null */
-        
-        if (this.MOVING_PIECE == null) { return null; }
+        /*
+         * Return chess piece by value (cannot change attributes of original piece)
+         * unless null
+         */
+
+        if (this.MOVING_PIECE == null) {
+            return null;
+        }
         return this.MOVING_PIECE.copy();
     }
-    public Piece getKilledPiece() {
-        /* Return chess piece by value (cannot change attributes of original piece) unless null */
 
-        if (this.KILLED_PIECE == null) { return null; }
+    public Piece getKilledPiece() {
+        /*
+         * Return chess piece by value (cannot change attributes of original piece)
+         * unless null
+         */
+
+        if (this.KILLED_PIECE == null) {
+            return null;
+        }
         return this.KILLED_PIECE.copy();
     }
+
     public Space getOldLocation() {
         return this.OLD_LOCATION;
     }
+
     public Space getNewLocation() {
         return this.NEW_LOCATION;
     }
+
     public int getKillPoints() {
         return this.kill_points;
     }
+
     public void setKillPoints(int points_in) {
         this.kill_points = points_in;
     }
-    
+
     public String getNotation(boolean is_enemy_checked, boolean be_precise) {
         /* Get the move in algebraic notation (for human readability) */
 
@@ -117,19 +130,17 @@ public abstract class Move {
             move_string = "x" + move_string;
         }
 
-        // if multiple pieces of same type exist on the same row, column of moving piece is added to the string
+        // if multiple pieces of same type exist on the same row, column of moving piece
+        // is added to the string
         if (be_precise) {
             String old_location_x_axis = String.valueOf(getOldLocation().toString().charAt(0));
             move_string = old_location_x_axis + move_string;
         }
 
-        // knight piece has different symbol to differentiate it from king
-        if (getMovingPiece() instanceof Knight) {
-            move_string = "N" + move_string;
-        }
-        // only pawn doesn't have a symbol
-        else if (!(getMovingPiece() instanceof Pawn)) {
-            move_string = getMovingPiece().getName().charAt(0) + move_string;
+        // pawn does not have a symbol in algebraic notation for moves
+        if (!(getMovingPiece() instanceof Pawn)) {
+            // in algebraic notation for moves, piece symbol is always upper case
+            move_string = Character.toUpperCase(getMovingPiece().getSymbol()) + move_string;
         }
 
         return move_string;
@@ -142,18 +153,31 @@ public abstract class Move {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) { return true; }
-        if (!(obj instanceof Move)) { return false; }
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof Move)) {
+            return false;
+        }
 
         Move move_in = (Move) obj;
-        if (!getMovingPiece().equals(move_in.getMovingPiece())) { return false; }
-        if (!getOldLocation().equals(move_in.getOldLocation())) { return false; }
-        if (!getNewLocation().equals(move_in.getNewLocation())) { return false; }
-        if (getKillPoints() != move_in.getKillPoints()) { return false; }
+        if (!getMovingPiece().equals(move_in.getMovingPiece())) {
+            return false;
+        }
+        if (!getOldLocation().equals(move_in.getOldLocation())) {
+            return false;
+        }
+        if (!getNewLocation().equals(move_in.getNewLocation())) {
+            return false;
+        }
+        if (getKillPoints() != move_in.getKillPoints()) {
+            return false;
+        }
 
         return true;
     }
 
     public abstract void apply(Board chess_board);
+
     public abstract void undo(Board chess_board);
 }

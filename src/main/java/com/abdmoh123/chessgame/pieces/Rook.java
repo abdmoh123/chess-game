@@ -101,8 +101,9 @@ public class Rook extends Piece {
     }
 
     @Override
-    public String getName() {
-        return "Rook";
+    public char getSymbol() {
+        if (isWhite()) { return 'R'; }
+        return 'r';
     }
     @Override
     public Piece copy() {
