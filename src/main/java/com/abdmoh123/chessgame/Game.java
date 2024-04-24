@@ -54,7 +54,7 @@ public class Game {
     private void startTurn() {
         getBoard().display();
 
-        Player current_player = selectPlayer();
+        Player current_player = getCurrentPlayer();
 
         checkGameEnded(current_player);
         if (hasEnded()) {
@@ -84,6 +84,8 @@ public class Game {
 
         current_player.addPoints(generated_move.getKillPoints());
         recordMoveNotation(generated_move);
+
+        switchTurn();
     }
 
     private void displayPlayerMessage(Player player) {
@@ -95,18 +97,6 @@ public class Game {
 
         if (getEngine().isCheck(player.isWhite())) {
             System.out.println("Your king is in check!");
-        }
-    }
-
-    public Player selectPlayer() {
-        /* Automatically select the correct player for the turn */
-
-        if (isP1Turn()) {
-            this.p1_turn = !isP1Turn(); // switch turn for next time
-            return getPlayer(1);
-        } else {
-            this.p1_turn = !isP1Turn(); // switch turn for next time
-            return getPlayer(2);
         }
     }
 
@@ -165,6 +155,10 @@ public class Game {
             throw new RuntimeException("Invalid input");
         }
         return this.players[choice - 1]; // getPlayer(1) = player[0]
+    }
+
+    public void switchTurn() {
+        this.p1_turn = !isP1Turn();
     }
 
     public Board getBoard() {

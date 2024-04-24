@@ -90,7 +90,7 @@ public class MainController {
 
         // reset highlighting every time the player clicks a space
         resetHighlighting();
-        Player current_player = chess_game.selectPlayer();
+        Player current_player = chess_game.getCurrentPlayer();
         // don't let player select pieces if a bot is playing
         if (current_player instanceof BotPlayer)
             return;
@@ -105,10 +105,11 @@ public class MainController {
         // apply move if player selected the correct spaces
         Move selected_move = getMoveFromSelection(this.selected_space);
         if (selected_move != null) {
-            selected_move.apply(chess_game.getBoard());
-
-            current_player.addPoints(selected_move.getKillPoints());
+            // move is recorded before applied to prevent null pointer exception
             chess_game.recordMoveNotation(selected_move);
+            current_player.addPoints(selected_move.getKillPoints());
+
+            selected_move.apply(chess_game.getBoard());
 
             resetHighlighting();
             chess_board_pane.setBoard(chess_game.getBoard());
@@ -130,11 +131,12 @@ public class MainController {
             } else
                 black_move_history.getChildren().add(move_entry);
 
+            this.chess_game.switchTurn();
+
             return;
         }
 
-        // if there exists a move that can be played, run the code below
-        if (chess_game.getEngine().generateLegalMoves(selected_space, current_player.isWhite()).size() > 0) {
+        if (chess_game.getBoard().isSpaceFriendly(this.selected_space, current_player.isWhite())) {
             char piece_symbol = chess_game.getBoard().getPiece(selected_space).getSymbol();
             System.out.printf("Found %s at cell: (%d, %d)\n", piece_symbol, selected_space.getX(),
                     selected_space.getY());
@@ -174,7 +176,7 @@ public class MainController {
         } else {
             this.selected_possible_moves = this.chess_game.getEngine().generateLegalMoves(
                     this.selected_space,
-                    this.chess_game.getCurrentPlayer().isWhite());
+                    this.chess_game.isP1Turn());
         }
     }
 

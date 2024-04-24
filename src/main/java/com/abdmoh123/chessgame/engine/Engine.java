@@ -339,9 +339,7 @@ public class Engine {
         return this.chess_board;
     }
 
-    public boolean canMultiplePiecesMoveToSameSpace(
-            Space chosen_space,
-            Space destination_space) {
+    public boolean canMultiplePiecesMoveToSameSpace(Space chosen_space, Space destination_space) {
         /*
          * Check if no other pieces (of same type) can move to the same destination
          * space
