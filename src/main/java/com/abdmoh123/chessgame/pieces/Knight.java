@@ -36,7 +36,7 @@ public class Knight extends Piece {
 
         for (int[] set : space_coordinates) {
             Space space = new Space(set[0], set[1]);
-            if (Move.isLegal(chess_board, location, space)) {
+            if (Move.isValid(chess_board, location, space)) {
                 addVisibleSpace(space);
             }
         }

@@ -54,9 +54,11 @@
                     <mainClass>com.abdmoh123.chessgame.ChessGame</mainClass>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.3</version>
                 <executions>
                     <execution>
                         <goals>
@@ -76,5 +78,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

@@ -35,7 +35,7 @@ public class CastlingMove extends Move {
     @Override
     public void apply(Board chess_board) {
         Rook moving_rook = (Rook) chess_board.getPiece(getOldRookSpace());
-        King moving_king = (King) getChessPiece();
+        King moving_king = (King) getMovingPiece();
         // prevent future castling
         moving_rook.activate();
         moving_king.disableCastling();
@@ -45,5 +45,20 @@ public class CastlingMove extends Move {
         chess_board.updateSpace(getOldLocation(), null);
         chess_board.updateSpace(getNewRookSpace(), moving_rook);
         chess_board.updateSpace(getOldRookSpace(), null);
+    }
+
+    @Override
+    public void undo(Board chess_board) {
+        Rook moving_rook = (Rook) chess_board.getPiece(getNewRookSpace());
+        King moving_king = (King) getMovingPiece();
+        // allow castling again
+        moving_rook.deactivate();
+        moving_king.enableCastling();
+
+        // undo castling
+        chess_board.updateSpace(getNewLocation(), null);
+        chess_board.updateSpace(getOldLocation(), moving_king);
+        chess_board.updateSpace(getNewRookSpace(), null);
+        chess_board.updateSpace(getOldRookSpace(), moving_rook);
     }
 }

@@ -139,7 +139,7 @@ public class BoardPane extends GridPane {
         SpacePane new_cell = getCell(move_in.getNewLocation());
 
         old_cell.setPieceImage(' ');
-        new_cell.setPieceImage(move_in.getChessPiece().getSymbol());
+        new_cell.setPieceImage(move_in.getMovingPiece().getSymbol());
     }
 
     public int getSize() {

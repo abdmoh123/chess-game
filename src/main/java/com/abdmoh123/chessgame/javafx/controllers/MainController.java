@@ -8,9 +8,9 @@ import com.abdmoh123.chessgame.GameState;
 import com.abdmoh123.chessgame.boards.Board;
 import com.abdmoh123.chessgame.boards.Space;
 import com.abdmoh123.chessgame.boards.StandardBoard;
-import com.abdmoh123.chessgame.control.Computer;
-import com.abdmoh123.chessgame.control.Human;
-import com.abdmoh123.chessgame.control.Player;
+import com.abdmoh123.chessgame.players.Human;
+import com.abdmoh123.chessgame.players.Player;
+import com.abdmoh123.chessgame.players.bots.BotPlayer;
 import com.abdmoh123.chessgame.moves.Move;
 import com.abdmoh123.chessgame.javafx.components.BoardPane;
 import com.abdmoh123.chessgame.javafx.components.SpacePane;
@@ -90,9 +90,9 @@ public class MainController {
 
         // reset highlighting every time the player clicks a space
         resetHighlighting();
-        Player current_player = chess_game.getCurrentPlayer();
+        Player current_player = chess_game.selectPlayer();
         // don't let player select pieces if a bot is playing
-        if (current_player instanceof Computer)
+        if (current_player instanceof BotPlayer)
             return;
 
         // get square/grid cell that the user clicked
@@ -108,7 +108,7 @@ public class MainController {
             selected_move.apply(chess_game.getBoard());
 
             current_player.addPoints(selected_move.getKillPoints());
-            chess_game.recordMove(selected_move);
+            chess_game.recordMoveNotation(selected_move);
 
             resetHighlighting();
             chess_board_pane.setBoard(chess_game.getBoard());
@@ -130,12 +130,11 @@ public class MainController {
             } else
                 black_move_history.getChildren().add(move_entry);
 
-            this.chess_game.switchTurn();
-
             return;
         }
 
-        if (current_player.canPieceMove(selected_space, chess_game.getBoard())) {
+        // if there exists a move that can be played, run the code below
+        if (chess_game.getEngine().generateLegalMoves(selected_space, current_player.isWhite()).size() > 0) {
             char piece_symbol = chess_game.getBoard().getPiece(selected_space).getSymbol();
             System.out.printf("Found %s at cell: (%d, %d)\n", piece_symbol, selected_space.getX(),
                     selected_space.getY());
@@ -173,7 +172,9 @@ public class MainController {
         if (!chess_board.isSpaceFriendly(selected_space, chess_game.isP1Turn())) {
             this.selected_possible_moves.clear();
         } else {
-            this.selected_possible_moves = chess_game.getCurrentPlayer().getMoves(selected_space, chess_board);
+            this.selected_possible_moves = this.chess_game.getEngine().generateLegalMoves(
+                    this.selected_space,
+                    this.chess_game.getCurrentPlayer().isWhite());
         }
     }
 

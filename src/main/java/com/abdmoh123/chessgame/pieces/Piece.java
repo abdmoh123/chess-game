@@ -18,6 +18,20 @@ public abstract class Piece {
         this.visible_spaces = new ArrayList<>();
     }
 
+    public boolean canMove(Space current_location_in, Space new_location_in, Board chess_board) {
+        /* Check if a piece can move to a given location (doesn't take into account checks) */
+
+        computeVision(current_location_in, chess_board);
+
+        List<Space> visible_spaces = getVisibleSpaces();
+        for (Space visible_space : visible_spaces) {
+            if (visible_space.equals(new_location_in)) {
+                return true;
+            }
+        }
+        return false;
+    };
+
     public boolean isWhite() {
         return this.IS_WHITE;
     }
