@@ -149,14 +149,24 @@ public class Pawn extends Piece {
             return null;
         }
 
-        // if pawn reaches horizontal edge of board, it can promote
-        if (new_space.getY() == chess_board.getLength() - 1 || new_space.getY() == 0) {
-            // 4 pieces to promote to
+        // if pawn reaches top of board (only white), it can promote
+        if (new_space.getY() == chess_board.getLength() - 1) {
+            // 4 white pieces to promote to
             return new Move[] {
-                    new PromotePawnMove(location, new_space, this, 1),
-                    new PromotePawnMove(location, new_space, this, 2),
-                    new PromotePawnMove(location, new_space, this, 3),
-                    new PromotePawnMove(location, new_space, this, 4)
+                    new PromotePawnMove(location, new_space, this, 'R'),
+                    new PromotePawnMove(location, new_space, this, 'N'),
+                    new PromotePawnMove(location, new_space, this, 'B'),
+                    new PromotePawnMove(location, new_space, this, 'Q')
+            };
+        }
+        // if pawn reaches bottom of board (only black), it can promote
+        if (new_space.getY() == 0) {
+            // 4 black pieces to promote to
+            return new Move[] {
+                    new PromotePawnMove(location, new_space, this, 'r'),
+                    new PromotePawnMove(location, new_space, this, 'n'),
+                    new PromotePawnMove(location, new_space, this, 'b'),
+                    new PromotePawnMove(location, new_space, this, 'q')
             };
         }
         return new Move[] { new StandardMove(location, new_space, this, chess_board.getPiece(new_space)) };
@@ -229,13 +239,25 @@ public class Pawn extends Piece {
         for (Space visible_space : getVisibleSpaces()) {
             if (!chess_board.isSpaceEmpty(visible_space)) {
                 // allow diagonal killing move to be a pawn promotion move
-                if (visible_space.getY() == chess_board.getLength() - 1 || visible_space.getY() == 0) {
-                    // 4 pieces to promote to
+                if (visible_space.getY() == chess_board.getLength() - 1) {
+                    // 4 white pieces to promote to
                     Move[] promotion_moves = {
-                            new PromotePawnMove(location, visible_space, this, 1, chess_board.getPiece(visible_space)),
-                            new PromotePawnMove(location, visible_space, this, 2, chess_board.getPiece(visible_space)),
-                            new PromotePawnMove(location, visible_space, this, 3, chess_board.getPiece(visible_space)),
-                            new PromotePawnMove(location, visible_space, this, 4, chess_board.getPiece(visible_space))
+                            new PromotePawnMove(location, visible_space, this, 'R'),
+                            new PromotePawnMove(location, visible_space, this, 'N'),
+                            new PromotePawnMove(location, visible_space, this, 'B'),
+                            new PromotePawnMove(location, visible_space, this, 'Q')
+                    };
+                    for (Move move : promotion_moves) {
+                        possible_moves.add(move);
+                    }
+                }
+                if (visible_space.getY() == 0) {
+                    // 4 black pieces to promote to
+                    Move[] promotion_moves = {
+                            new PromotePawnMove(location, visible_space, this, 'r'),
+                            new PromotePawnMove(location, visible_space, this, 'n'),
+                            new PromotePawnMove(location, visible_space, this, 'b'),
+                            new PromotePawnMove(location, visible_space, this, 'q')
                     };
                     for (Move move : promotion_moves) {
                         possible_moves.add(move);

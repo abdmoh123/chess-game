@@ -2,51 +2,36 @@ package com.abdmoh123.chessgame.moves;
 
 import com.abdmoh123.chessgame.boards.Board;
 import com.abdmoh123.chessgame.boards.Space;
-import com.abdmoh123.chessgame.pieces.Bishop;
 import com.abdmoh123.chessgame.pieces.Knight;
 import com.abdmoh123.chessgame.pieces.Pawn;
 import com.abdmoh123.chessgame.pieces.Piece;
-import com.abdmoh123.chessgame.pieces.Queen;
-import com.abdmoh123.chessgame.pieces.Rook;
+import com.abdmoh123.chessgame.pieces.PieceFactory;
 
 public class PromotePawnMove extends Move {
     private Piece new_piece;
 
-    public PromotePawnMove(Space old_location_in, Space new_location_in, Pawn moving_piece_in, int promotion_choice) {
+    public PromotePawnMove(Space old_location_in, Space new_location_in, Pawn moving_piece_in,
+            char promote_piece_symbol) {
         super(old_location_in, new_location_in, moving_piece_in);
-        setNewPiece(promotion_choice, moving_piece_in.isWhite());
+        setNewPiece(promote_piece_symbol);
     }
 
-    public PromotePawnMove(
-            Space old_location_in, Space new_location_in, Pawn moving_piece_in, int promotion_choice,
+    public PromotePawnMove(Space old_location_in, Space new_location_in, Pawn moving_piece_in,
+            char promote_piece_symbol,
             Piece piece_killed) {
         super(old_location_in, new_location_in, moving_piece_in, piece_killed);
-        setNewPiece(promotion_choice, moving_piece_in.isWhite());
+        setNewPiece(promote_piece_symbol);
     }
 
     public Piece getNewPiece() {
         return this.new_piece;
     }
 
-    private void setNewPiece(int choice, boolean is_white_in) {
+    public void setNewPiece(char piece_symbol) {
         /* Set the piece that the pawn promotes to */
 
-        switch (choice) {
-            case 1:
-                this.new_piece = new Queen(is_white_in);
-                break;
-            case 2:
-                this.new_piece = new Rook(is_white_in);
-                break;
-            case 3:
-                this.new_piece = new Bishop(is_white_in);
-                break;
-            case 4:
-                this.new_piece = new Knight(is_white_in);
-                break;
-            default:
-                throw new RuntimeException("Invalid choice for promoted pawn!");
-        }
+        // NOTE: this value can end up being null
+        this.new_piece = PieceFactory.createPiece(piece_symbol);
     }
 
     @Override

@@ -15,11 +15,23 @@
             <Button text="Start game" onAction="#startGame" />
         </VBox>
     </left>
-    
+
     <center>
         <StackPane>
             <GridPane id="center-container">
                 <BoardPane id="chess-board" fx:id="chess_board_pane" onMouseClicked="#handleSpaceSelection" />
+            </GridPane>
+
+            <GridPane style="-fx-alignment: center;">
+                <VBox id="promote_popup" fx:id="promote_popup">
+                    <Label>Select a piece to promote to</Label>
+                    <HBox>
+                        <Button text="Rook" onAction="#promoteRook" />
+                        <Button text="Knight" onAction="#promoteKnight" />
+                        <Button text="Bishop" onAction="#promoteBishop" />
+                        <Button text="Queen" onAction="#promoteQueen" />
+                    </HBox>
+                </VBox>
             </GridPane>
         </StackPane>
     </center>

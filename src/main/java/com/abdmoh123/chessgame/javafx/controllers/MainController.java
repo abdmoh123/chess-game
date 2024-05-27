@@ -56,17 +56,76 @@ public class MainController {
     @FXML
     private VBox promote_popup;
 
+    private boolean can_play = true;
+
     public void initialize() {
         selected_possible_moves = new ArrayList<>();
-        promote_popup = createPromotionPopup();
-        Node center_content = main_window.getCenter();
-        ((StackPane) center_content).getChildren().add(new Group(promote_popup));
-        main_window.setCenter(center_content);
+        promote_popup.getParent().setVisible(false);
     }
 
     @FXML
     protected void handleSubmitButtonAction(ActionEvent event) {
         output_text.setText("Chess!");
+    }
+
+    @FXML
+    protected void promoteRook(ActionEvent event) {
+        promote_popup.getParent().setVisible(false);
+        this.can_play = true;
+
+        Move selected_move = getMoveFromSelection(this.selected_space);
+
+        char rook_symbol = 'r';
+        if (this.chess_game.isP1Turn())
+            rook_symbol = 'R';
+
+        ((PromotePawnMove) selected_move).setNewPiece(rook_symbol);
+        applyMove(selected_move);
+    }
+
+    @FXML
+    protected void promoteKnight(ActionEvent event) {
+        promote_popup.getParent().setVisible(false);
+        this.can_play = true;
+
+        Move selected_move = getMoveFromSelection(this.selected_space);
+
+        char knight_symbol = 'n';
+        if (this.chess_game.isP1Turn())
+            knight_symbol = 'N';
+
+        ((PromotePawnMove) selected_move).setNewPiece(knight_symbol);
+        applyMove(selected_move);
+    }
+
+    @FXML
+    protected void promoteBishop(ActionEvent event) {
+        promote_popup.getParent().setVisible(false);
+        this.can_play = true;
+
+        Move selected_move = getMoveFromSelection(this.selected_space);
+
+        char bishop_symbol = 'b';
+        if (this.chess_game.isP1Turn())
+            bishop_symbol = 'B';
+
+        ((PromotePawnMove) selected_move).setNewPiece(bishop_symbol);
+        applyMove(selected_move);
+    }
+
+    @FXML
+    protected void promoteQueen(ActionEvent event) {
+        promote_popup.getParent().setVisible(false);
+        this.can_play = true;
+
+        Move selected_move = getMoveFromSelection(this.selected_space);
+
+        char queen_symbol = 'q';
+        if (this.chess_game.isP1Turn())
+            queen_symbol = 'Q';
+
+        ((PromotePawnMove) selected_move).setNewPiece(queen_symbol);
+        applyMove(selected_move);
     }
 
     @FXML
@@ -120,42 +179,15 @@ public class MainController {
             return;
 
         this.selected_space = getSpacePaneLocation((SpacePane) clicked_node);
-        // apply move if player selected the correct spaces
         Move selected_move = getMoveFromSelection(this.selected_space);
+        // pawn promotion stuff
         if (selected_move instanceof PromotePawnMove) {
-            promote_popup.setVisible(true);
+            promote_popup.getParent().setVisible(true);
+            return;
         }
-        if (selected_move != null) {
-            // move is recorded before applied to prevent null pointer exception
-            this.chess_game.recordMove(selected_move);
-            current_player.addPoints(selected_move.getKillPoints());
-
-            selected_move.apply(this.chess_game.getBoard());
-
-            resetHighlighting();
-            chess_board_pane.setBoard(this.chess_game.getBoard());
-
-            this.selected_space = null;
-            this.selected_possible_moves.clear();
-
-            /* Add move to move history list */
-            List<Move> move_history = this.chess_game.getMoveHistory();
-            String move_notation = this.chess_game.getEngine()
-                    .convertMoveToNotation(move_history.get(move_history.size() - 1));
-
-            // left column = white moves, right = black moves, with move index at far left
-            Label move_entry = new Label(move_notation);
-            move_entry.setAlignment(Pos.CENTER);
-
-            if (this.chess_game.isP1Turn()) {
-                Label index_label = new Label(Integer.toString((move_history.size() + 1) / 2));
-                move_history_index.getChildren().add(index_label);
-                white_move_history.getChildren().add(move_entry);
-            } else
-                black_move_history.getChildren().add(move_entry);
-
-            this.chess_game.switchTurn();
-
+        // apply move if player selected the correct spaces
+        else if (selected_move != null) {
+            applyMove(selected_move);
             return;
         }
 
@@ -172,34 +204,36 @@ public class MainController {
         highlightMovablePanes();
     }
 
-    private VBox createPromotionPopup() {
-        VBox popup_content = new VBox();
+    private void applyMove(Move selected_move) {
+        // move is recorded before applied to prevent null pointer exception
+        this.chess_game.recordMove(selected_move);
+        this.chess_game.getCurrentPlayer().addPoints(selected_move.getKillPoints());
 
-        Label popup_title = new Label("Select a piece to promote to");
+        selected_move.apply(this.chess_game.getBoard());
 
-        HBox piece_list = new HBox();
-        Button rook_button = new Button("Rook");
-        Button knight_button = new Button("Knight");
-        Button bishop_button = new Button("Bishop");
-        Button queen_button = new Button("Queen");
-        Button[] choices = { rook_button, knight_button, bishop_button, queen_button };
+        resetHighlighting();
+        chess_board_pane.setBoard(this.chess_game.getBoard());
 
-        for (Button button : choices) {
-            button.getStyleClass().add("popup-buttons");
-            button.setOnAction(new EventHandler<ActionEvent>() {
-                public void handle(ActionEvent e) {
-                    popup_content.setVisible(false);
-                }
-            });
-        }
-        piece_list.getChildren().addAll(rook_button, knight_button, bishop_button, queen_button);
+        this.selected_space = null;
+        this.selected_possible_moves.clear();
 
-        popup_content.getChildren().addAll(popup_title, piece_list);
+        /* Add move to move history list */
+        List<Move> move_history = this.chess_game.getMoveHistory();
+        String move_notation = this.chess_game.getEngine()
+                .convertMoveToNotation(move_history.get(move_history.size() - 1));
 
-        popup_content.setVisible(false);
-        popup_content.setId("promote_popup");
+        // left column = white moves, right = black moves, with move index at far left
+        Label move_entry = new Label(move_notation);
+        move_entry.setAlignment(Pos.CENTER);
 
-        return popup_content;
+        if (this.chess_game.isP1Turn()) {
+            Label index_label = new Label(Integer.toString((move_history.size() + 1) / 2));
+            move_history_index.getChildren().add(index_label);
+            white_move_history.getChildren().add(move_entry);
+        } else
+            black_move_history.getChildren().add(move_entry);
+
+        this.chess_game.switchTurn();
     }
 
     private Move getMoveFromSelection(Space space_in) {
