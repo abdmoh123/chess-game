@@ -8,6 +8,7 @@ import com.abdmoh123.chessgame.GameState;
 import com.abdmoh123.chessgame.boards.Board;
 import com.abdmoh123.chessgame.boards.Space;
 import com.abdmoh123.chessgame.boards.StandardBoard;
+import com.abdmoh123.chessgame.moves.PromotePawnMove;
 import com.abdmoh123.chessgame.players.Human;
 import com.abdmoh123.chessgame.players.Player;
 import com.abdmoh123.chessgame.players.bots.BotPlayer;
@@ -16,15 +17,25 @@ import com.abdmoh123.chessgame.javafx.components.BoardPane;
 import com.abdmoh123.chessgame.javafx.components.SpacePane;
 
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 public class MainController {
+    @FXML
+    private BorderPane main_window;
+
     @FXML
     private Text output_text;
     @FXML
@@ -42,8 +53,15 @@ public class MainController {
     private Space selected_space;
     private List<Move> selected_possible_moves;
 
+    @FXML
+    private VBox promote_popup;
+
     public void initialize() {
         selected_possible_moves = new ArrayList<>();
+        promote_popup = createPromotionPopup();
+        Node center_content = main_window.getCenter();
+        ((StackPane) center_content).getChildren().add(new Group(promote_popup));
+        main_window.setCenter(center_content);
     }
 
     @FXML
@@ -104,6 +122,9 @@ public class MainController {
         this.selected_space = getSpacePaneLocation((SpacePane) clicked_node);
         // apply move if player selected the correct spaces
         Move selected_move = getMoveFromSelection(this.selected_space);
+        if (selected_move instanceof PromotePawnMove) {
+            promote_popup.setVisible(true);
+        }
         if (selected_move != null) {
             // move is recorded before applied to prevent null pointer exception
             this.chess_game.recordMove(selected_move);
@@ -149,6 +170,36 @@ public class MainController {
 
         updatePossibleMoves();
         highlightMovablePanes();
+    }
+
+    private VBox createPromotionPopup() {
+        VBox popup_content = new VBox();
+
+        Label popup_title = new Label("Select a piece to promote to");
+
+        HBox piece_list = new HBox();
+        Button rook_button = new Button("Rook");
+        Button knight_button = new Button("Knight");
+        Button bishop_button = new Button("Bishop");
+        Button queen_button = new Button("Queen");
+        Button[] choices = { rook_button, knight_button, bishop_button, queen_button };
+
+        for (Button button : choices) {
+            button.getStyleClass().add("popup-buttons");
+            button.setOnAction(new EventHandler<ActionEvent>() {
+                public void handle(ActionEvent e) {
+                    popup_content.setVisible(false);
+                }
+            });
+        }
+        piece_list.getChildren().addAll(rook_button, knight_button, bishop_button, queen_button);
+
+        popup_content.getChildren().addAll(popup_title, piece_list);
+
+        popup_content.setVisible(false);
+        popup_content.setId("promote_popup");
+
+        return popup_content;
     }
 
     private Move getMoveFromSelection(Space space_in) {

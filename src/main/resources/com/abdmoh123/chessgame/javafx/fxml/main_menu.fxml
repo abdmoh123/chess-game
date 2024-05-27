@@ -8,7 +8,7 @@
 
 <?import com.abdmoh123.chessgame.javafx.components.* ?>
 
-<BorderPane fx:controller="com.abdmoh123.chessgame.javafx.controllers.MainController"  xmlns:fx="http://javafx.com/fxml">
+<BorderPane fx:id="main_window" fx:controller="com.abdmoh123.chessgame.javafx.controllers.MainController"  xmlns:fx="http://javafx.com/fxml">
 
     <left>
         <VBox id="left-container">
@@ -17,9 +17,11 @@
     </left>
     
     <center>
-        <GridPane id="center-container">
-            <BoardPane id="chess-board" fx:id="chess_board_pane" onMouseClicked="#handleSpaceSelection" />
-        </GridPane>
+        <StackPane>
+            <GridPane id="center-container">
+                <BoardPane id="chess-board" fx:id="chess_board_pane" onMouseClicked="#handleSpaceSelection" />
+            </GridPane>
+        </StackPane>
     </center>
 
     <right>

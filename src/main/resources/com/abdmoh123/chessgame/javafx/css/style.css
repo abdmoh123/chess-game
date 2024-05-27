@@ -142,29 +142,25 @@
     -fx-background-color: -bg0;
 }
 
-.popup {
+#promote_popup {
     /* Apply double line border to popup */
     -fx-background-color: -bg0, -bg1, -bg0;
     -fx-background-insets: -6px, -3px, 0px;
 
-    -fx-padding: 5px;
-    -fx-alignment: center;
+    -fx-padding: 10px 10px 13px 10px;
+    -fx-spacing: 10px;
 }
-.popup .label {
-    -fx-padding: 5px;
+#promote_popup .label {
 }
-.popup .button {
+#promote_popup .button {
     -fx-background-color: transparent; /* transparent buttons */
     -fx-effect: dropshadow(one-pass-box, -d_orange, 0, 0, 0, 0);
 }
-.popup .hbox {
-    -fx-alignment: center;
-}
-.popup .button:hover {
+#promote_popup .button:hover {
     -fx-background-color: -n_orange;
     -fx-effect: dropshadow(one-pass-box, -d_orange, 0, 0, 0, 3px);
 }
-.popup .button:focused {
+#promote_popup .button:focused {
     -fx-background-color: -d_orange;
     -fx-effect: dropshadow(one-pass-box, -d_orange, 0, 0, 0, 3px);
 }

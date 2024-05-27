@@ -16,37 +16,6 @@ import javafx.stage.Popup;
 import javafx.stage.Stage;
 
 public class ChessGameApp extends Application {
-    private Popup createPromotionPopup() {
-        Popup promote_popup = new Popup();
-        VBox popup_content = new VBox();
-
-        Label popup_title = new Label("Select a piece to promote to");
-
-        HBox piece_list = new HBox();
-        Button rook_button = new Button("Rook");
-        Button knight_button = new Button("Knight");
-        Button bishop_button = new Button("Bishop");
-        Button queen_button = new Button("Queen");
-        Button[] choices = { rook_button, knight_button, bishop_button, queen_button };
-
-        for (Button button : choices) {
-            button.getStyleClass().add("popup-buttons");
-            button.setOnAction(new EventHandler<ActionEvent>() {
-                public void handle(ActionEvent e) {
-                    promote_popup.hide();
-                }
-            });
-        }
-        piece_list.getChildren().addAll(rook_button, knight_button, bishop_button, queen_button);
-
-        popup_content.getChildren().addAll(popup_title, piece_list);
-        Pane popup_content_wrapper = new Pane();
-        popup_content_wrapper.getChildren().add(popup_content);
-
-        promote_popup.getContent().add(popup_content_wrapper);
-
-        return promote_popup;
-    }
 
     @Override
     public void start(Stage primary_stage) throws Exception {
@@ -58,18 +27,7 @@ public class ChessGameApp extends Application {
         primary_stage.setScene(main_scene);
         main_scene.getStylesheets().add(getClass().getResource("css/style.css").toExternalForm());
 
-        Popup promote_popup = createPromotionPopup();
-        EventHandler<ActionEvent> promotion_event = new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent e) {
-                if (!promote_popup.isShowing()) {
-                    promote_popup.show(primary_stage);
-                }
-            }
-        };
-
         primary_stage.show();
-
-        promote_popup.show(primary_stage);
     }
 
     public static void main(String[] args) {
