@@ -238,14 +238,16 @@ public class Pawn extends Piece {
 
         for (Space visible_space : getVisibleSpaces()) {
             if (!chess_board.isSpaceEmpty(visible_space)) {
+                Piece killed_piece = chess_board.getPiece(visible_space);
+
                 // allow diagonal killing move to be a pawn promotion move
                 if (visible_space.getY() == chess_board.getLength() - 1) {
                     // 4 white pieces to promote to
                     Move[] promotion_moves = {
-                            new PromotePawnMove(location, visible_space, this, 'R'),
-                            new PromotePawnMove(location, visible_space, this, 'N'),
-                            new PromotePawnMove(location, visible_space, this, 'B'),
-                            new PromotePawnMove(location, visible_space, this, 'Q')
+                            new PromotePawnMove(location, visible_space, this, 'R', killed_piece),
+                            new PromotePawnMove(location, visible_space, this, 'N', killed_piece),
+                            new PromotePawnMove(location, visible_space, this, 'B', killed_piece),
+                            new PromotePawnMove(location, visible_space, this, 'Q', killed_piece)
                     };
                     for (Move move : promotion_moves) {
                         possible_moves.add(move);
@@ -254,10 +256,10 @@ public class Pawn extends Piece {
                 if (visible_space.getY() == 0) {
                     // 4 black pieces to promote to
                     Move[] promotion_moves = {
-                            new PromotePawnMove(location, visible_space, this, 'r'),
-                            new PromotePawnMove(location, visible_space, this, 'n'),
-                            new PromotePawnMove(location, visible_space, this, 'b'),
-                            new PromotePawnMove(location, visible_space, this, 'q')
+                            new PromotePawnMove(location, visible_space, this, 'r', killed_piece),
+                            new PromotePawnMove(location, visible_space, this, 'n', killed_piece),
+                            new PromotePawnMove(location, visible_space, this, 'b', killed_piece),
+                            new PromotePawnMove(location, visible_space, this, 'q', killed_piece)
                     };
                     for (Move move : promotion_moves) {
                         possible_moves.add(move);

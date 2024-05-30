@@ -17,8 +17,7 @@ public class PromotePawnMove extends Move {
     }
 
     public PromotePawnMove(Space old_location_in, Space new_location_in, Pawn moving_piece_in,
-            char promote_piece_symbol,
-            Piece piece_killed) {
+            char promote_piece_symbol, Piece piece_killed) {
         super(old_location_in, new_location_in, moving_piece_in, piece_killed);
         setNewPiece(promote_piece_symbol);
     }
