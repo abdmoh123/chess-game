@@ -17,18 +17,12 @@ import com.abdmoh123.chessgame.javafx.components.BoardPane;
 import com.abdmoh123.chessgame.javafx.components.SpacePane;
 
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
@@ -56,8 +50,6 @@ public class MainController {
     @FXML
     private VBox promote_popup;
 
-    private boolean can_play = true;
-
     public void initialize() {
         selected_possible_moves = new ArrayList<>();
         promote_popup.getParent().setVisible(false);
@@ -71,7 +63,6 @@ public class MainController {
     @FXML
     protected void promoteRook(ActionEvent event) {
         promote_popup.getParent().setVisible(false);
-        this.can_play = true;
 
         Move selected_move = getMoveFromSelection(this.selected_space);
 
@@ -86,7 +77,6 @@ public class MainController {
     @FXML
     protected void promoteKnight(ActionEvent event) {
         promote_popup.getParent().setVisible(false);
-        this.can_play = true;
 
         Move selected_move = getMoveFromSelection(this.selected_space);
 
@@ -101,7 +91,6 @@ public class MainController {
     @FXML
     protected void promoteBishop(ActionEvent event) {
         promote_popup.getParent().setVisible(false);
-        this.can_play = true;
 
         Move selected_move = getMoveFromSelection(this.selected_space);
 
@@ -116,7 +105,6 @@ public class MainController {
     @FXML
     protected void promoteQueen(ActionEvent event) {
         promote_popup.getParent().setVisible(false);
-        this.can_play = true;
 
         Move selected_move = getMoveFromSelection(this.selected_space);
 
