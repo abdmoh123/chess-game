@@ -56,8 +56,8 @@
             </VBox>
             <HBox id="right-buttons">
                 <HBox>
-                    <Button text="Undo" styleClass="orange-button" />
-                    <Button text="Redo" styleClass="orange-button" />
+                    <Button text="Undo" styleClass="orange-button" onAction="#undoMove" />
+                    <Button text="Redo" styleClass="orange-button" onAction="#redoMove" />
                 </HBox>
                 <Button text="End game" styleClass="red-button" onAction="#endGame" />
             </HBox>

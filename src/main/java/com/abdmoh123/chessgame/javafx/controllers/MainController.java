@@ -2,6 +2,7 @@ package com.abdmoh123.chessgame.javafx.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 import com.abdmoh123.chessgame.Game;
 import com.abdmoh123.chessgame.GameState;
@@ -146,6 +147,51 @@ public class MainController {
     }
 
     @FXML
+    protected void undoMove(ActionEvent event) {
+        // do not allow user to undo during bot's turn
+        if (!(this.chess_game.getCurrentPlayer() instanceof Human))
+            return;
+        // do not allow undoing on the first turn
+        if (this.chess_game.getMoveHistory().size() < 2)
+            return;
+
+        this.chess_game.undoLastMove();
+
+        int move_history_index_size = move_history_index.getChildren().size();
+        int white_move_history_size = white_move_history.getChildren().size();
+        int black_move_history_size = black_move_history.getChildren().size();
+        this.white_move_history.getChildren().remove(white_move_history_size - 1);
+        this.black_move_history.getChildren().remove(black_move_history_size - 1);
+        this.move_history_index.getChildren().remove(move_history_index_size - 1);
+
+        chess_board_pane.setBoard(this.chess_game.getBoard());
+
+        resetHighlighting();
+    }
+
+    @FXML
+    protected void redoMove(ActionEvent event) {
+        // do not allow redoing if there is nothing to redo
+        if (this.chess_game.getRedoMemory().size() < 2)
+            return;
+
+        this.chess_game.redoLastMove();
+
+        Stack<Move> move_history = this.chess_game.getMoveHistory();
+        Move last_enemy_move = move_history.get(move_history.size() - 1);
+        Move last_player_move = move_history.get(move_history.size() - 2);
+
+        this.chess_game.switchTurn();
+        addMoveToHistoryList(last_enemy_move);
+        this.chess_game.switchTurn();
+        addMoveToHistoryList(last_player_move);
+
+        chess_board_pane.setBoard(this.chess_game.getBoard());
+
+        resetHighlighting();
+    }
+
+    @FXML
     protected void handleSpaceSelection(MouseEvent event) {
         // don't do anything if game hasn't started or if it has ended
         if (this.chess_game == null)
@@ -207,21 +253,24 @@ public class MainController {
 
         /* Add move to move history list */
         List<Move> move_history = this.chess_game.getMoveHistory();
-        String move_notation = this.chess_game.getEngine()
-                .convertMoveToNotation(move_history.get(move_history.size() - 1));
+        addMoveToHistoryList(move_history.get(move_history.size() - 1));
+
+        this.chess_game.switchTurn();
+    }
+
+    private void addMoveToHistoryList(Move move_in) {
+        String move_notation = this.chess_game.getEngine().convertMoveToNotation(move_in);
 
         // left column = white moves, right = black moves, with move index at far left
         Label move_entry = new Label(move_notation);
         move_entry.setAlignment(Pos.CENTER);
 
         if (this.chess_game.isP1Turn()) {
-            Label index_label = new Label(Integer.toString((move_history.size() + 1) / 2));
+            Label index_label = new Label(Integer.toString(move_history_index.getChildren().size() + 1));
             move_history_index.getChildren().add(index_label);
             white_move_history.getChildren().add(move_entry);
         } else
             black_move_history.getChildren().add(move_entry);
-
-        this.chess_game.switchTurn();
     }
 
     private Move getMoveFromSelection(Space space_in) {

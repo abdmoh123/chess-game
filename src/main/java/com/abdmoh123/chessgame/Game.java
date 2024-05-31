@@ -5,13 +5,13 @@ import com.abdmoh123.chessgame.engine.Engine;
 import com.abdmoh123.chessgame.moves.Move;
 import com.abdmoh123.chessgame.players.Player;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Stack;
 
 public class Game {
     private Player[] players;
     private boolean p1_turn;
-    private List<Move> move_history;
+    private Stack<Move> move_history;
+    private Stack<Move> redo_memory;
 
     private Engine chess_engine;
     private GameState game_state;
@@ -22,7 +22,9 @@ public class Game {
     public Game(Player[] players_in, Board chess_board_in) {
         this.players = players_in;
         this.p1_turn = getPlayer(1).isWhite();
-        this.move_history = new ArrayList<>();
+
+        this.move_history = new Stack<>();
+        this.redo_memory = new Stack<>();
 
         this.quiet_move_count = 0;
         this.three_fold_repetition_count = 0;
@@ -82,6 +84,7 @@ public class Game {
         // apply after refreshing en passant so double pawn moves work correctly
         generated_move.apply(getBoard());
 
+        this.redo_memory.clear();
         current_player.addPoints(generated_move.getKillPoints());
         recordMove(generated_move);
 
@@ -127,8 +130,12 @@ public class Game {
         return this.p1_turn;
     }
 
-    public List<Move> getMoveHistory() {
+    public Stack<Move> getMoveHistory() {
         return this.move_history;
+    }
+
+    public Stack<Move> getRedoMemory() {
+        return this.redo_memory;
     }
 
     public void recordMove(Move move_in) {
@@ -150,6 +157,30 @@ public class Game {
             throw new RuntimeException("Invalid input");
         }
         return this.players[choice - 1]; // getPlayer(1) = player[0]
+    }
+
+    public void undoLastMove() {
+        if (move_history.size() < 2)
+            return;
+
+        Move enemy_last_move = move_history.pop();
+        Move player_last_move = move_history.pop();
+        getEngine().undoMoveToBoard(enemy_last_move);
+        getEngine().undoMoveToBoard(player_last_move);
+        this.redo_memory.add(enemy_last_move);
+        this.redo_memory.add(player_last_move);
+    }
+
+    public void redoLastMove() {
+        if (redo_memory.size() < 2)
+            return;
+
+        Move player_last_move = redo_memory.pop();
+        Move enemy_last_move = redo_memory.pop();
+        getEngine().applyMoveToBoard(player_last_move);
+        getEngine().applyMoveToBoard(enemy_last_move);
+        this.move_history.add(player_last_move);
+        this.move_history.add(enemy_last_move);
     }
 
     public void switchTurn() {
