@@ -148,6 +148,10 @@ public class MainController {
 
     @FXML
     protected void undoMove(ActionEvent event) {
+        // can't undo if game hasn't started
+        if (this.chess_game == null)
+            return;
+
         // do not allow user to undo during bot's turn
         if (!(this.chess_game.getCurrentPlayer() instanceof Human))
             return;
@@ -171,6 +175,10 @@ public class MainController {
 
     @FXML
     protected void redoMove(ActionEvent event) {
+        // can't redo if game hasn't started
+        if (this.chess_game == null)
+            return;
+
         // do not allow redoing if there is nothing to redo
         if (this.chess_game.getRedoMemory().size() < 2)
             return;
