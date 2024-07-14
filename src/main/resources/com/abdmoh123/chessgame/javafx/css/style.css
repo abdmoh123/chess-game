@@ -24,6 +24,7 @@
     -bg2: #d5c4a1;
 
     -fg: #3c3836;
+    -fg0: #282828;
 
     -fx-background-color: -bg0;
     -fx-text-fill: -fg;
@@ -164,3 +165,23 @@
     -fx-background-color: -d_orange;
     -fx-effect: dropshadow(one-pass-box, -d_orange, 0, 0, 0, 3px);
 }
+
+#timer-wrapper {
+    -fx-spacing: 10px;
+}
+.timer-container {
+    -fx-padding: 30px;
+    -fx-alignment: center;
+}
+.white-timer-container {
+    -fx-background-color: -bg1;
+    -fx-effect: dropshadow(one-pass-box, -bg2, 0, 0, 0, 3px);
+}
+.black-timer-container {
+    -fx-background-color: -fg;
+    -fx-effect: dropshadow(one-pass-box, -fg0, 0, 0, 0, 3px);
+}
+.black-timer-container .label {
+    -fx-text-fill: -bg1;
+}
+

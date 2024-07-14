@@ -18,10 +18,12 @@
 
     <center>
         <StackPane>
+            <!-- Chess board -->
             <GridPane id="center-container">
                 <BoardPane id="chess-board" fx:id="chess_board_pane" onMouseClicked="#handleSpaceSelection" />
             </GridPane>
 
+            <!-- Pawn promotion popup menu -->
             <GridPane style="-fx-alignment: center;">
                 <VBox id="promote_popup" fx:id="promote_popup">
                     <Label>Select a piece to promote to</Label>
@@ -38,6 +40,17 @@
 
     <right>
         <VBox id="right-container">
+            <!-- Timers -->
+            <HBox id="timer-wrapper">
+                <StackPane styleClass="timer-container, white-timer-container" HBox.hgrow="always">
+                    <Label fx:id="white_timer" style="-fx-text-alignment: center;">0:00</Label>
+                </StackPane>
+                <StackPane styleClass="timer-container, black-timer-container" HBox.hgrow="always">
+                    <Label fx:id="black_timer" style="-fx-text-alignment: center;">0:00</Label>
+                </StackPane>
+            </HBox>
+
+            <!-- Move history list -->
             <VBox id="move-history-container" VBox.vgrow="always">
                 <Label id="move-history-title">Move History</Label>
                 <ScrollPane fitToWidth="true" VBox.vgrow="always">
@@ -47,13 +60,15 @@
                             <ColumnConstraints percentWidth="33" />
                             <ColumnConstraints percentWidth="33" />
                         </columnConstraints>
-    
+
                         <VBox fx:id="move_history_index" GridPane.columnIndex="0" VBox.vgrow="always" />
                         <VBox fx:id="white_move_history" GridPane.columnIndex="1" VBox.vgrow="always" />
                         <VBox fx:id="black_move_history" GridPane.columnIndex="2" VBox.vgrow="always" />
                     </GridPane>
                 </ScrollPane>
             </VBox>
+
+            <!-- Undo and end game buttons -->
             <HBox id="right-buttons">
                 <HBox>
                     <Button text="Undo" styleClass="orange-button" onAction="#undoMove" />
@@ -63,5 +78,5 @@
             </HBox>
         </VBox>
     </right>
-    
+
 </BorderPane>

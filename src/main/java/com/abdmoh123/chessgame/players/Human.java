@@ -3,7 +3,6 @@ package com.abdmoh123.chessgame.players;
 import com.abdmoh123.chessgame.boards.Space;
 import com.abdmoh123.chessgame.engine.Engine;
 import com.abdmoh123.chessgame.moves.Move;
-import com.abdmoh123.chessgame.pieces.Pawn;
 
 import static com.abdmoh123.chessgame.ChessGame.SCANNER;
 

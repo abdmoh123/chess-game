@@ -43,6 +43,11 @@ public class MainController {
     @FXML
     public VBox black_move_history;
 
+    @FXML
+    private Label white_timer;
+    @FXML
+    private Label black_timer;
+
     private Game chess_game;
 
     private Space selected_space;
