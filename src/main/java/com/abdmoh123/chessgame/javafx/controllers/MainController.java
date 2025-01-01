@@ -24,17 +24,18 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 
 public class MainController {
     @FXML
     private BorderPane main_window;
 
     @FXML
-    private Text output_text;
-    @FXML
     public BoardPane chess_board_pane;
+
+    @FXML
+    public GridPane new_game_dialog;
 
     @FXML
     public VBox move_history_index;
@@ -58,12 +59,10 @@ public class MainController {
 
     public void initialize() {
         selected_possible_moves = new ArrayList<>();
-        promote_popup.getParent().setVisible(false);
-    }
 
-    @FXML
-    protected void handleSubmitButtonAction(ActionEvent event) {
-        output_text.setText("Chess!");
+        NewGameDialogController new_game_dialog_controller = new NewGameDialogController();
+        new_game_dialog_controller.setMainController(this);
+        this.new_game_dialog.getChildren().add(new_game_dialog_controller);
     }
 
     @FXML
@@ -123,7 +122,15 @@ public class MainController {
     }
 
     @FXML
-    protected void startGame(ActionEvent event) {
+    protected void openStartGameDialog(ActionEvent event) {
+        // show new game dialog
+        this.new_game_dialog.setVisible(true);
+    }
+
+    protected void startGame() {
+        // hide new game dialog
+        this.new_game_dialog.setVisible(false);
+
         // do nothing if game is already active
         if (this.chess_game != null && this.chess_game.getState() == GameState.ACTIVE)
             return;

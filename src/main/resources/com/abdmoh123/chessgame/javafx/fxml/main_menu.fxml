@@ -6,13 +6,15 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<?import com.abdmoh123.chessgame.javafx.components.* ?>
+<?import com.abdmoh123.chessgame.javafx.components.*?>
 
-<BorderPane fx:id="main_window" fx:controller="com.abdmoh123.chessgame.javafx.controllers.MainController"  xmlns:fx="http://javafx.com/fxml">
+<BorderPane fx:id="main_window"
+    fx:controller="com.abdmoh123.chessgame.javafx.controllers.MainController"
+    xmlns:fx="http://javafx.com/fxml">
 
     <left>
         <VBox id="left-container">
-            <Button text="Start game" onAction="#startGame" />
+            <Button text="Start game" onAction="#openStartGameDialog" />
         </VBox>
     </left>
 
@@ -20,12 +22,13 @@
         <StackPane>
             <!-- Chess board -->
             <GridPane id="center-container">
-                <BoardPane id="chess-board" fx:id="chess_board_pane" onMouseClicked="#handleSpaceSelection" />
+                <BoardPane id="chess-board" fx:id="chess_board_pane"
+                    onMouseClicked="#handleSpaceSelection" />
             </GridPane>
 
             <!-- Pawn promotion popup menu -->
-            <GridPane style="-fx-alignment: center;">
-                <VBox id="promote_popup" fx:id="promote_popup">
+            <GridPane style="-fx-alignment: center;" visible="false">
+                <VBox id="promote_popup" styleClass="popup" fx:id="promote_popup">
                     <Label>Select a piece to promote to</Label>
                     <HBox>
                         <Button text="Rook" onAction="#promoteRook" />
@@ -35,6 +38,8 @@
                     </HBox>
                 </VBox>
             </GridPane>
+
+            <GridPane style="-fx-alignment: center;" fx:id="new_game_dialog" visible="false" />
         </StackPane>
     </center>
 
@@ -61,9 +66,12 @@
                             <ColumnConstraints percentWidth="33" />
                         </columnConstraints>
 
-                        <VBox fx:id="move_history_index" GridPane.columnIndex="0" VBox.vgrow="always" />
-                        <VBox fx:id="white_move_history" GridPane.columnIndex="1" VBox.vgrow="always" />
-                        <VBox fx:id="black_move_history" GridPane.columnIndex="2" VBox.vgrow="always" />
+                        <VBox fx:id="move_history_index" GridPane.columnIndex="0"
+                            VBox.vgrow="always" />
+                        <VBox fx:id="white_move_history" GridPane.columnIndex="1"
+                            VBox.vgrow="always" />
+                        <VBox fx:id="black_move_history" GridPane.columnIndex="2"
+                            VBox.vgrow="always" />
                     </GridPane>
                 </ScrollPane>
             </VBox>
