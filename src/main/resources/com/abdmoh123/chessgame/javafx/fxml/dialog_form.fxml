@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<fx:root type="VBox" xmlns:fx="http://javafx.com/fxml" fx:id="dialog_form"
+    alignment="top_center" spacing="10" styleClass="popup">
+    <padding>
+        <Insets topRightBottomLeft="15" />
+    </padding>
+
+    <Text fx:id="menu_title" id="menu-title" text="Title" />
+
+    <Text fx:id="description" text="Description" />
+
+    <Button text="OK" onAction="#closeDialog" />
+</fx:root>

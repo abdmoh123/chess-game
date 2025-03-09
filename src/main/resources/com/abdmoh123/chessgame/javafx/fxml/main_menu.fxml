@@ -39,7 +39,7 @@
                 </VBox>
             </GridPane>
 
-            <GridPane style="-fx-alignment: center;" fx:id="new_game_dialog" visible="false" />
+            <GridPane style="-fx-alignment: center;" fx:id="dialog_window" visible="false" />
         </StackPane>
     </center>
 

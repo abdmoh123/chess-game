@@ -16,6 +16,7 @@ import com.abdmoh123.chessgame.players.bots.BotPlayer;
 import com.abdmoh123.chessgame.moves.Move;
 import com.abdmoh123.chessgame.javafx.components.BoardPane;
 import com.abdmoh123.chessgame.javafx.components.SpacePane;
+import com.abdmoh123.chessgame.javafx.JFXUtils;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -35,7 +36,7 @@ public class MainController {
     public BoardPane chess_board_pane;
 
     @FXML
-    public GridPane new_game_dialog;
+    public GridPane dialog_window;
 
     @FXML
     public VBox move_history_index;
@@ -59,10 +60,6 @@ public class MainController {
 
     public void initialize() {
         selected_possible_moves = new ArrayList<>();
-
-        NewGameDialogController new_game_dialog_controller = new NewGameDialogController();
-        new_game_dialog_controller.setMainController(this);
-        this.new_game_dialog.getChildren().add(new_game_dialog_controller);
     }
 
     @FXML
@@ -123,13 +120,17 @@ public class MainController {
 
     @FXML
     protected void openStartGameDialog(ActionEvent event) {
+        NewGameDialogController new_game_dialog_controller = new NewGameDialogController();
+        new_game_dialog_controller.setMainController(this);
+        JFXUtils.setChildPane(this.dialog_window, new_game_dialog_controller);
+
         // show new game dialog
-        this.new_game_dialog.setVisible(true);
+        this.dialog_window.setVisible(true);
     }
 
     protected void startGame() {
         // hide new game dialog
-        this.new_game_dialog.setVisible(false);
+        this.dialog_window.setVisible(false);
 
         // do nothing if game is already active
         if (this.chess_game != null && this.chess_game.getState() == GameState.ACTIVE)
@@ -145,7 +146,6 @@ public class MainController {
 
         chess_board_pane.reset();
         chess_board_pane.setBoard(chess_board);
-        System.out.println("Game started!");
     }
 
     @FXML
@@ -155,7 +155,11 @@ public class MainController {
             return;
 
         this.chess_game.endGame(this.chess_game.isP1Turn());
-        System.out.println("Game ended!");
+
+        // show dialog popup
+        DialogPopupController dialog_popup = new DialogPopupController("Game Over", "Game has ended!");
+        JFXUtils.setChildPane(this.dialog_window, dialog_popup);
+        this.dialog_window.setVisible(true);
     }
 
     @FXML
